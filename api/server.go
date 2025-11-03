@@ -396,6 +396,7 @@ type UpdateTraderRequest struct {
 	CustomPrompt    string  `json:"custom_prompt"`
 	OverrideBasePrompt bool `json:"override_base_prompt"`
 	IsCrossMargin   *bool   `json:"is_cross_margin"`
+	ScanIntervalMinutes *int `json:"scan_interval_minutes"` // 扫描间隔（分钟）
 }
 
 // handleUpdateTrader 更新交易员配置
@@ -445,6 +446,12 @@ func (s *Server) handleUpdateTrader(c *gin.Context) {
 		altcoinLeverage = existingTrader.AltcoinLeverage // 保持原值
 	}
 	
+	// 设置扫描间隔默认值
+	scanIntervalMinutes := existingTrader.ScanIntervalMinutes // 保持原值
+	if req.ScanIntervalMinutes != nil && *req.ScanIntervalMinutes > 0 {
+		scanIntervalMinutes = *req.ScanIntervalMinutes
+	}
+	
     // 更新交易员配置
     trader := &config.TraderRecord{
 		ID:                  traderID,
@@ -459,7 +466,7 @@ func (s *Server) handleUpdateTrader(c *gin.Context) {
 		CustomPrompt:        req.CustomPrompt,
 		OverrideBasePrompt:  req.OverrideBasePrompt,
 		IsCrossMargin:       isCrossMargin,
-		ScanIntervalMinutes: existingTrader.ScanIntervalMinutes, // 保持原值
+		ScanIntervalMinutes: scanIntervalMinutes,
 		IsRunning:           existingTrader.IsRunning,           // 保持原值
 	}
 

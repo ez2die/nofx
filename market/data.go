@@ -206,6 +206,7 @@ func calculateIntradaySeries(klines []Kline) *IntradayData {
 		MACDValues:  make([]float64, 0, 10),
 		RSI7Values:  make([]float64, 0, 10),
 		RSI14Values: make([]float64, 0, 10),
+		ATR14Values: make([]float64, 0, 10),
 	}
 
 	// 获取最近10个数据点
@@ -237,6 +238,12 @@ func calculateIntradaySeries(klines []Kline) *IntradayData {
 		if i >= 14 {
 			rsi14 := calculateRSI(klines[:i+1], 14)
 			data.RSI14Values = append(data.RSI14Values, rsi14)
+		}
+
+		// 计算每个点的ATR (14-period)
+		if i >= 14 {
+			atr14 := calculateATR(klines[:i+1], 14)
+			data.ATR14Values = append(data.ATR14Values, atr14)
 		}
 	}
 
@@ -393,6 +400,10 @@ func Format(data *Data) string {
 
 		if len(data.IntradaySeries.RSI14Values) > 0 {
 			sb.WriteString(fmt.Sprintf("RSI indicators (14‑Period): %s\n\n", formatFloatSlice(data.IntradaySeries.RSI14Values)))
+		}
+
+		if len(data.IntradaySeries.ATR14Values) > 0 {
+			sb.WriteString(fmt.Sprintf("ATR indicators (14‑Period): %s\n\n", formatFloatSlice(data.IntradaySeries.ATR14Values)))
 		}
 	}
 

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <path d="M50 5L10 25L50 45L90 25L50 5Z" fill="#646cff"/>
+  <path d="M10 25V75L50 95L90 75V25L50 45V5L10 25Z" fill="#646cff"/>
+  <circle cx="50" cy="50" r="30" fill="#fff"/>
+  <text x="50" y="60" font-size="40" font-weight="bold" text-anchor="middle" fill="#646cff">N</text>
+</svg>
+
