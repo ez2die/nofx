@@ -33,7 +33,7 @@ func main() {
 		log.Fatalf("❌ 获取交易对列表失败: %v", err)
 	}
 	log.Printf("✓ 成功获取 %d 个交易对\n", len(exchangeInfo.Symbols))
-	
+
 	// 显示前5个交易对
 	for i, symbol := range exchangeInfo.Symbols {
 		if i >= 5 {
@@ -75,4 +75,3 @@ func main() {
 	log.Println("\n✅ 所有测试通过！")
 	log.Println(fmt.Sprintf("市场数据源 '%s' 工作正常", *dataSource))
 }
-

@@ -166,13 +166,13 @@ func fetchMarketDataForContext(ctx *Context) error {
 		// 但现有持仓必须保留（需要决策是否平仓）
 		// 重要：OI过滤是可选的，如果OI数据不可用（为0或获取失败），不进行过滤，允许进入决策
 		isExistingPosition := positionSymbols[symbol]
-		
+
 		// 只有当OI数据存在且大于0时才进行过滤
-		shouldFilterOI := !isExistingPosition && 
-			data.OpenInterest != nil && 
-			data.CurrentPrice > 0 && 
+		shouldFilterOI := !isExistingPosition &&
+			data.OpenInterest != nil &&
+			data.CurrentPrice > 0 &&
 			data.OpenInterest.Latest > 0
-		
+
 		if shouldFilterOI {
 			// 计算持仓价值（USD）= 持仓量 × 当前价格
 			oiValue := data.OpenInterest.Latest * data.CurrentPrice

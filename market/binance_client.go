@@ -185,4 +185,3 @@ func (c *BinanceClient) GetOpenInterest(symbol string) (*OIData, error) {
 		Average: oi * 0.999, // 近似平均值
 	}, nil
 }
-

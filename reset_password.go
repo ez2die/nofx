@@ -78,4 +78,3 @@ func main() {
 	fmt.Println()
 	fmt.Println("🎉 完成！用户现在可以使用新密码登录了。")
 }
-

@@ -132,7 +132,7 @@ func (m *WSMonitor) startWithRetry(coins []string) {
 	// 重试逻辑：最多重试10次，每次间隔30秒
 	maxRetries := 10
 	retryInterval := 30 * time.Second
-	
+
 	for attempt := 1; attempt <= maxRetries; attempt++ {
 		err = m.combinedClient.Connect()
 		if err != nil {
@@ -146,7 +146,7 @@ func (m *WSMonitor) startWithRetry(coins []string) {
 				return
 			}
 		}
-		
+
 		// 订阅所有交易对
 		err = m.subscribeAll()
 		if err != nil {
@@ -160,7 +160,7 @@ func (m *WSMonitor) startWithRetry(coins []string) {
 				return
 			}
 		}
-		
+
 		// 成功连接和订阅
 		log.Printf("✅ WebSocket实时监控启动成功")
 		return

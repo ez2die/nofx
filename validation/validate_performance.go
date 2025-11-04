@@ -15,9 +15,9 @@ import (
 
 // DecisionRecord 决策记录（简化版，只包含需要验证的字段）
 type DecisionRecord struct {
-	Timestamp time.Time       `json:"timestamp"`
+	Timestamp time.Time        `json:"timestamp"`
 	Decisions []DecisionAction `json:"decisions"`
-	Success   bool            `json:"success"`
+	Success   bool             `json:"success"`
 }
 
 // DecisionAction 决策动作
@@ -71,19 +71,19 @@ type SymbolPerformance struct {
 
 // ValidationResult 验证结果
 type ValidationResult struct {
-	TotalCycles       int                           `json:"total_cycles"`
-	CyclesWithTrades  int                           `json:"cycles_with_trades"`
-	TotalTrades       int                           `json:"total_trades"`
-	WinningTrades     int                           `json:"winning_trades"`
-	LosingTrades      int                           `json:"losing_trades"`
-	WinRate           float64                       `json:"win_rate"`
-	AvgWin            float64                       `json:"avg_win"`
-	AvgLoss           float64                       `json:"avg_loss"`
-	ProfitFactor      float64                       `json:"profit_factor"`
-	CompletedTrades   []TradeOutcome                `json:"completed_trades"`
-	SymbolStats       map[string]*SymbolPerformance `json:"symbol_stats"`
-	BestSymbol        string                        `json:"best_symbol"`
-	WorstSymbol       string                        `json:"worst_symbol"`
+	TotalCycles      int                           `json:"total_cycles"`
+	CyclesWithTrades int                           `json:"cycles_with_trades"`
+	TotalTrades      int                           `json:"total_trades"`
+	WinningTrades    int                           `json:"winning_trades"`
+	LosingTrades     int                           `json:"losing_trades"`
+	WinRate          float64                       `json:"win_rate"`
+	AvgWin           float64                       `json:"avg_win"`
+	AvgLoss          float64                       `json:"avg_loss"`
+	ProfitFactor     float64                       `json:"profit_factor"`
+	CompletedTrades  []TradeOutcome                `json:"completed_trades"`
+	SymbolStats      map[string]*SymbolPerformance `json:"symbol_stats"`
+	BestSymbol       string                        `json:"best_symbol"`
+	WorstSymbol      string                        `json:"worst_symbol"`
 }
 
 // FileInfo 文件信息（包含时间戳用于排序）
@@ -345,10 +345,10 @@ func matchTrades(records []*DecisionRecord) []TradeOutcome {
 				openPositions[posKey] = append(openPositions[posKey], OpenPosition{
 					Symbol:    symbol,
 					Side:      side,
-					Quantity:   decision.Quantity,
-					Leverage:   decision.Leverage,
-					OpenPrice:  decision.Price,
-					OpenTime:   decision.Timestamp,
+					Quantity:  decision.Quantity,
+					Leverage:  decision.Leverage,
+					OpenPrice: decision.Price,
+					OpenTime:  decision.Timestamp,
 				})
 			} else if isClose {
 				// 平仓：FIFO匹配
@@ -390,7 +390,7 @@ func matchTrades(records []*DecisionRecord) []TradeOutcome {
 							OpenPrice: openPos.OpenPrice,
 							OpenTime:  openPos.OpenTime,
 						}
-						
+
 						// 创建修改后的closeDecision用于部分匹配（创建新副本）
 						partialCloseDecision := DecisionAction{
 							Action:    decision.Action,
@@ -402,10 +402,10 @@ func matchTrades(records []*DecisionRecord) []TradeOutcome {
 							Success:   decision.Success,
 							Error:     decision.Error,
 						}
-						
+
 						trade := matchSingleTrade(partialOpenPos, partialCloseDecision)
 						completedTrades = append(completedTrades, trade)
-						
+
 						// 保留剩余部分的开仓（创建新副本）
 						remainingOpenPos := OpenPosition{
 							Symbol:    openPos.Symbol,
@@ -416,7 +416,7 @@ func matchTrades(records []*DecisionRecord) []TradeOutcome {
 							OpenTime:  openPos.OpenTime,
 						}
 						newList = append(newList, remainingOpenPos)
-						
+
 						remainingQty = 0
 					}
 				}
@@ -544,4 +544,3 @@ func calculateStatistics(trades []TradeOutcome, cyclesWithTrades, totalCycles in
 
 	return result
 }
-

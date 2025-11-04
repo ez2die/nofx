@@ -22,4 +22,3 @@ type MarketDataClient interface {
 	// GetDataSourceName 返回数据源名称（用于日志和调试）
 	GetDataSourceName() string
 }
-

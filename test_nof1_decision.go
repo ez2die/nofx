@@ -15,11 +15,11 @@ import (
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	
+
 	// 解析命令行参数
 	useRealData := flag.Bool("real", false, "Use real Hyperliquid account data (positions and balance)")
 	flag.Parse()
-	
+
 	log.Println("=== NOF1 Prompt 决策测试脚本 ===")
 	if *useRealData {
 		log.Println("🔴 使用真实 Hyperliquid 账户数据模式")
@@ -37,12 +37,12 @@ func main() {
 
 	var config struct {
 		Traders []struct {
-			ID                  string  `json:"id"`
-			DeepSeekKey         string  `json:"deepseek_key"`
-			InitialBalance      float64 `json:"initial_balance"`
-			HyperliquidPrivateKey string `json:"hyperliquid_private_key,omitempty"`
-			HyperliquidWalletAddr string `json:"hyperliquid_wallet_addr,omitempty"`
-			HyperliquidTestnet   bool   `json:"hyperliquid_testnet,omitempty"`
+			ID                    string  `json:"id"`
+			DeepSeekKey           string  `json:"deepseek_key"`
+			InitialBalance        float64 `json:"initial_balance"`
+			HyperliquidPrivateKey string  `json:"hyperliquid_private_key,omitempty"`
+			HyperliquidWalletAddr string  `json:"hyperliquid_wallet_addr,omitempty"`
+			HyperliquidTestnet    bool    `json:"hyperliquid_testnet,omitempty"`
 		} `json:"traders"`
 		Leverage struct {
 			BTCETHLeverage  int `json:"btc_eth_leverage"`
@@ -84,13 +84,13 @@ func main() {
 	// 2. 初始化市场监控器（需要先初始化才能获取市场数据）
 	log.Println("\n📊 初始化市场监控器...")
 	monitor := market.NewWSMonitor(10)
-	
+
 	// 使用默认币种列表初始化
 	defaultCoins := []string{"BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT"}
 	if len(config.DefaultCoins) > 0 {
 		defaultCoins = config.DefaultCoins
 	}
-	
+
 	if err := monitor.Initialize(defaultCoins); err != nil {
 		log.Fatalf("初始化市场监控器失败: %v", err)
 	}
@@ -107,17 +107,17 @@ func main() {
 
 	// 4. 构建交易上下文（Context）
 	log.Println("\n📝 构建交易上下文...")
-	
+
 	var ctx *decision.Context
-	
+
 	if *useRealData {
 		// 使用真实 Hyperliquid 数据
 		if hyperliquidPrivateKey == "" || hyperliquidWalletAddr == "" {
 			log.Fatalf("❌ 使用 --real 模式需要配置 hyperliquid_private_key 和 hyperliquid_wallet_addr")
 		}
-		
+
 		log.Println("🔄 正在从 Hyperliquid 获取真实账户数据...")
-		
+
 		// 初始化 Hyperliquid 交易器
 		hlTrader, err := trader.NewHyperliquidTrader(
 			hyperliquidPrivateKey,
@@ -127,17 +127,17 @@ func main() {
 		if err != nil {
 			log.Fatalf("❌ 初始化 Hyperliquid 交易器失败: %v", err)
 		}
-		
+
 		// 获取真实账户余额
 		balance, err := hlTrader.GetBalance()
 		if err != nil {
 			log.Fatalf("❌ 获取账户余额失败: %v", err)
 		}
-		
+
 		totalWalletBalance := 0.0
 		totalUnrealizedProfit := 0.0
 		availableBalance := 0.0
-		
+
 		if wallet, ok := balance["totalWalletBalance"].(float64); ok {
 			totalWalletBalance = wallet
 		}
@@ -147,26 +147,26 @@ func main() {
 		if avail, ok := balance["availableBalance"].(float64); ok {
 			availableBalance = avail
 		}
-		
+
 		totalEquity := totalWalletBalance + totalUnrealizedProfit
 		totalPnL := totalEquity - initialBalance
 		totalPnLPct := 0.0
 		if initialBalance > 0 {
 			totalPnLPct = (totalPnL / initialBalance) * 100
 		}
-		
+
 		log.Printf("✓ 真实账户数据: 净值=%.2f, 钱包=%.2f, 未实现盈亏=%.2f, 可用=%.2f",
 			totalEquity, totalWalletBalance, totalUnrealizedProfit, availableBalance)
-		
+
 		// 获取真实持仓
 		positions, err := hlTrader.GetPositions()
 		if err != nil {
 			log.Fatalf("❌ 获取持仓失败: %v", err)
 		}
-		
+
 		var positionInfos []decision.PositionInfo
 		totalMarginUsed := 0.0
-		
+
 		log.Printf("✓ 找到 %d 个真实持仓", len(positions))
 		for _, pos := range positions {
 			symbol := pos["symbol"].(string)
@@ -179,7 +179,7 @@ func main() {
 			}
 			unrealizedPnl := pos["unRealizedProfit"].(float64)
 			liquidationPrice := pos["liquidationPrice"].(float64)
-			
+
 			// 计算盈亏百分比
 			pnlPct := 0.0
 			if side == "long" {
@@ -187,7 +187,7 @@ func main() {
 			} else {
 				pnlPct = ((entryPrice - markPrice) / entryPrice) * 100
 			}
-			
+
 			// 计算占用保证金
 			leverage := 10
 			if lev, ok := pos["leverage"].(float64); ok {
@@ -195,10 +195,10 @@ func main() {
 			}
 			marginUsed := (quantity * markPrice) / float64(leverage)
 			totalMarginUsed += marginUsed
-			
+
 			log.Printf("  - %s %s: 数量=%.4f, 入场价=%.4f, 当前价=%.4f, 盈亏=%.2f (%.2f%%)",
 				symbol, side, quantity, entryPrice, markPrice, unrealizedPnl, pnlPct)
-			
+
 			positionInfos = append(positionInfos, decision.PositionInfo{
 				Symbol:           symbol,
 				Side:             side,
@@ -213,16 +213,16 @@ func main() {
 				UpdateTime:       time.Now().UnixMilli(),
 			})
 		}
-		
+
 		marginUsedPct := 0.0
 		if totalEquity > 0 {
 			marginUsedPct = (totalMarginUsed / totalEquity) * 100
 		}
-		
+
 		ctx = &decision.Context{
-			CurrentTime:     time.Now().Format("2006-01-02 15:04:05"),
-			RuntimeMinutes:  0,
-			CallCount:       1,
+			CurrentTime:    time.Now().Format("2006-01-02 15:04:05"),
+			RuntimeMinutes: 0,
+			CallCount:      1,
 			Account: decision.AccountInfo{
 				TotalEquity:      totalEquity,
 				AvailableBalance: availableBalance,
@@ -232,22 +232,22 @@ func main() {
 				MarginUsedPct:    marginUsedPct,
 				PositionCount:    len(positionInfos),
 			},
-			Positions:      positionInfos,
-			CandidateCoins: []decision.CandidateCoin{},
-			MarketDataMap:  make(map[string]*market.Data),
-			OITopDataMap:   make(map[string]*decision.OITopData),
-			Performance:    nil,
+			Positions:       positionInfos,
+			CandidateCoins:  []decision.CandidateCoin{},
+			MarketDataMap:   make(map[string]*market.Data),
+			OITopDataMap:    make(map[string]*decision.OITopData),
+			Performance:     nil,
 			BTCETHLeverage:  config.Leverage.BTCETHLeverage,
 			AltcoinLeverage: config.Leverage.AltcoinLeverage,
 		}
-		
+
 		log.Printf("✓ 交易上下文构建完成: 持仓数=%d, 保证金使用率=%.2f%%", len(positionInfos), marginUsedPct)
 	} else {
 		// 使用模拟数据（原有逻辑）
 		ctx = &decision.Context{
-			CurrentTime:     time.Now().Format("2006-01-02 15:04:05"),
-			RuntimeMinutes:  0,
-			CallCount:       1,
+			CurrentTime:    time.Now().Format("2006-01-02 15:04:05"),
+			RuntimeMinutes: 0,
+			CallCount:      1,
 			Account: decision.AccountInfo{
 				TotalEquity:      initialBalance,
 				AvailableBalance: initialBalance,
@@ -255,13 +255,13 @@ func main() {
 				TotalPnLPct:      0.0,
 				MarginUsed:       0.0,
 				MarginUsedPct:    0.0,
-				PositionCount:   0,
+				PositionCount:    0,
 			},
 			Positions:       []decision.PositionInfo{},
 			CandidateCoins:  []decision.CandidateCoin{},
 			MarketDataMap:   make(map[string]*market.Data),
 			OITopDataMap:    make(map[string]*decision.OITopData),
-			Performance:    nil,
+			Performance:     nil,
 			BTCETHLeverage:  config.Leverage.BTCETHLeverage,
 			AltcoinLeverage: config.Leverage.AltcoinLeverage,
 		}
@@ -272,7 +272,7 @@ func main() {
 	for _, coin := range defaultCoins {
 		ctx.CandidateCoins = append(ctx.CandidateCoins, decision.CandidateCoin{
 			Symbol:  coin,
-			Sources:  []string{"default"},
+			Sources: []string{"default"},
 		})
 		log.Printf("  - %s", coin)
 	}
@@ -355,4 +355,3 @@ func main() {
 
 	log.Println("\n✅ 测试完成！")
 }
-

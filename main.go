@@ -98,15 +98,15 @@ func syncConfigToDatabase(database *config.Database) error {
 
 	// 同步各配置项到数据库
 	configs := map[string]string{
-		"admin_mode":            fmt.Sprintf("%t", configFile.AdminMode),
-		"beta_mode":             fmt.Sprintf("%t", configFile.BetaMode),
-		"api_server_port":       strconv.Itoa(configFile.APIServerPort),
-		"use_default_coins":     fmt.Sprintf("%t", configFile.UseDefaultCoins),
-		"coin_pool_api_url":     configFile.CoinPoolAPIURL,
-		"oi_top_api_url":        configFile.OITopAPIURL,
-		"max_daily_loss":        fmt.Sprintf("%.1f", configFile.MaxDailyLoss),
-		"max_drawdown":          fmt.Sprintf("%.1f", configFile.MaxDrawdown),
-		"stop_trading_minutes":  strconv.Itoa(configFile.StopTradingMinutes),
+		"admin_mode":           fmt.Sprintf("%t", configFile.AdminMode),
+		"beta_mode":            fmt.Sprintf("%t", configFile.BetaMode),
+		"api_server_port":      strconv.Itoa(configFile.APIServerPort),
+		"use_default_coins":    fmt.Sprintf("%t", configFile.UseDefaultCoins),
+		"coin_pool_api_url":    configFile.CoinPoolAPIURL,
+		"oi_top_api_url":       configFile.OITopAPIURL,
+		"max_daily_loss":       fmt.Sprintf("%.1f", configFile.MaxDailyLoss),
+		"max_drawdown":         fmt.Sprintf("%.1f", configFile.MaxDrawdown),
+		"stop_trading_minutes": strconv.Itoa(configFile.StopTradingMinutes),
 	}
 
 	// 同步default_coins（转换为JSON字符串存储）
@@ -146,7 +146,7 @@ func syncConfigToDatabase(database *config.Database) error {
 // loadBetaCodesToDatabase 加载内测码文件到数据库
 func loadBetaCodesToDatabase(database *config.Database) error {
 	betaCodeFile := "beta_codes.txt"
-	
+
 	// 检查内测码文件是否存在
 	if _, err := os.Stat(betaCodeFile); os.IsNotExist(err) {
 		log.Printf("📄 内测码文件 %s 不存在，跳过加载", betaCodeFile)
@@ -160,7 +160,7 @@ func loadBetaCodesToDatabase(database *config.Database) error {
 	}
 
 	log.Printf("🔄 发现内测码文件 %s (%.1f KB)，开始加载...", betaCodeFile, float64(fileInfo.Size())/1024)
-	
+
 	// 加载内测码到数据库
 	err = database.LoadBetaCodesFromFile(betaCodeFile)
 	if err != nil {

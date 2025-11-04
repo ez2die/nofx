@@ -321,7 +321,7 @@ func (c *HyperliquidClient) GetOpenInterest(symbol string) (*OIData, error) {
 			}
 		}
 	}
-	
+
 	// 尝试作为数组解析
 	var arrayResult []map[string]interface{}
 	if err := json.Unmarshal(resp, &arrayResult); err == nil {
@@ -337,7 +337,7 @@ func (c *HyperliquidClient) GetOpenInterest(symbol string) (*OIData, error) {
 				} else if val, ok := item["oi"].(string); ok {
 					oiVal = val
 				}
-				
+
 				if oiVal != "" {
 					oi, err := strconv.ParseFloat(oiVal, 64)
 					if err == nil {
@@ -401,15 +401,14 @@ type HyperliquidMeta struct {
 }
 
 type HyperliquidCandle struct {
-	T    int64  `json:"t"`    // 开始时间（毫秒）
-	TEnd int64  `json:"T"`    // 结束时间（毫秒）
-	S    string `json:"s"`    // 币种
-	I    string `json:"i"`    // 间隔
-	O    string `json:"o"`    // 开盘价
-	C    string `json:"c"`    // 收盘价
-	H    string `json:"h"`    // 最高价
-	L    string `json:"l"`    // 最低价
-	V    string `json:"v"`    // 成交量
-	N    int    `json:"n"`    // 交易次数
+	T    int64  `json:"t"` // 开始时间（毫秒）
+	TEnd int64  `json:"T"` // 结束时间（毫秒）
+	S    string `json:"s"` // 币种
+	I    string `json:"i"` // 间隔
+	O    string `json:"o"` // 开盘价
+	C    string `json:"c"` // 收盘价
+	H    string `json:"h"` // 最高价
+	L    string `json:"l"` // 最低价
+	V    string `json:"v"` // 成交量
+	N    int    `json:"n"` // 交易次数
 }
-

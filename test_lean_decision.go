@@ -15,12 +15,12 @@ import (
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	
+
 	// 解析命令行参数
 	useRealData := flag.Bool("real", false, "Use real Hyperliquid account data (positions and balance)")
 	dataSource := flag.String("source", "binance", "Market data source: binance or hyperliquid")
 	flag.Parse()
-	
+
 	log.Println("=== LEAN Prompt 决策测试脚本 ===")
 	if *useRealData {
 		log.Println("🔴 使用真实 Hyperliquid 账户数据模式")
@@ -39,25 +39,25 @@ func main() {
 
 	var config struct {
 		Traders []struct {
-			ID                  string  `json:"id"`
-			DeepSeekKey         string  `json:"deepseek_key"`
-			InitialBalance      float64 `json:"initial_balance"`
-			HyperliquidPrivateKey string `json:"hyperliquid_private_key,omitempty"`
-			HyperliquidWalletAddr string `json:"hyperliquid_wallet_addr,omitempty"`
-			HyperliquidTestnet   bool   `json:"hyperliquid_testnet,omitempty"`
+			ID                    string  `json:"id"`
+			DeepSeekKey           string  `json:"deepseek_key"`
+			InitialBalance        float64 `json:"initial_balance"`
+			HyperliquidPrivateKey string  `json:"hyperliquid_private_key,omitempty"`
+			HyperliquidWalletAddr string  `json:"hyperliquid_wallet_addr,omitempty"`
+			HyperliquidTestnet    bool    `json:"hyperliquid_testnet,omitempty"`
 		} `json:"traders"`
 		Leverage struct {
 			BTCETHLeverage  int `json:"btc_eth_leverage"`
 			AltcoinLeverage int `json:"altcoin_leverage"`
 		} `json:"leverage"`
-		DefaultCoins []string `json:"default_coins"`
-		MarketDataSource string `json:"market_data_source"`
+		DefaultCoins     []string `json:"default_coins"`
+		MarketDataSource string   `json:"market_data_source"`
 	}
 
 	if err := json.Unmarshal(configData, &config); err != nil {
 		log.Fatalf("解析配置文件失败: %v", err)
 	}
-	
+
 	// 确定使用的数据源（命令行参数优先，然后是配置，最后默认binance）
 	selectedDataSource := *dataSource
 	if selectedDataSource == "" {
@@ -66,7 +66,7 @@ func main() {
 	if selectedDataSource == "" {
 		selectedDataSource = "binance"
 	}
-	
+
 	// 初始化市场数据源（必须在初始化monitor之前）
 	log.Printf("\n🔧 初始化市场数据源: %s", selectedDataSource)
 	if err := market.SetDataSource(market.DataSource(selectedDataSource)); err != nil {
@@ -102,13 +102,13 @@ func main() {
 	// 2. 初始化市场监控器（需要先初始化才能获取市场数据）
 	log.Println("\n📊 初始化市场监控器...")
 	monitor := market.NewWSMonitor(10)
-	
+
 	// 使用默认币种列表初始化
 	defaultCoins := []string{"BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT"}
 	if len(config.DefaultCoins) > 0 {
 		defaultCoins = config.DefaultCoins
 	}
-	
+
 	if err := monitor.Initialize(defaultCoins); err != nil {
 		log.Fatalf("初始化市场监控器失败: %v", err)
 	}
@@ -125,17 +125,17 @@ func main() {
 
 	// 4. 构建交易上下文（Context）
 	log.Println("\n📝 构建交易上下文...")
-	
+
 	var ctx *decision.Context
-	
+
 	if *useRealData {
 		// 使用真实 Hyperliquid 数据
 		if hyperliquidPrivateKey == "" || hyperliquidWalletAddr == "" {
 			log.Fatalf("❌ 使用 --real 模式需要配置 hyperliquid_private_key 和 hyperliquid_wallet_addr")
 		}
-		
+
 		log.Println("🔄 正在从 Hyperliquid 获取真实账户数据...")
-		
+
 		// 初始化 Hyperliquid 交易器
 		hlTrader, err := trader.NewHyperliquidTrader(
 			hyperliquidPrivateKey,
@@ -145,17 +145,17 @@ func main() {
 		if err != nil {
 			log.Fatalf("❌ 初始化 Hyperliquid 交易器失败: %v", err)
 		}
-		
+
 		// 获取真实账户余额
 		balance, err := hlTrader.GetBalance()
 		if err != nil {
 			log.Fatalf("❌ 获取账户余额失败: %v", err)
 		}
-		
+
 		totalWalletBalance := 0.0
 		totalUnrealizedProfit := 0.0
 		availableBalance := 0.0
-		
+
 		if wallet, ok := balance["totalWalletBalance"].(float64); ok {
 			totalWalletBalance = wallet
 		}
@@ -165,26 +165,26 @@ func main() {
 		if avail, ok := balance["availableBalance"].(float64); ok {
 			availableBalance = avail
 		}
-		
+
 		totalEquity := totalWalletBalance + totalUnrealizedProfit
 		totalPnL := totalEquity - initialBalance
 		totalPnLPct := 0.0
 		if initialBalance > 0 {
 			totalPnLPct = (totalPnL / initialBalance) * 100
 		}
-		
+
 		log.Printf("✓ 真实账户数据: 净值=%.2f, 钱包=%.2f, 未实现盈亏=%.2f, 可用=%.2f",
 			totalEquity, totalWalletBalance, totalUnrealizedProfit, availableBalance)
-		
+
 		// 获取真实持仓
 		positions, err := hlTrader.GetPositions()
 		if err != nil {
 			log.Fatalf("❌ 获取持仓失败: %v", err)
 		}
-		
+
 		var positionInfos []decision.PositionInfo
 		totalMarginUsed := 0.0
-		
+
 		log.Printf("✓ 找到 %d 个真实持仓", len(positions))
 		for _, pos := range positions {
 			symbol := pos["symbol"].(string)
@@ -197,7 +197,7 @@ func main() {
 			}
 			unrealizedPnl := pos["unRealizedProfit"].(float64)
 			liquidationPrice := pos["liquidationPrice"].(float64)
-			
+
 			// 计算盈亏百分比
 			pnlPct := 0.0
 			if side == "long" {
@@ -205,7 +205,7 @@ func main() {
 			} else {
 				pnlPct = ((entryPrice - markPrice) / entryPrice) * 100
 			}
-			
+
 			// 计算占用保证金
 			leverage := 10
 			if lev, ok := pos["leverage"].(float64); ok {
@@ -213,10 +213,10 @@ func main() {
 			}
 			marginUsed := (quantity * markPrice) / float64(leverage)
 			totalMarginUsed += marginUsed
-			
+
 			log.Printf("  - %s %s: 数量=%.4f, 入场价=%.4f, 当前价=%.4f, 盈亏=%.2f (%.2f%%)",
 				symbol, side, quantity, entryPrice, markPrice, unrealizedPnl, pnlPct)
-			
+
 			positionInfos = append(positionInfos, decision.PositionInfo{
 				Symbol:           symbol,
 				Side:             side,
@@ -231,16 +231,16 @@ func main() {
 				UpdateTime:       time.Now().UnixMilli(),
 			})
 		}
-		
+
 		marginUsedPct := 0.0
 		if totalEquity > 0 {
 			marginUsedPct = (totalMarginUsed / totalEquity) * 100
 		}
-		
+
 		ctx = &decision.Context{
-			CurrentTime:     time.Now().Format("2006-01-02 15:04:05"),
-			RuntimeMinutes:  0,
-			CallCount:       1,
+			CurrentTime:    time.Now().Format("2006-01-02 15:04:05"),
+			RuntimeMinutes: 0,
+			CallCount:      1,
 			Account: decision.AccountInfo{
 				TotalEquity:      totalEquity,
 				AvailableBalance: availableBalance,
@@ -250,22 +250,22 @@ func main() {
 				MarginUsedPct:    marginUsedPct,
 				PositionCount:    len(positionInfos),
 			},
-			Positions:      positionInfos,
-			CandidateCoins: []decision.CandidateCoin{},
-			MarketDataMap:  make(map[string]*market.Data),
-			OITopDataMap:   make(map[string]*decision.OITopData),
-			Performance:    nil,
+			Positions:       positionInfos,
+			CandidateCoins:  []decision.CandidateCoin{},
+			MarketDataMap:   make(map[string]*market.Data),
+			OITopDataMap:    make(map[string]*decision.OITopData),
+			Performance:     nil,
 			BTCETHLeverage:  config.Leverage.BTCETHLeverage,
 			AltcoinLeverage: config.Leverage.AltcoinLeverage,
 		}
-		
+
 		log.Printf("✓ 交易上下文构建完成: 持仓数=%d, 保证金使用率=%.2f%%", len(positionInfos), marginUsedPct)
 	} else {
 		// 使用模拟数据（原有逻辑）
 		ctx = &decision.Context{
-			CurrentTime:     time.Now().Format("2006-01-02 15:04:05"),
-			RuntimeMinutes:  0,
-			CallCount:       1,
+			CurrentTime:    time.Now().Format("2006-01-02 15:04:05"),
+			RuntimeMinutes: 0,
+			CallCount:      1,
 			Account: decision.AccountInfo{
 				TotalEquity:      initialBalance,
 				AvailableBalance: initialBalance,
@@ -273,13 +273,13 @@ func main() {
 				TotalPnLPct:      0.0,
 				MarginUsed:       0.0,
 				MarginUsedPct:    0.0,
-				PositionCount:   0,
+				PositionCount:    0,
 			},
 			Positions:       []decision.PositionInfo{},
 			CandidateCoins:  []decision.CandidateCoin{},
 			MarketDataMap:   make(map[string]*market.Data),
 			OITopDataMap:    make(map[string]*decision.OITopData),
-			Performance:    nil,
+			Performance:     nil,
 			BTCETHLeverage:  config.Leverage.BTCETHLeverage,
 			AltcoinLeverage: config.Leverage.AltcoinLeverage,
 		}
@@ -290,7 +290,7 @@ func main() {
 	for _, coin := range defaultCoins {
 		ctx.CandidateCoins = append(ctx.CandidateCoins, decision.CandidateCoin{
 			Symbol:  coin,
-			Sources:  []string{"default"},
+			Sources: []string{"default"},
 		})
 		log.Printf("  - %s", coin)
 	}
@@ -335,7 +335,7 @@ func main() {
 			log.Printf("\n决策 #%d:", i+1)
 			log.Printf("  币种: %s", d.Symbol)
 			log.Printf("  动作: %s", d.Action)
-			
+
 			// 验证 action 是否符合 lean.txt 的要求
 			validActions := map[string]bool{
 				"open_long":   true,
@@ -350,10 +350,10 @@ func main() {
 			} else {
 				log.Printf("  ❌ Action 无效: %s (应为 open_long/open_short/close_long/close_short/hold/wait)", d.Action)
 			}
-			
+
 			if d.Leverage > 0 {
 				log.Printf("  杠杆: %dx", d.Leverage)
-				
+
 				// 验证杠杆是否在配置范围内
 				maxLeverage := config.Leverage.AltcoinLeverage
 				if d.Symbol == "BTCUSDT" || d.Symbol == "ETHUSDT" {
@@ -373,7 +373,7 @@ func main() {
 			}
 			if d.TakeProfit > 0 {
 				log.Printf("  止盈: %.4f", d.TakeProfit)
-				
+
 				// 验证风险回报比
 				if d.StopLoss > 0 {
 					var entryPrice, risk, reward, riskRewardRatio float64
@@ -399,14 +399,14 @@ func main() {
 			}
 			if d.Confidence > 0 {
 				log.Printf("  信心度: %d/100", d.Confidence)
-				
+
 				// 验证信心度是否符合 lean.txt 的要求 (70-100)
 				if d.Confidence >= 70 && d.Confidence <= 100 {
 					log.Printf("  ✓ 信心度在有效范围内 (70-100)")
 				} else {
 					log.Printf("  ❌ 信心度不在有效范围内 (%d, 应为 70-100)", d.Confidence)
 				}
-				
+
 				// 检查是否低于阈值（开仓应≥70）
 				if (d.Action == "open_long" || d.Action == "open_short") && d.Confidence < 70 {
 					log.Printf("  ⚠️  警告: 开仓信心度低于70，按lean.txt要求不应开仓")
@@ -414,7 +414,7 @@ func main() {
 			}
 			if d.RiskUSD > 0 {
 				log.Printf("  风险金额: %.2f USD (%.2f%% 账户)", d.RiskUSD, (d.RiskUSD/initialBalance)*100)
-				
+
 				// 验证风险金额是否符合 lean.txt 的要求 (5-8%)
 				riskPct := (d.RiskUSD / initialBalance) * 100
 				if riskPct >= 5.0 && riskPct <= 8.0 {
@@ -445,10 +445,10 @@ func main() {
 	log.Println("\n📋 兼容性验证总结:")
 	log.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	allValid := true
-	
+
 	for i, d := range fullDecision.Decisions {
 		valid := true
-		
+
 		// 验证 action
 		validActions := map[string]bool{
 			"open_long": true, "open_short": true, "close_long": true,
@@ -459,16 +459,16 @@ func main() {
 			valid = false
 			allValid = false
 		}
-		
+
 		// 验证 confidence（开仓必须≥70）
-		if (d.Action == "open_long" || d.Action == "open_short") {
+		if d.Action == "open_long" || d.Action == "open_short" {
 			if d.Confidence < 70 {
 				log.Printf("决策 #%d: ❌ 开仓信心度 %d < 70 (lean.txt要求)", i+1, d.Confidence)
 				valid = false
 				allValid = false
 			}
 		}
-		
+
 		// 验证杠杆（不能超过配置）
 		if d.Leverage > 0 {
 			maxLeverage := config.Leverage.AltcoinLeverage
@@ -481,12 +481,12 @@ func main() {
 				allValid = false
 			}
 		}
-		
+
 		if valid {
 			log.Printf("决策 #%d: ✅ 所有验证通过", i+1)
 		}
 	}
-	
+
 	if allValid && len(fullDecision.Decisions) > 0 {
 		log.Println("\n✅ 所有决策验证通过！lean.txt prompt 与 engine 兼容")
 	} else if len(fullDecision.Decisions) == 0 {
@@ -498,4 +498,3 @@ func main() {
 
 	log.Println("\n✅ 测试完成！")
 }
-

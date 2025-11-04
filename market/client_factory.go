@@ -57,4 +57,3 @@ func GetMarketDataClient() MarketDataClient {
 func NewAPIClient() MarketDataClient {
 	return GetMarketDataClient()
 }
-
