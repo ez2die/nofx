@@ -27,6 +27,7 @@ type LeverageConfig struct {
 type ConfigFile struct {
 	AdminMode          bool           `json:"admin_mode"`
 	BetaMode           bool           `json:"beta_mode"`
+	MarketDataSource   string         `json:"market_data_source"`
 	APIServerPort      int            `json:"api_server_port"`
 	UseDefaultCoins    bool           `json:"use_default_coins"`
 	DefaultCoins       []string       `json:"default_coins"`
@@ -38,6 +39,39 @@ type ConfigFile struct {
 	Leverage           LeverageConfig `json:"leverage"`
 	JWTSecret          string         `json:"jwt_secret"`
 	DataKLineTime      string         `json:"data_k_line_time"`
+}
+
+// initMarketDataSource 初始化市场数据源
+func initMarketDataSource() error {
+	// 检查config.json是否存在
+	if _, err := os.Stat("config.json"); os.IsNotExist(err) {
+		log.Printf("📄 config.json不存在，跳过市场数据源初始化")
+		return nil
+	}
+
+	// 读取config.json
+	data, err := os.ReadFile("config.json")
+	if err != nil {
+		return fmt.Errorf("读取config.json失败: %w", err)
+	}
+
+	// 解析JSON
+	var configFile ConfigFile
+	if err := json.Unmarshal(data, &configFile); err != nil {
+		return fmt.Errorf("解析config.json失败: %w", err)
+	}
+
+	// 设置市场数据源
+	dataSource := market.DataSource(configFile.MarketDataSource)
+	if dataSource == "" {
+		dataSource = market.DataSourceBinance // 默认使用Binance
+	}
+	log.Printf("🔧 初始化市场数据源: %s", dataSource)
+	if err := market.SetDataSource(dataSource); err != nil {
+		return fmt.Errorf("设置市场数据源失败: %w", err)
+	}
+
+	return nil
 }
 
 // syncConfigToDatabase 从config.json读取配置并同步到数据库
@@ -171,6 +205,11 @@ func main() {
 	// 加载内测码到数据库
 	if err := loadBetaCodesToDatabase(database); err != nil {
 		log.Printf("⚠️  加载内测码到数据库失败: %v", err)
+	}
+
+	// 设置市场数据源（需要先读取config.json）
+	if err := initMarketDataSource(); err != nil {
+		log.Printf("⚠️  设置市场数据源失败: %v", err)
 	}
 
 	// 获取系统配置

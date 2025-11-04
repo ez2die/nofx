@@ -398,13 +398,13 @@ type UpdateTraderRequest struct {
 	AIModelID           string  `json:"ai_model_id" binding:"required"`
 	ExchangeID          string  `json:"exchange_id" binding:"required"`
 	InitialBalance      float64 `json:"initial_balance"`
-	ScanIntervalMinutes int     `json:"scan_interval_minutes"`
 	BTCETHLeverage      int     `json:"btc_eth_leverage"`
 	AltcoinLeverage     int     `json:"altcoin_leverage"`
 	TradingSymbols      string  `json:"trading_symbols"`
 	CustomPrompt        string  `json:"custom_prompt"`
 	OverrideBasePrompt  bool    `json:"override_base_prompt"`
 	IsCrossMargin       *bool   `json:"is_cross_margin"`
+	ScanIntervalMinutes *int    `json:"scan_interval_minutes"` // 扫描间隔（分钟）
 }
 
 // handleUpdateTrader 更新交易员配置
@@ -454,10 +454,10 @@ func (s *Server) handleUpdateTrader(c *gin.Context) {
 		altcoinLeverage = existingTrader.AltcoinLeverage // 保持原值
 	}
 
-	// 设置扫描间隔，允许更新
-	scanIntervalMinutes := req.ScanIntervalMinutes
-	if scanIntervalMinutes <= 0 {
-		scanIntervalMinutes = existingTrader.ScanIntervalMinutes // 保持原值
+	// 设置扫描间隔默认值
+	scanIntervalMinutes := existingTrader.ScanIntervalMinutes // 保持原值
+	if req.ScanIntervalMinutes != nil && *req.ScanIntervalMinutes > 0 {
+		scanIntervalMinutes = *req.ScanIntervalMinutes
 	}
 
 	// 更新交易员配置
@@ -514,14 +514,8 @@ func (s *Server) handleDeleteTrader(c *gin.Context) {
 		return
 	}
 
-	// 如果交易员正在运行，先停止它
-	if trader, err := s.traderManager.GetTrader(traderID); err == nil {
-		status := trader.GetStatus()
-		if isRunning, ok := status["is_running"].(bool); ok && isRunning {
-			trader.Stop()
-			log.Printf("⏹  已停止运行中的交易员: %s", traderID)
-		}
-	}
+	// 从内存中移除trader（会先停止运行中的trader）
+	s.traderManager.RemoveTrader(traderID)
 
 	log.Printf("✓ 交易员已删除: %s", traderID)
 	c.JSON(http.StatusOK, gin.H{"message": "交易员已删除"})

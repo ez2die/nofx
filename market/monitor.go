@@ -47,7 +47,7 @@ func NewWSMonitor(batchSize int) *WSMonitor {
 func (m *WSMonitor) Initialize(coins []string) error {
 	log.Println("初始化WebSocket监控器...")
 	// 获取交易对信息
-	apiClient := NewAPIClient()
+	apiClient := GetMarketDataClient()
 	// 如果不指定交易对，则使用market市场的所有交易对币种
 	if len(coins) == 0 {
 		exchangeInfo, err := apiClient.GetExchangeInfo()
@@ -76,7 +76,7 @@ func (m *WSMonitor) Initialize(coins []string) error {
 }
 
 func (m *WSMonitor) initializeHistoricalData() error {
-	apiClient := NewAPIClient()
+	apiClient := GetMarketDataClient()
 
 	var wg sync.WaitGroup
 	semaphore := make(chan struct{}, 5) // 限制并发数
@@ -117,23 +117,52 @@ func (m *WSMonitor) initializeHistoricalData() error {
 }
 
 func (m *WSMonitor) Start(coins []string) {
+	go m.startWithRetry(coins)
+}
+
+func (m *WSMonitor) startWithRetry(coins []string) {
 	log.Printf("启动WebSocket实时监控...")
 	// 初始化交易对
 	err := m.Initialize(coins)
 	if err != nil {
-		log.Fatalf("❌ 初始化币种: %v", err)
+		log.Printf("❌ 初始化币种失败: %v (将使用REST API回退)", err)
 		return
 	}
 
-	err = m.combinedClient.Connect()
-	if err != nil {
-		log.Fatalf("❌ 批量订阅流: %v", err)
-		return
-	}
-	// 订阅所有交易对
-	err = m.subscribeAll()
-	if err != nil {
-		log.Fatalf("❌ 订阅币种交易对: %v", err)
+	// 重试逻辑：最多重试10次，每次间隔30秒
+	maxRetries := 10
+	retryInterval := 30 * time.Second
+	
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		err = m.combinedClient.Connect()
+		if err != nil {
+			log.Printf("⚠️  批量订阅流连接失败 (尝试 %d/%d): %v", attempt, maxRetries, err)
+			if attempt < maxRetries {
+				log.Printf("   将在 %.0f 秒后重试...", retryInterval.Seconds())
+				time.Sleep(retryInterval)
+				continue
+			} else {
+				log.Printf("❌ WebSocket连接彻底失败，将使用REST API回退模式")
+				return
+			}
+		}
+		
+		// 订阅所有交易对
+		err = m.subscribeAll()
+		if err != nil {
+			log.Printf("⚠️  订阅币种交易对失败 (尝试 %d/%d): %v", attempt, maxRetries, err)
+			if attempt < maxRetries {
+				log.Printf("   将在 %.0f 秒后重试...", retryInterval.Seconds())
+				time.Sleep(retryInterval)
+				continue
+			} else {
+				log.Printf("❌ WebSocket订阅彻底失败，将使用REST API回退模式")
+				return
+			}
+		}
+		
+		// 成功连接和订阅
+		log.Printf("✅ WebSocket实时监控启动成功")
 		return
 	}
 }
@@ -159,7 +188,7 @@ func (m *WSMonitor) subscribeAll() error {
 	for _, st := range subKlineTime {
 		err := m.combinedClient.BatchSubscribeKlines(m.symbols, st)
 		if err != nil {
-			log.Fatalf("❌ 订阅3m K线: %v", err)
+			log.Printf("❌ 订阅%s K线失败: %v", st, err)
 			return err
 		}
 	}
@@ -237,19 +266,21 @@ func (m *WSMonitor) GetCurrentKlines(symbol string, _time string) ([]Kline, erro
 	value, exists := m.getKlineDataMap(_time).Load(symbol)
 	if !exists {
 		// 如果Ws数据未初始化完成时,单独使用api获取 - 兼容性代码 (防止在未初始化完成是,已经有交易员运行)
-		apiClient := NewAPIClient()
+		apiClient := GetMarketDataClient()
 		klines, err := apiClient.GetKlines(symbol, _time, 100)
 		m.getKlineDataMap(_time).Store(strings.ToUpper(symbol), klines) //动态缓存进缓存
 		subStr := m.subscribeSymbol(symbol, _time)
 		subErr := m.combinedClient.subscribeStreams(subStr)
 		log.Printf("动态订阅流: %v", subStr)
 		if subErr != nil {
-			return nil, fmt.Errorf("动态订阅%v分钟K线失败: %v", _time, subErr)
+			// 订阅失败不影响数据获取，只记录警告
+			log.Printf("⚠️  动态订阅%v分钟K线流失败: %v (将继续使用API数据)", _time, subErr)
 		}
 		if err != nil {
 			return nil, fmt.Errorf("获取%v分钟K线失败: %v", _time, err)
 		}
-		return klines, fmt.Errorf("symbol不存在")
+		// 成功获取数据，返回klines和nil
+		return klines, nil
 	}
 	return value.([]Kline), nil
 }

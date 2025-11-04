@@ -30,6 +30,7 @@ type IntradayData struct {
 	MACDValues  []float64
 	RSI7Values  []float64
 	RSI14Values []float64
+	ATR14Values []float64 // ATR (14-period) for 3-minute intervals
 }
 
 // LongerTermData 长期数据(4小时时间框架)

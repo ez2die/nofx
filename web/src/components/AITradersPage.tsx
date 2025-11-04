@@ -145,16 +145,17 @@ export function AITradersPage({ onTraderSelect }: AITradersPageProps) {
 
   const handleCreateTrader = async (data: CreateTraderRequest) => {
     try {
-      const model = allModels?.find(m => m.id === data.ai_model_id);
-      const exchange = allExchanges?.find(e => e.id === data.exchange_id);
-
-      if (!model?.enabled) {
-        alert(t('modelNotConfigured', language));
+      // 检查模型是否已配置（需要启用且有 API Key）
+      const model = enabledModels?.find(m => m.id === data.ai_model_id);
+      if (!model) {
+        alert(t('modelNotConfigured', language) + '\n请先到"AI模型"页面配置该模型的API Key');
         return;
       }
 
-      if (!exchange?.enabled) {
-        alert(t('exchangeNotConfigured', language));
+      // 检查交易所是否已配置
+      const exchange = enabledExchanges?.find(e => e.id === data.exchange_id);
+      if (!exchange) {
+        alert(t('exchangeNotConfigured', language) + '\n请先到"交易所"页面配置该交易所的API密钥');
         return;
       }
 
