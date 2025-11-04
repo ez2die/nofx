@@ -107,6 +107,7 @@ func GetFullDecisionWithCustomPrompt(ctx *Context, mcpClient *mcp.Client, custom
 	userPrompt := buildUserPrompt(ctx)
 
 	// 3. 调用AI API（使用 system + user prompt）
+	log.Println("🚀 正在调用AI API进行决策分析...")
 	aiResponse, err := mcpClient.CallWithMessages(systemPrompt, userPrompt)
 	if err != nil {
 		return nil, fmt.Errorf("调用AI API失败: %w", err)

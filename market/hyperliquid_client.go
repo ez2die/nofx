@@ -17,6 +17,12 @@ type HyperliquidClient struct {
 	client  *http.Client
 	// 币种名称映射表（从Meta API获取）
 	coinMap map[string]string // symbol -> coin name, e.g., "BTCUSDT" -> "BTC"
+	// OI数据缓存（metaAndAssetCtxs API 响应）
+	oiCache struct {
+		universe []map[string]interface{} // universe 数组
+		contexts []map[string]interface{}  // contexts 数组
+		expireAt time.Time                 // 缓存过期时间
+	}
 }
 
 func NewHyperliquidClient() (*HyperliquidClient, error) {
@@ -289,70 +295,262 @@ func (c *HyperliquidClient) GetCurrentPrice(symbol string) (float64, error) {
 }
 
 // GetOpenInterest 实现 MarketDataClient 接口
-// Hyperliquid可能不支持直接获取OI，使用market24hSnapshot获取市场数据
+// 使用 metaAndAssetCtxs API 类型获取 OI 数据
+// API 响应格式: [universe, contexts]
+//   - universe: 包含币种信息（name 字段）
+//   - contexts: 包含市场数据（openInterest, markPx, funding, dayNtlVlm 等）
+// 优化：使用缓存机制，避免重复调用 API（metaAndAssetCtxs 一次返回所有币种数据）
 func (c *HyperliquidClient) GetOpenInterest(symbol string) (*OIData, error) {
 	coin := c.symbolToCoin(symbol)
 
-	// 尝试使用market24hSnapshot获取市场数据（可能包含OI）
-	reqBody := map[string]interface{}{
-		"type": "market24hSnapshot",
+	// 检查缓存是否有效（5秒过期）
+	now := time.Now()
+	var universe []map[string]interface{}
+	var contexts []map[string]interface{}
+	
+	if now.Before(c.oiCache.expireAt) && len(c.oiCache.universe) > 0 && len(c.oiCache.contexts) > 0 {
+		// 使用缓存
+		universe = c.oiCache.universe
+		contexts = c.oiCache.contexts
+		log.Printf("📦 使用缓存的 OI 数据 [%s]", symbol)
+	} else {
+		// 缓存失效或不存在，调用 API
+		log.Printf("🔄 调用 API 获取 OI 数据（将缓存结果供后续币种使用）...")
+		
+		reqBody := map[string]interface{}{
+			"type": "metaAndAssetCtxs",
+		}
+
+		resp, err := c.postRequest("/info", reqBody)
+		if err != nil {
+			log.Printf("⚠️  Hyperliquid OI API请求失败 [%s]: %v", symbol, err)
+			return nil, fmt.Errorf("请求Hyperliquid OI数据失败: %w", err)
+		}
+
+		// 解析响应：响应是一个数组 [universe, contexts]
+		var responseArray []json.RawMessage
+		if err := json.Unmarshal(resp, &responseArray); err != nil {
+			log.Printf("⚠️  Hyperliquid OI API响应解析失败 [%s]: %v", symbol, err)
+			return nil, fmt.Errorf("解析Hyperliquid OI响应失败: %w", err)
+		}
+
+		// 响应应该包含至少2个元素
+		if len(responseArray) < 2 {
+			log.Printf("⚠️  Hyperliquid OI API响应格式错误 [%s]: 期望至少2个元素，实际%d个", symbol, len(responseArray))
+			return nil, fmt.Errorf("Hyperliquid OI API响应格式错误")
+		}
+
+		// 解析第一个元素（包含 universe 字段的对象）
+		var metaObj map[string]interface{}
+		if err := json.Unmarshal(responseArray[0], &metaObj); err != nil {
+			log.Printf("⚠️  Hyperliquid OI API meta对象解析失败 [%s]: %v", symbol, err)
+			return nil, fmt.Errorf("解析meta对象失败: %w", err)
+		}
+
+		// 提取 universe 数组
+		universeRaw, ok := metaObj["universe"]
+		if !ok {
+			log.Printf("⚠️  Hyperliquid OI API响应中未找到universe字段 [%s]", symbol)
+			return nil, fmt.Errorf("响应中未找到universe字段")
+		}
+
+		// 将 universe 转换为 JSON 再解析
+		universeJSON, err := json.Marshal(universeRaw)
+		if err != nil {
+			log.Printf("⚠️  Hyperliquid OI API universe序列化失败 [%s]: %v", symbol, err)
+			return nil, fmt.Errorf("universe序列化失败: %w", err)
+		}
+
+		if err := json.Unmarshal(universeJSON, &universe); err != nil {
+			log.Printf("⚠️  Hyperliquid OI API universe数组解析失败 [%s]: %v", symbol, err)
+			return nil, fmt.Errorf("解析universe数组失败: %w", err)
+		}
+
+		// 解析 contexts（第二个元素，直接是数组）
+		if err := json.Unmarshal(responseArray[1], &contexts); err != nil {
+			log.Printf("⚠️  Hyperliquid OI API contexts解析失败 [%s]: %v", symbol, err)
+			return nil, fmt.Errorf("解析contexts失败: %w", err)
+		}
+
+		// 更新缓存（5秒过期）
+		c.oiCache.universe = universe
+		c.oiCache.contexts = contexts
+		c.oiCache.expireAt = now.Add(5 * time.Second)
+		log.Printf("✓ OI 数据已缓存（有效期5秒）")
 	}
 
-	resp, err := c.postRequest("/info", reqBody)
-	if err != nil {
-		log.Printf("⚠️  Hyperliquid OI API请求失败 [%s]: %v", symbol, err)
-		return nil, fmt.Errorf("请求Hyperliquid OI数据失败: %w", err)
-	}
-
-	log.Printf("🔍 [DEBUG] Hyperliquid Market24hSnapshot响应: %s", string(resp))
-
-	// market24hSnapshot返回所有币种的市场数据，需要找到对应的币种
-	// 可能返回单个对象或数组
-	var singleObj map[string]interface{}
-	if err := json.Unmarshal(resp, &singleObj); err == nil {
-		// 单个对象，检查是否是我们要找的币种
-		if coinVal, ok := singleObj["coin"].(string); ok && coinVal == coin {
-			// 尝试提取OI数据
-			if oiVal, ok := singleObj["sumOpenInterest"].(string); ok && oiVal != "" {
-				oi, err := strconv.ParseFloat(oiVal, 64)
-				if err == nil {
-					return &OIData{Latest: oi, Average: oi * 0.999}, nil
-				}
-			}
+	// 查找对应的币种索引
+	var coinIndex = -1
+	for i, item := range universe {
+		if coinName, ok := item["name"].(string); ok && coinName == coin {
+			coinIndex = i
+			break
 		}
 	}
 
-	// 尝试作为数组解析
-	var arrayResult []map[string]interface{}
-	if err := json.Unmarshal(resp, &arrayResult); err == nil {
-		// 遍历数组找到对应的币种
-		for _, item := range arrayResult {
-			if coinVal, ok := item["coin"].(string); ok && coinVal == coin {
-				// 尝试多个可能的字段名
-				var oiVal string
-				if val, ok := item["sumOpenInterest"].(string); ok {
-					oiVal = val
-				} else if val, ok := item["openInterest"].(string); ok {
-					oiVal = val
-				} else if val, ok := item["oi"].(string); ok {
-					oiVal = val
-				}
+	if coinIndex == -1 {
+		log.Printf("⚠️  未找到币种 %s 在universe中", coin)
+		return nil, fmt.Errorf("未找到币种 %s", coin)
+	}
 
-				if oiVal != "" {
-					oi, err := strconv.ParseFloat(oiVal, 64)
-					if err == nil {
-						log.Printf("✓ 从market24hSnapshot成功获取 %s 的OI数据: %.2f", symbol, oi)
-						return &OIData{Latest: oi, Average: oi * 0.999}, nil
-					}
-				}
-			}
+	// 检查索引是否在范围内
+	if coinIndex >= len(contexts) {
+		log.Printf("⚠️  币种索引 %d 超出contexts范围 [%s]", coinIndex, symbol)
+		return nil, fmt.Errorf("币种索引超出范围")
+	}
+
+	// 获取对应币种的 context 数据
+	context := contexts[coinIndex]
+
+	// 提取 openInterest 数据
+	var oi float64
+	var oiFound bool
+
+	// 尝试多种可能的字段名
+	if oiVal, ok := context["openInterest"].(float64); ok {
+		oi = oiVal
+		oiFound = true
+	} else if oiVal, ok := context["openInterest"].(string); ok {
+		// 如果是字符串，尝试转换
+		if parsed, err := strconv.ParseFloat(oiVal, 64); err == nil {
+			oi = parsed
+			oiFound = true
 		}
 	}
 
-	// 如果以上都失败，说明Hyperliquid可能不支持OI API或格式不同
-	// 返回错误，让上层代码处理（使用默认值0或从其他数据源获取）
-	log.Printf("⚠️  Hyperliquid无法获取 %s 的OI数据，响应: %s", symbol, string(resp))
-	return nil, fmt.Errorf("Hyperliquid API不支持或无法获取OI数据，响应: %s", string(resp))
+	if !oiFound {
+		log.Printf("⚠️  无法从context中提取openInterest [%s]", symbol)
+		return nil, fmt.Errorf("无法提取openInterest数据")
+	}
+
+	log.Printf("✓ 成功获取 %s 的OI数据: %.2f", symbol, oi)
+	return &OIData{
+		Latest:  oi,
+		Average: oi * 0.999, // 使用当前值作为平均值（可以后续优化）
+	}, nil
+}
+
+// GetFundingRate 实现 MarketDataClient 接口
+// 使用 metaAndAssetCtxs API 缓存获取 funding rate 数据
+// 优化：复用 GetOpenInterest 的缓存机制，避免重复调用 API
+func (c *HyperliquidClient) GetFundingRate(symbol string) (float64, error) {
+	coin := c.symbolToCoin(symbol)
+
+	// 检查缓存是否有效（5秒过期）
+	now := time.Now()
+	var universe []map[string]interface{}
+	var contexts []map[string]interface{}
+
+	// 复用 GetOpenInterest 的缓存逻辑
+	if now.Before(c.oiCache.expireAt) && len(c.oiCache.universe) > 0 && len(c.oiCache.contexts) > 0 {
+		// 使用缓存
+		universe = c.oiCache.universe
+		contexts = c.oiCache.contexts
+	} else {
+		// 缓存失效或不存在，调用 API（复用 GetOpenInterest 的逻辑）
+		log.Printf("🔄 调用 API 获取 funding rate 数据（将缓存结果供后续使用）...")
+
+		reqBody := map[string]interface{}{
+			"type": "metaAndAssetCtxs",
+		}
+
+		resp, err := c.postRequest("/info", reqBody)
+		if err != nil {
+			log.Printf("⚠️  Hyperliquid funding rate API请求失败 [%s]: %v", symbol, err)
+			return 0, fmt.Errorf("请求Hyperliquid funding rate数据失败: %w", err)
+		}
+
+		// 解析响应：响应是一个数组 [universe, contexts]
+		var responseArray []json.RawMessage
+		if err := json.Unmarshal(resp, &responseArray); err != nil {
+			log.Printf("⚠️  Hyperliquid funding rate API响应解析失败 [%s]: %v", symbol, err)
+			return 0, fmt.Errorf("解析Hyperliquid funding rate响应失败: %w", err)
+		}
+
+		if len(responseArray) < 2 {
+			log.Printf("⚠️  Hyperliquid funding rate API响应格式错误 [%s]", symbol)
+			return 0, fmt.Errorf("Hyperliquid funding rate API响应格式错误")
+		}
+
+		// 解析第一个元素（包含 universe 字段的对象）
+		var metaObj map[string]interface{}
+		if err := json.Unmarshal(responseArray[0], &metaObj); err != nil {
+			return 0, fmt.Errorf("解析meta对象失败: %w", err)
+		}
+
+		// 提取 universe 数组
+		universeRaw, ok := metaObj["universe"]
+		if !ok {
+			return 0, fmt.Errorf("响应中未找到universe字段")
+		}
+
+		// 将 universe 转换为 JSON 再解析
+		universeJSON, err := json.Marshal(universeRaw)
+		if err != nil {
+			return 0, fmt.Errorf("universe序列化失败: %w", err)
+		}
+
+		if err := json.Unmarshal(universeJSON, &universe); err != nil {
+			return 0, fmt.Errorf("解析universe数组失败: %w", err)
+		}
+
+		// 解析 contexts（第二个元素，直接是数组）
+		if err := json.Unmarshal(responseArray[1], &contexts); err != nil {
+			return 0, fmt.Errorf("解析contexts失败: %w", err)
+		}
+
+		// 更新缓存（5秒过期）
+		c.oiCache.universe = universe
+		c.oiCache.contexts = contexts
+		c.oiCache.expireAt = now.Add(5 * time.Second)
+	}
+
+	// 查找对应的币种索引
+	var coinIndex = -1
+	for i, item := range universe {
+		if coinName, ok := item["name"].(string); ok && coinName == coin {
+			coinIndex = i
+			break
+		}
+	}
+
+	if coinIndex == -1 {
+		log.Printf("⚠️  未找到币种 %s 在universe中", coin)
+		return 0, fmt.Errorf("未找到币种 %s", coin)
+	}
+
+	// 检查索引是否在范围内
+	if coinIndex >= len(contexts) {
+		log.Printf("⚠️  币种索引 %d 超出contexts范围 [%s]", coinIndex, symbol)
+		return 0, fmt.Errorf("币种索引超出范围")
+	}
+
+	// 获取对应币种的 context 数据
+	context := contexts[coinIndex]
+
+	// 提取 funding 数据
+	var funding float64
+	var fundingFound bool
+
+	// 尝试多种可能的字段名和类型
+	if fundingVal, ok := context["funding"].(float64); ok {
+		funding = fundingVal
+		fundingFound = true
+	} else if fundingVal, ok := context["funding"].(string); ok {
+		// 如果是字符串，尝试转换
+		if parsed, err := strconv.ParseFloat(fundingVal, 64); err == nil {
+			funding = parsed
+			fundingFound = true
+		}
+	}
+
+	if !fundingFound {
+		log.Printf("⚠️  无法从context中提取funding [%s]", symbol)
+		return 0, fmt.Errorf("无法提取funding数据")
+	}
+
+	log.Printf("✓ 成功获取 %s 的funding rate: %.6f (数据源: hyperliquid)", symbol, funding)
+	return funding, nil
 }
 
 // postRequest 执行POST请求（内部辅助方法）

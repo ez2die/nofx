@@ -19,6 +19,10 @@ type MarketDataClient interface {
 	// 返回持仓量和平均值，如果数据源不支持则返回错误
 	GetOpenInterest(symbol string) (*OIData, error)
 
+	// GetFundingRate 获取资金费率
+	// 返回资金费率，如果数据源不支持则返回错误
+	GetFundingRate(symbol string) (float64, error)
+
 	// GetDataSourceName 返回数据源名称（用于日志和调试）
 	GetDataSourceName() string
 }

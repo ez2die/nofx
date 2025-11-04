@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Get 获取指定代币的市场数据
@@ -65,8 +66,15 @@ func Get(symbol string) (*Data, error) {
 		log.Printf("✓ 成功获取 %s 的OI数据: %.2f (数据源: %s)", symbol, oiData.Latest, apiClient.GetDataSourceName())
 	}
 
-	// 获取Funding Rate
-	fundingRate, _ := getFundingRate(symbol)
+	// 获取Funding Rate（从当前数据源获取）
+	fundingRate, err := apiClient.GetFundingRate(symbol)
+	if err != nil {
+		// Funding rate失败不影响整体,使用默认值，但记录日志
+		log.Printf("⚠️  获取 %s 的funding rate失败 (数据源: %s): %v，使用默认值0", symbol, apiClient.GetDataSourceName(), err)
+		fundingRate = 0
+	} else {
+		log.Printf("✓ 成功获取 %s 的funding rate: %.6f (数据源: %s)", symbol, fundingRate, apiClient.GetDataSourceName())
+	}
 
 	// 计算日内系列数据
 	intradayData := calculateIntradaySeries(klines3m)
@@ -305,10 +313,19 @@ func calculateLongerTermData(klines []Kline) *LongerTermData {
 // 此函数保留用于向后兼容，但不应再使用
 
 // getFundingRate 获取资金费率
+// ⚠️ 已废弃：此函数直接调用Binance API，不适用于Hyperliquid等数据源
+// 现在使用 apiClient.GetFundingRate() 方法，支持不同数据源
+// 此函数保留用于向后兼容，但不应再使用
+// Deprecated: 使用 apiClient.GetFundingRate() 代替
 func getFundingRate(symbol string) (float64, error) {
 	url := fmt.Sprintf("https://fapi.binance.com/fapi/v1/premiumIndex?symbol=%s", symbol)
 
-	resp, err := http.Get(url)
+	// 创建带超时的HTTP客户端（避免阻塞）
+	client := &http.Client{
+		Timeout: 5 * time.Second, // 5秒超时，避免阻塞
+	}
+
+	resp, err := client.Get(url)
 	if err != nil {
 		return 0, err
 	}

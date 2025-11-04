@@ -185,3 +185,37 @@ func (c *BinanceClient) GetOpenInterest(symbol string) (*OIData, error) {
 		Average: oi * 0.999, // 近似平均值
 	}, nil
 }
+
+// GetFundingRate 实现 MarketDataClient 接口
+func (c *BinanceClient) GetFundingRate(symbol string) (float64, error) {
+	url := fmt.Sprintf("%s/fapi/v1/premiumIndex?symbol=%s", binanceBaseURL, symbol)
+
+	resp, err := c.client.Get(url)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, err
+	}
+
+	var result struct {
+		Symbol          string `json:"symbol"`
+		MarkPrice       string `json:"markPrice"`
+		IndexPrice      string `json:"indexPrice"`
+		LastFundingRate string `json:"lastFundingRate"`
+		NextFundingTime int64  `json:"nextFundingTime"`
+		InterestRate    string `json:"interestRate"`
+		Time            int64  `json:"time"`
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return 0, err
+	}
+
+	rate, _ := strconv.ParseFloat(result.LastFundingRate, 64)
+	log.Printf("✓ 成功获取 %s 的funding rate: %.6f (数据源: binance)", symbol, rate)
+	return rate, nil
+}
