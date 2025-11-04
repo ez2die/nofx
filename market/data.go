@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math"
 	"net/http"
 	"strconv"
@@ -53,11 +54,15 @@ func Get(symbol string) (*Data, error) {
 		}
 	}
 
-	// 获取OI数据
-	oiData, err := getOpenInterestData(symbol)
+	// 获取OI数据（从当前数据源获取）
+	apiClient := GetMarketDataClient()
+	oiData, err := apiClient.GetOpenInterest(symbol)
 	if err != nil {
-		// OI失败不影响整体,使用默认值
+		// OI失败不影响整体,使用默认值，但记录日志
+		log.Printf("⚠️  获取 %s 的OI数据失败 (数据源: %s): %v，使用默认值0", symbol, apiClient.GetDataSourceName(), err)
 		oiData = &OIData{Latest: 0, Average: 0}
+	} else {
+		log.Printf("✓ 成功获取 %s 的OI数据: %.2f (数据源: %s)", symbol, oiData.Latest, apiClient.GetDataSourceName())
 	}
 
 	// 获取Funding Rate
@@ -296,38 +301,8 @@ func calculateLongerTermData(klines []Kline) *LongerTermData {
 	return data
 }
 
-// getOpenInterestData 获取OI数据
-func getOpenInterestData(symbol string) (*OIData, error) {
-	url := fmt.Sprintf("https://fapi.binance.com/fapi/v1/openInterest?symbol=%s", symbol)
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var result struct {
-		OpenInterest string `json:"openInterest"`
-		Symbol       string `json:"symbol"`
-		Time         int64  `json:"time"`
-	}
-
-	if err := json.Unmarshal(body, &result); err != nil {
-		return nil, err
-	}
-
-	oi, _ := strconv.ParseFloat(result.OpenInterest, 64)
-
-	return &OIData{
-		Latest:  oi,
-		Average: oi * 0.999, // 近似平均值
-	}, nil
-}
+// getOpenInterestData 已废弃，现在使用 MarketDataClient.GetOpenInterest() 方法
+// 此函数保留用于向后兼容，但不应再使用
 
 // getFundingRate 获取资金费率
 func getFundingRate(symbol string) (float64, error) {
