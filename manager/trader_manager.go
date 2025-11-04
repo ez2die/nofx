@@ -39,6 +39,7 @@ func (tm *TraderManager) LoadTradersFromDatabase(database *config.Database) erro
 	log.Printf("📋 发现 %d 个用户，开始加载所有交易员配置...", len(userIDs))
 
 	var allTraders []*config.TraderRecord
+	var dbTraderIDs = make(map[string]bool)
 	for _, userID := range userIDs {
 		// 获取每个用户的交易员
 		traders, err := database.GetTraders(userID)
@@ -47,10 +48,33 @@ func (tm *TraderManager) LoadTradersFromDatabase(database *config.Database) erro
 			continue
 		}
 		log.Printf("📋 用户 %s: %d 个交易员", userID, len(traders))
-		allTraders = append(allTraders, traders...)
+		for _, t := range traders {
+			allTraders = append(allTraders, t)
+			dbTraderIDs[t.ID] = true
+		}
 	}
 
 	log.Printf("📋 总共加载 %d 个交易员配置", len(allTraders))
+
+	// 清理数据库中不存在的trader（已在内存中但不在数据库中）
+	var removedCount int
+	for traderID := range tm.traders {
+		if !dbTraderIDs[traderID] {
+			// 这个trader在内存中但不在数据库中，需要清理
+			t := tm.traders[traderID]
+			status := t.GetStatus()
+			if isRunning, ok := status["is_running"].(bool); ok && isRunning {
+				t.Stop()
+				log.Printf("⏹  已停止运行中的已删除交易员: %s", traderID)
+			}
+			delete(tm.traders, traderID)
+			removedCount++
+			log.Printf("🗑️  已从内存中清理已删除的交易员: %s", traderID)
+		}
+	}
+	if removedCount > 0 {
+		log.Printf("✓ 已清理 %d 个数据库中不存在的交易员", removedCount)
+	}
 
 	// 获取系统配置（不包含信号源，信号源现在为用户级别）
 	maxDailyLossStr, _ := database.GetSystemConfig("max_daily_loss")
@@ -410,6 +434,24 @@ func (tm *TraderManager) GetTraderIDs() []string {
 		ids = append(ids, id)
 	}
 	return ids
+}
+
+// RemoveTrader 从内存中移除trader
+func (tm *TraderManager) RemoveTrader(id string) {
+	tm.mu.Lock()
+	defer tm.mu.Unlock()
+
+	if t, exists := tm.traders[id]; exists {
+		// 如果trader正在运行，先停止它
+		status := t.GetStatus()
+		if isRunning, ok := status["is_running"].(bool); ok && isRunning {
+			t.Stop()
+			log.Printf("⏹  已停止运行中的交易员: %s", id)
+		}
+		// 从map中删除
+		delete(tm.traders, id)
+		log.Printf("✓ 已从内存中移除交易员: %s", id)
+	}
 }
 
 // StartAll 启动所有trader

@@ -157,14 +157,23 @@ func fetchMarketDataForContext(ctx *Context) error {
 		data, err := market.Get(symbol)
 		if err != nil {
 			// 单个币种失败不影响整体，只记录错误
+			log.Printf("⚠️  获取 %s 市场数据失败: %v", symbol, err)
 			continue
 		}
 
 		// ⚠️ 流动性过滤：持仓价值低于15M USD的币种不做（多空都不做）
 		// 持仓价值 = 持仓量 × 当前价格
 		// 但现有持仓必须保留（需要决策是否平仓）
+		// 重要：OI过滤是可选的，如果OI数据不可用（为0或获取失败），不进行过滤，允许进入决策
 		isExistingPosition := positionSymbols[symbol]
-		if !isExistingPosition && data.OpenInterest != nil && data.CurrentPrice > 0 {
+		
+		// 只有当OI数据存在且大于0时才进行过滤
+		shouldFilterOI := !isExistingPosition && 
+			data.OpenInterest != nil && 
+			data.CurrentPrice > 0 && 
+			data.OpenInterest.Latest > 0
+		
+		if shouldFilterOI {
 			// 计算持仓价值（USD）= 持仓量 × 当前价格
 			oiValue := data.OpenInterest.Latest * data.CurrentPrice
 			oiValueInMillions := oiValue / 1_000_000 // 转换为百万美元单位
@@ -173,10 +182,22 @@ func fetchMarketDataForContext(ctx *Context) error {
 					symbol, oiValueInMillions, data.OpenInterest.Latest, data.CurrentPrice)
 				continue
 			}
+			log.Printf("✓ %s OI过滤通过: 持仓价值=%.2fM USD [持仓量:%.0f × 价格:%.4f]",
+				symbol, oiValueInMillions, data.OpenInterest.Latest, data.CurrentPrice)
+		} else if !isExistingPosition && data.OpenInterest != nil && data.OpenInterest.Latest == 0 {
+			// OI数据为0，可能是数据源不支持，跳过过滤，允许进入决策
+			log.Printf("ℹ️  %s OI数据为0（数据源可能不支持），跳过OI过滤，允许进入决策", symbol)
 		}
 
 		ctx.MarketDataMap[symbol] = data
+		log.Printf("✓ 成功获取 %s 市场数据", symbol)
 	}
+
+	// 检查是否获取到任何市场数据
+	if len(ctx.MarketDataMap) == 0 {
+		return fmt.Errorf("未能获取任何币种的市场数据（尝试获取了 %d 个币种）", len(symbolSet))
+	}
+	log.Printf("✓ 成功获取 %d/%d 个币种的市场数据", len(ctx.MarketDataMap), len(symbolSet))
 
 	// 加载OI Top数据（不影响主流程）
 	oiPositions, err := pool.GetOITopPositions()

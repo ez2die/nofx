@@ -16,6 +16,12 @@ ARG TA_LIB_VERSION=0.4.0
 FROM alpine:${ALPINE_VERSION} AS ta-lib-builder
 ARG TA_LIB_VERSION
 
+# Configure Alpine mirror for faster downloads (use Aliyun mirror)
+RUN ALPINE_VERSION=$(cat /etc/alpine-release | cut -d. -f1-2) && \
+    echo "http://mirrors.aliyun.com/alpine/v${ALPINE_VERSION}/main" > /etc/apk/repositories && \
+    echo "http://mirrors.aliyun.com/alpine/v${ALPINE_VERSION}/community" >> /etc/apk/repositories || \
+    sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
 RUN apk update && apk add --no-cache \
     wget tar make gcc g++ musl-dev autoconf automake
 
@@ -38,7 +44,16 @@ RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-${TA_LIB_VERSION}-src.
 # ──────────────────────────────────────────────────────────────
 FROM golang:${GO_VERSION} AS backend-builder
 
+# Configure Alpine mirror for faster downloads (use Aliyun mirror)
+RUN ALPINE_VERSION=$(cat /etc/alpine-release | cut -d. -f1-2) && \
+    echo "http://mirrors.aliyun.com/alpine/v${ALPINE_VERSION}/main" > /etc/apk/repositories && \
+    echo "http://mirrors.aliyun.com/alpine/v${ALPINE_VERSION}/community" >> /etc/apk/repositories || \
+    sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
 RUN apk update && apk add --no-cache git make gcc g++ musl-dev
+
+# Configure Go proxy for faster module downloads (optional, can use direct mode)
+ENV GOPROXY=https://goproxy.cn,direct
 
 COPY --from=ta-lib-builder /usr/local /usr/local
 
@@ -53,6 +68,12 @@ RUN CGO_ENABLED=1 CGO_CFLAGS="-D_LARGEFILE64_SOURCE" GOOS=linux go build -trimpa
 # Runtime Stage (Minimal Executable Environment)
 # ──────────────────────────────────────────────────────────────
 FROM alpine:${ALPINE_VERSION}
+
+# Configure Alpine mirror for faster downloads (use Aliyun mirror)
+RUN ALPINE_VERSION=$(cat /etc/alpine-release | cut -d. -f1-2) && \
+    echo "http://mirrors.aliyun.com/alpine/v${ALPINE_VERSION}/main" > /etc/apk/repositories && \
+    echo "http://mirrors.aliyun.com/alpine/v${ALPINE_VERSION}/community" >> /etc/apk/repositories || \
+    sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN apk update && apk add --no-cache ca-certificates tzdata
 

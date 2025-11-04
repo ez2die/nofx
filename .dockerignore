@@ -26,6 +26,8 @@ nofx_test
 # Test files
 *_test.go
 test_*
+hl_ws_smoke.go
+validation/validate_performance.go
 
 # Documentation
 *.md

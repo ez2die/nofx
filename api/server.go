@@ -505,14 +505,8 @@ func (s *Server) handleDeleteTrader(c *gin.Context) {
 		return
 	}
 	
-	// 如果交易员正在运行，先停止它
-	if trader, err := s.traderManager.GetTrader(traderID); err == nil {
-		status := trader.GetStatus()
-		if isRunning, ok := status["is_running"].(bool); ok && isRunning {
-			trader.Stop()
-			log.Printf("⏹  已停止运行中的交易员: %s", traderID)
-		}
-	}
+	// 从内存中移除trader（会先停止运行中的trader）
+	s.traderManager.RemoveTrader(traderID)
 	
 	log.Printf("✓ 交易员已删除: %s", traderID)
 	c.JSON(http.StatusOK, gin.H{"message": "交易员已删除"})

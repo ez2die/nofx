@@ -18,6 +18,7 @@ func main() {
 	
 	// 解析命令行参数
 	useRealData := flag.Bool("real", false, "Use real Hyperliquid account data (positions and balance)")
+	dataSource := flag.String("source", "binance", "Market data source: binance or hyperliquid")
 	flag.Parse()
 	
 	log.Println("=== LEAN Prompt 决策测试脚本 ===")
@@ -27,6 +28,7 @@ func main() {
 		log.Println("📝 使用模拟数据模式（默认）")
 		log.Println("💡 提示: 使用 --real 参数可启用真实账户数据")
 	}
+	log.Printf("📊 市场数据源: %s", *dataSource)
 
 	// 1. 从配置文件读取参数
 	configFile := "config.json"
@@ -49,10 +51,26 @@ func main() {
 			AltcoinLeverage int `json:"altcoin_leverage"`
 		} `json:"leverage"`
 		DefaultCoins []string `json:"default_coins"`
+		MarketDataSource string `json:"market_data_source"`
 	}
 
 	if err := json.Unmarshal(configData, &config); err != nil {
 		log.Fatalf("解析配置文件失败: %v", err)
+	}
+	
+	// 确定使用的数据源（命令行参数优先，然后是配置，最后默认binance）
+	selectedDataSource := *dataSource
+	if selectedDataSource == "" {
+		selectedDataSource = config.MarketDataSource
+	}
+	if selectedDataSource == "" {
+		selectedDataSource = "binance"
+	}
+	
+	// 初始化市场数据源（必须在初始化monitor之前）
+	log.Printf("\n🔧 初始化市场数据源: %s", selectedDataSource)
+	if err := market.SetDataSource(market.DataSource(selectedDataSource)); err != nil {
+		log.Fatalf("设置市场数据源失败: %v", err)
 	}
 
 	// 查找 hyperliquid_deepseek 配置
