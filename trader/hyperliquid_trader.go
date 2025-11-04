@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/sonirico/go-hyperliquid"
@@ -260,9 +261,52 @@ func (t *HyperliquidTrader) OpenLong(symbol string, quantity float64, leverage i
 		ReduceOnly: false,
 	}
 
-	_, err = t.exchange.Order(t.ctx, order, nil)
+	// 调用Order API，获取返回值
+	orderResp, err := t.exchange.Order(t.ctx, order, nil)
 	if err != nil {
 		return nil, fmt.Errorf("开多仓失败: %w", err)
+	}
+
+	// ⚠️ 关键修复：记录Order API的完整响应，便于调试
+	log.Printf("  📋 Order API响应: %+v", orderResp)
+
+	// ⚠️ 关键修复：等待订单成交后，查询持仓确认订单是否真正成交
+	time.Sleep(2 * time.Second) // 等待订单成交
+	
+	// 重试获取持仓，最多重试3次
+	var found bool
+	var positions []map[string]interface{}
+	for retry := 0; retry < 3; retry++ {
+		positions, err = t.GetPositions()
+		if err == nil {
+			break
+		}
+		if retry < 2 {
+			log.Printf("  ⚠️ 获取持仓失败（重试 %d/3）: %v", retry+1, err)
+			time.Sleep(1 * time.Second)
+		}
+	}
+	
+	if err != nil {
+		// 如果获取持仓失败，返回错误而不是继续执行
+		log.Printf("  ❌ 获取持仓失败，无法验证订单是否成交: %v", err)
+		return nil, fmt.Errorf("订单提交成功，但无法验证是否成交（获取持仓失败）: %w", err)
+	}
+	
+	found = false
+	for _, pos := range positions {
+		if pos["symbol"] == symbol && pos["side"] == "long" {
+			found = true
+			posAmt, _ := pos["positionAmt"].(float64)
+			log.Printf("  ✅ 订单已成交，当前多仓数量: %.4f", posAmt)
+			break
+		}
+	}
+	if !found {
+		// ⚠️ 严重问题：Order API返回成功，但持仓中没有对应仓位
+		log.Printf("  ❌ 警告：Order API返回成功，但持仓中未找到对应仓位！")
+		log.Printf("  ❌ 可能原因：IOC订单未成交、余额不足、价格偏差太大等")
+		return nil, fmt.Errorf("订单提交成功，但未成交：持仓中未找到 %s 多仓", symbol)
 	}
 
 	log.Printf("✓ 开多仓成功: %s 数量: %.4f", symbol, roundedQuantity)
@@ -318,9 +362,52 @@ func (t *HyperliquidTrader) OpenShort(symbol string, quantity float64, leverage 
 		ReduceOnly: false,
 	}
 
-	_, err = t.exchange.Order(t.ctx, order, nil)
+	// 调用Order API，获取返回值
+	orderResp, err := t.exchange.Order(t.ctx, order, nil)
 	if err != nil {
 		return nil, fmt.Errorf("开空仓失败: %w", err)
+	}
+
+	// ⚠️ 关键修复：记录Order API的完整响应，便于调试
+	log.Printf("  📋 Order API响应: %+v", orderResp)
+
+	// ⚠️ 关键修复：等待订单成交后，查询持仓确认订单是否真正成交
+	time.Sleep(2 * time.Second) // 等待订单成交
+	
+	// 重试获取持仓，最多重试3次
+	var found bool
+	var positions []map[string]interface{}
+	for retry := 0; retry < 3; retry++ {
+		positions, err = t.GetPositions()
+		if err == nil {
+			break
+		}
+		if retry < 2 {
+			log.Printf("  ⚠️ 获取持仓失败（重试 %d/3）: %v", retry+1, err)
+			time.Sleep(1 * time.Second)
+		}
+	}
+	
+	if err != nil {
+		// 如果获取持仓失败，返回错误而不是继续执行
+		log.Printf("  ❌ 获取持仓失败，无法验证订单是否成交: %v", err)
+		return nil, fmt.Errorf("订单提交成功，但无法验证是否成交（获取持仓失败）: %w", err)
+	}
+	
+	found = false
+	for _, pos := range positions {
+		if pos["symbol"] == symbol && pos["side"] == "short" {
+			found = true
+			posAmt, _ := pos["positionAmt"].(float64)
+			log.Printf("  ✅ 订单已成交，当前空仓数量: %.4f", posAmt)
+			break
+		}
+	}
+	if !found {
+		// ⚠️ 严重问题：Order API返回成功，但持仓中没有对应仓位
+		log.Printf("  ❌ 警告：Order API返回成功，但持仓中未找到对应仓位！")
+		log.Printf("  ❌ 可能原因：IOC订单未成交、余额不足、价格偏差太大等")
+		return nil, fmt.Errorf("订单提交成功，但未成交：持仓中未找到 %s 空仓", symbol)
 	}
 
 	log.Printf("✓ 开空仓成功: %s 数量: %.4f", symbol, roundedQuantity)
