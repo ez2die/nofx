@@ -50,15 +50,17 @@ type PositionSnapshot struct {
 
 // DecisionAction 决策动作
 type DecisionAction struct {
-	Action    string    `json:"action"`    // open_long, open_short, close_long, close_short
-	Symbol    string    `json:"symbol"`    // 币种
-	Quantity  float64   `json:"quantity"`  // 数量
-	Leverage  int       `json:"leverage"`  // 杠杆（开仓时）
-	Price     float64   `json:"price"`     // 执行价格
-	OrderID   int64     `json:"order_id"`  // 订单ID
-	Timestamp time.Time `json:"timestamp"` // 执行时间
-	Success   bool      `json:"success"`   // 是否成功
-	Error     string    `json:"error"`     // 错误信息
+	Action          string    `json:"action"`            // open_long, open_short, close_long, close_short
+	Symbol          string    `json:"symbol"`            // 币种
+	Quantity        float64   `json:"quantity"`          // 数量
+	Leverage        int       `json:"leverage"`          // 杠杆（开仓时）
+	Price           float64   `json:"price"`             // 执行价格
+	OrderID         int64     `json:"order_id"`          // 订单ID
+	Timestamp       time.Time `json:"timestamp"`         // 执行时间
+	Success         bool      `json:"success"`           // 是否成功
+	Error           string    `json:"error"`             // 错误信息
+	IsAutoTriggered bool      `json:"is_auto_triggered"` // 是否自动触发（止盈止损）
+	WasStopLoss     bool      `json:"was_stop_loss"`     // 是否止损（仅在自动触发时有效）
 }
 
 // DecisionLogger 决策日志记录器
@@ -406,8 +408,19 @@ func (l *DecisionLogger) AnalyzePerformance(lookbackCycles int) (*PerformanceAna
 					openPrice := openPos["openPrice"].(float64)
 					openTime := openPos["openTime"].(time.Time)
 					side := openPos["side"].(string)
-					quantity := openPos["quantity"].(float64)
+					openQuantity := openPos["quantity"].(float64)
 					leverage := openPos["leverage"].(int)
+
+					// ⚠️ 关键：使用平仓时的quantity（action.Quantity），如果为0则使用开仓quantity
+					// 这样可以正确处理部分平仓的情况，并且修复了之前quantity=0导致PL=0的bug
+					quantity := action.Quantity
+					if quantity == 0 {
+						quantity = openQuantity // Fallback：如果平仓时quantity未记录，使用开仓quantity
+					}
+					// 如果平仓时记录了leverage，使用它；否则使用开仓时的leverage
+					if action.Leverage > 0 {
+						leverage = action.Leverage
+					}
 
 					// 计算实际盈亏（USDT）
 					// 合约交易 PnL 计算：quantity × 价格差
@@ -442,6 +455,7 @@ func (l *DecisionLogger) AnalyzePerformance(lookbackCycles int) (*PerformanceAna
 						Duration:      action.Timestamp.Sub(openTime).String(),
 						OpenTime:      openTime,
 						CloseTime:     action.Timestamp,
+						WasStopLoss:   action.WasStopLoss && action.IsAutoTriggered, // 仅在自动触发时设置
 					}
 
 					analysis.RecentTrades = append(analysis.RecentTrades, outcome)

@@ -9,6 +9,7 @@ import (
 	"nofx/market"
 	"nofx/mcp"
 	"nofx/pool"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -95,9 +96,10 @@ type AutoTrader struct {
 	lastResetTime         time.Time
 	stopUntil             time.Time
 	isRunning             bool
-	startTime             time.Time        // 系统启动时间
-	callCount             int              // AI调用次数
-	positionFirstSeenTime map[string]int64 // 持仓首次出现时间 (symbol_side -> timestamp毫秒)
+	startTime             time.Time               // 系统启动时间
+	callCount             int                     // AI调用次数
+	positionFirstSeenTime map[string]int64        // 持仓首次出现时间 (symbol_side -> timestamp毫秒)
+	lastCyclePositions    []decision.PositionInfo // 上一个周期的持仓列表（用于检测自动触发的止盈止损）
 }
 
 // NewAutoTrader 创建自动交易器
@@ -293,6 +295,84 @@ func (at *AutoTrader) runCycle() error {
 		return fmt.Errorf("构建交易上下文失败: %w", err)
 	}
 
+	// 3.1 检测自动触发的止盈止损订单（通过持仓变化）
+	// 比较上一个周期的持仓和当前持仓，找出消失的持仓
+	if len(at.lastCyclePositions) > 0 {
+		// 构建当前持仓的key集合（symbol_side）
+		currentPositionKeys := make(map[string]bool)
+		for _, pos := range ctx.Positions {
+			posKey := pos.Symbol + "_" + pos.Side
+			currentPositionKeys[posKey] = true
+		}
+
+		// 检测消失的持仓
+		for _, lastPos := range at.lastCyclePositions {
+			posKey := lastPos.Symbol + "_" + lastPos.Side
+			if !currentPositionKeys[posKey] {
+				// 持仓消失了，可能是自动触发的止盈止损订单
+				// 尝试获取当前市场价格作为实际成交价的近似值
+				actualClosePrice := lastPos.MarkPrice // 默认使用上一周期的标记价
+				marketData, err := market.Get(lastPos.Symbol)
+				if err == nil && marketData != nil {
+					// 使用当前市场价格作为实际成交价的近似值（比上一周期的标记价更准确）
+					actualClosePrice = marketData.CurrentPrice
+				}
+
+				// 创建自动触发的close决策记录
+				closeAction := logger.DecisionAction{
+					Action:          "close_" + lastPos.Side,
+					Symbol:          lastPos.Symbol,
+					Quantity:        lastPos.Quantity,
+					Leverage:        lastPos.Leverage,
+					Price:           actualClosePrice, // 使用当前市场价格作为实际成交价
+					Timestamp:       time.Now(),
+					Success:         true,
+					IsAutoTriggered: true, // 标记为自动触发
+				}
+
+				// 判断是止损还是止盈（通过实际成交价与开仓价的对比）
+				// 注意：只能通过价格方向推断，无法100%准确判断
+				// 但比使用上一周期的标记价更准确
+				wasStopLoss := false
+				if lastPos.Side == "long" {
+					// 多仓：如果实际成交价低于开仓价，可能是止损
+					// 设置一个容差，避免价格微小波动导致的误判
+					priceDiff := actualClosePrice - lastPos.EntryPrice
+					if priceDiff < -0.001 { // 价格低于开仓价超过0.001，判断为止损
+						wasStopLoss = true
+					}
+				} else {
+					// 空仓：如果实际成交价高于开仓价，可能是止损
+					priceDiff := actualClosePrice - lastPos.EntryPrice
+					if priceDiff > 0.001 { // 价格高于开仓价超过0.001，判断为止损
+						wasStopLoss = true
+					}
+				}
+
+				closeAction.WasStopLoss = wasStopLoss
+
+				if wasStopLoss {
+					log.Printf("🛑 检测到自动止损: %s %s (开仓价: %.4f, 成交价: %.4f)",
+						lastPos.Symbol, lastPos.Side, lastPos.EntryPrice, actualClosePrice)
+				} else {
+					log.Printf("🎯 检测到自动止盈: %s %s (开仓价: %.4f, 成交价: %.4f)",
+						lastPos.Symbol, lastPos.Side, lastPos.EntryPrice, actualClosePrice)
+				}
+
+				// 将自动触发的close决策添加到记录中
+				record.Decisions = append(record.Decisions, closeAction)
+				record.ExecutionLog = append(record.ExecutionLog,
+					fmt.Sprintf("🔄 自动触发: %s %s (数量: %.4f, 价格: %.4f)",
+						lastPos.Symbol, closeAction.Action, lastPos.Quantity, actualClosePrice))
+			}
+		}
+	}
+
+	// 更新lastCyclePositions为当前持仓（在周期结束时更新，但这里先保存一份副本）
+	// 注意：这里保存的是当前持仓的副本，在周期结束时再更新
+	currentPositionsCopy := make([]decision.PositionInfo, len(ctx.Positions))
+	copy(currentPositionsCopy, ctx.Positions)
+
 	// 保存账户状态快照
 	record.AccountState = logger.AccountSnapshot{
 		TotalBalance:          ctx.Account.TotalEquity,
@@ -403,13 +483,32 @@ func (at *AutoTrader) runCycle() error {
 	// 执行决策并记录结果
 	for _, d := range sortedDecisions {
 		actionRecord := logger.DecisionAction{
-			Action:    d.Action,
-			Symbol:    d.Symbol,
-			Quantity:  0,
-			Leverage:  d.Leverage,
-			Price:     0,
-			Timestamp: time.Now(),
-			Success:   false,
+			Action:          d.Action,
+			Symbol:          d.Symbol,
+			Quantity:        0,
+			Leverage:        d.Leverage,
+			Price:           0,
+			Timestamp:       time.Now(),
+			Success:         false,
+			IsAutoTriggered: false, // AI决策触发的，不是自动触发
+			WasStopLoss:     false,
+		}
+
+		// 检查是否与自动触发的记录冲突（如果AI决策中有相同的close操作，移除自动触发的记录）
+		// ⚠️ 修复：从后往前遍历，避免在遍历时删除元素导致索引错乱
+		if d.Action == "close_long" || d.Action == "close_short" {
+			// 从后往前遍历，查找并移除对应的自动触发记录
+			for i := len(record.Decisions) - 1; i >= 0; i-- {
+				existingAction := record.Decisions[i]
+				if existingAction.IsAutoTriggered &&
+					existingAction.Action == d.Action &&
+					existingAction.Symbol == d.Symbol {
+					// 移除自动触发的记录，因为AI决策会执行相同的操作
+					record.Decisions = append(record.Decisions[:i], record.Decisions[i+1:]...)
+					log.Printf("ℹ️  AI决策覆盖自动触发: %s %s", d.Symbol, d.Action)
+					break // 找到第一个匹配的就退出，因为理论上每个symbol_side只有一个自动触发记录
+				}
+			}
 		}
 
 		if err := at.executeDecisionWithRecord(&d, &actionRecord); err != nil {
@@ -430,6 +529,9 @@ func (at *AutoTrader) runCycle() error {
 	if err := at.decisionLogger.LogDecision(record); err != nil {
 		log.Printf("⚠ 保存决策记录失败: %v", err)
 	}
+
+	// 10. 更新lastCyclePositions为当前持仓（用于下一个周期检测持仓变化）
+	at.lastCyclePositions = currentPositionsCopy
 
 	return nil
 }
@@ -645,6 +747,25 @@ func (at *AutoTrader) executeOpenLongWithRecord(decision *decision.Decision, act
 
 	log.Printf("  ✓ 开仓成功，订单ID: %v, 数量: %.4f", order["orderId"], quantity)
 
+	// ⚠️ 关键修复：等待订单成交后，查询持仓信息获取实际成交价格（entryPrice）
+	// 这是真实成交价格，而不是下单时的市场价格
+	time.Sleep(2 * time.Second) // 等待订单成交
+	positions, err = at.trader.GetPositions()
+	if err == nil {
+		for _, pos := range positions {
+			if pos["symbol"] == decision.Symbol && pos["side"] == "long" {
+				if entryPrice, ok := pos["entryPrice"].(float64); ok && entryPrice > 0 {
+					actionRecord.Price = entryPrice // 使用实际成交价格
+					log.Printf("  ✅ 已获取实际成交价格: %.2f (entryPrice)", entryPrice)
+					break
+				}
+			}
+		}
+	}
+	if actionRecord.Price == 0 {
+		log.Printf("  ⚠️ 无法获取实际成交价格，使用市场价格: %.2f", marketData.CurrentPrice)
+	}
+
 	// 记录开仓时间
 	posKey := decision.Symbol + "_long"
 	at.positionFirstSeenTime[posKey] = time.Now().UnixMilli()
@@ -704,6 +825,25 @@ func (at *AutoTrader) executeOpenShortWithRecord(decision *decision.Decision, ac
 
 	log.Printf("  ✓ 开仓成功，订单ID: %v, 数量: %.4f", order["orderId"], quantity)
 
+	// ⚠️ 关键修复：等待订单成交后，查询持仓信息获取实际成交价格（entryPrice）
+	// 这是真实成交价格，而不是下单时的市场价格
+	time.Sleep(2 * time.Second) // 等待订单成交
+	positions, err = at.trader.GetPositions()
+	if err == nil {
+		for _, pos := range positions {
+			if pos["symbol"] == decision.Symbol && pos["side"] == "short" {
+				if entryPrice, ok := pos["entryPrice"].(float64); ok && entryPrice > 0 {
+					actionRecord.Price = entryPrice // 使用实际成交价格
+					log.Printf("  ✅ 已获取实际成交价格: %.2f (entryPrice)", entryPrice)
+					break
+				}
+			}
+		}
+	}
+	if actionRecord.Price == 0 {
+		log.Printf("  ⚠️ 无法获取实际成交价格，使用市场价格: %.2f", marketData.CurrentPrice)
+	}
+
 	// 记录开仓时间
 	posKey := decision.Symbol + "_short"
 	at.positionFirstSeenTime[posKey] = time.Now().UnixMilli()
@@ -723,12 +863,62 @@ func (at *AutoTrader) executeOpenShortWithRecord(decision *decision.Decision, ac
 func (at *AutoTrader) executeCloseLongWithRecord(decision *decision.Decision, actionRecord *logger.DecisionAction) error {
 	log.Printf("  🔄 平多仓: %s", decision.Symbol)
 
-	// 获取当前价格
+	// ⚠️ 关键修复：平仓前记录市场价格（作为初始价格），平仓后会更新为实际成交价格
 	marketData, err := market.Get(decision.Symbol)
 	if err != nil {
 		return err
 	}
-	actionRecord.Price = marketData.CurrentPrice
+	actionRecord.Price = marketData.CurrentPrice // 初始价格，平仓后会更新
+
+	// ⚠️ 关键：在平仓前获取持仓数量并记录
+	// 这样在计算PL时才能正确使用quantity
+	positions, err := at.trader.GetPositions()
+	if err != nil {
+		log.Printf("  ⚠️ 获取持仓失败，quantity将无法记录: %v", err)
+	} else {
+		found := false
+		for _, pos := range positions {
+			if pos["symbol"] == decision.Symbol && pos["side"] == "long" {
+				// 类型安全的quantity获取
+				positionAmt, ok := pos["positionAmt"]
+				if !ok {
+					log.Printf("  ⚠️ 持仓信息中没有positionAmt字段")
+					break
+				}
+
+				var quantity float64
+				switch v := positionAmt.(type) {
+				case float64:
+					quantity = v
+				case string:
+					var parseErr error
+					quantity, parseErr = strconv.ParseFloat(v, 64)
+					if parseErr != nil {
+						log.Printf("  ⚠️ 无法解析positionAmt: %v", parseErr)
+						break
+					}
+				default:
+					log.Printf("  ⚠️ positionAmt类型不支持: %T", v)
+					break
+				}
+
+				if quantity < 0 {
+					quantity = -quantity // 空仓数量为负，转为正数
+				}
+
+				actionRecord.Quantity = quantity
+				// 获取杠杆（如果有）
+				if leverage, ok := pos["leverage"].(float64); ok {
+					actionRecord.Leverage = int(leverage)
+				}
+				found = true
+				break
+			}
+		}
+		if !found {
+			log.Printf("  ⚠️ 未找到 %s 的多仓，quantity将无法记录", decision.Symbol)
+		}
+	}
 
 	// 平仓
 	order, err := at.trader.CloseLong(decision.Symbol, 0) // 0 = 全部平仓
@@ -741,7 +931,22 @@ func (at *AutoTrader) executeCloseLongWithRecord(decision *decision.Decision, ac
 		actionRecord.OrderID = orderID
 	}
 
-	log.Printf("  ✓ 平仓成功")
+	// ⚠️ 关键修复：等待订单成交后，查询当前市场价格作为实际成交价格
+	// IOC 订单会在市价附近成交，使用成交后的市场价格作为近似值
+	time.Sleep(2 * time.Second) // 等待订单成交
+	marketDataAfter, err := market.Get(decision.Symbol)
+	if err == nil {
+		actionRecord.Price = marketDataAfter.CurrentPrice // 使用实际成交后的市场价格
+		log.Printf("  ✅ 已获取实际成交价格: %.2f (成交后市场价格)", marketDataAfter.CurrentPrice)
+	} else {
+		log.Printf("  ⚠️ 无法获取成交后价格，使用平仓前价格: %.2f", actionRecord.Price)
+	}
+
+	if actionRecord.Quantity > 0 {
+		log.Printf("  ✓ 平仓成功，数量: %.4f, 成交价格: %.2f", actionRecord.Quantity, actionRecord.Price)
+	} else {
+		log.Printf("  ✓ 平仓成功（数量未记录，将使用开仓quantity），成交价格: %.2f", actionRecord.Price)
+	}
 	return nil
 }
 
@@ -749,12 +954,62 @@ func (at *AutoTrader) executeCloseLongWithRecord(decision *decision.Decision, ac
 func (at *AutoTrader) executeCloseShortWithRecord(decision *decision.Decision, actionRecord *logger.DecisionAction) error {
 	log.Printf("  🔄 平空仓: %s", decision.Symbol)
 
-	// 获取当前价格
+	// ⚠️ 关键修复：平仓前记录市场价格（作为初始价格），平仓后会更新为实际成交价格
 	marketData, err := market.Get(decision.Symbol)
 	if err != nil {
 		return err
 	}
-	actionRecord.Price = marketData.CurrentPrice
+	actionRecord.Price = marketData.CurrentPrice // 初始价格，平仓后会更新
+
+	// ⚠️ 关键：在平仓前获取持仓数量并记录
+	// 这样在计算PL时才能正确使用quantity
+	positions, err := at.trader.GetPositions()
+	if err != nil {
+		log.Printf("  ⚠️ 获取持仓失败，quantity将无法记录: %v", err)
+	} else {
+		found := false
+		for _, pos := range positions {
+			if pos["symbol"] == decision.Symbol && pos["side"] == "short" {
+				// 类型安全的quantity获取
+				positionAmt, ok := pos["positionAmt"]
+				if !ok {
+					log.Printf("  ⚠️ 持仓信息中没有positionAmt字段")
+					break
+				}
+
+				var quantity float64
+				switch v := positionAmt.(type) {
+				case float64:
+					quantity = v
+				case string:
+					var parseErr error
+					quantity, parseErr = strconv.ParseFloat(v, 64)
+					if parseErr != nil {
+						log.Printf("  ⚠️ 无法解析positionAmt: %v", parseErr)
+						break
+					}
+				default:
+					log.Printf("  ⚠️ positionAmt类型不支持: %T", v)
+					break
+				}
+
+				if quantity < 0 {
+					quantity = -quantity // 空仓数量为负，转为正数
+				}
+
+				actionRecord.Quantity = quantity
+				// 获取杠杆（如果有）
+				if leverage, ok := pos["leverage"].(float64); ok {
+					actionRecord.Leverage = int(leverage)
+				}
+				found = true
+				break
+			}
+		}
+		if !found {
+			log.Printf("  ⚠️ 未找到 %s 的空仓，quantity将无法记录", decision.Symbol)
+		}
+	}
 
 	// 平仓
 	order, err := at.trader.CloseShort(decision.Symbol, 0) // 0 = 全部平仓
@@ -767,7 +1022,22 @@ func (at *AutoTrader) executeCloseShortWithRecord(decision *decision.Decision, a
 		actionRecord.OrderID = orderID
 	}
 
-	log.Printf("  ✓ 平仓成功")
+	// ⚠️ 关键修复：等待订单成交后，查询当前市场价格作为实际成交价格
+	// IOC 订单会在市价附近成交，使用成交后的市场价格作为近似值
+	time.Sleep(2 * time.Second) // 等待订单成交
+	marketDataAfter, err := market.Get(decision.Symbol)
+	if err == nil {
+		actionRecord.Price = marketDataAfter.CurrentPrice // 使用实际成交后的市场价格
+		log.Printf("  ✅ 已获取实际成交价格: %.2f (成交后市场价格)", marketDataAfter.CurrentPrice)
+	} else {
+		log.Printf("  ⚠️ 无法获取成交后价格，使用平仓前价格: %.2f", actionRecord.Price)
+	}
+
+	if actionRecord.Quantity > 0 {
+		log.Printf("  ✓ 平仓成功，数量: %.4f, 成交价格: %.2f", actionRecord.Quantity, actionRecord.Price)
+	} else {
+		log.Printf("  ✓ 平仓成功（数量未记录，将使用开仓quantity），成交价格: %.2f", actionRecord.Price)
+	}
 	return nil
 }
 
