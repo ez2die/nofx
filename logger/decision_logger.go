@@ -199,6 +199,11 @@ func (l *DecisionLogger) GetRecordByDate(date time.Time) ([]*DecisionRecord, err
 	return records, nil
 }
 
+// GetLogDir 获取日志目录路径
+func (l *DecisionLogger) GetLogDir() string {
+	return l.logDir
+}
+
 // CleanOldRecords 清理N天前的旧记录
 func (l *DecisionLogger) CleanOldRecords(days int) error {
 	cutoffTime := time.Now().AddDate(0, 0, -days)

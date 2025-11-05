@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"nofx/logger"
 	"nofx/market"
 	"nofx/mcp"
 	"nofx/pool"
@@ -66,6 +67,7 @@ type Context struct {
 	Performance     interface{}             `json:"-"` // 历史表现分析（logger.PerformanceAnalysis）
 	BTCETHLeverage  int                     `json:"-"` // BTC/ETH杠杆倍数（从配置读取）
 	AltcoinLeverage int                     `json:"-"` // 山寨币杠杆倍数（从配置读取）
+	LogDir          string                  `json:"-"` // 决策日志目录路径（用于读取历史思维链）
 }
 
 // Decision AI的交易决策
@@ -310,6 +312,30 @@ func buildSystemPrompt(accountEquity float64, btcEthLeverage, altcoinLeverage in
 // buildUserPrompt 构建 User Prompt（动态数据）
 func buildUserPrompt(ctx *Context) string {
 	var sb strings.Builder
+
+	// 获取上两个cycle的思维链（如果日志目录存在）
+	if ctx.LogDir != "" {
+		decisionLogger := logger.NewDecisionLogger(ctx.LogDir)
+		// 获取最近2个记录（当前cycle还未保存，所以GetLatestRecords会返回最新的2个已保存的cycle）
+		records, err := decisionLogger.GetLatestRecords(2)
+		if err != nil {
+			log.Printf("⚠️  读取历史决策记录失败: %v", err)
+		}
+		if err == nil && len(records) > 0 {
+			sb.WriteString("## 📚 历史决策参考（前两个周期）\n\n")
+			sb.WriteString("以下是前两个周期的决策思维链，供你参考。请注意：市场情况在不断变化，请基于当前最新的市场数据做出独立判断，不必依赖历史结论。\n\n")
+			// 从新到旧显示（records已经是按时间从旧到新排列，需要反转）
+			for i := len(records) - 1; i >= 0; i-- {
+				record := records[i]
+				if record.CoTTrace != "" {
+					sb.WriteString(fmt.Sprintf("### Cycle #%d (时间: %s)\n\n", record.CycleNumber, record.Timestamp.Format("2006-01-02 15:04:05")))
+					sb.WriteString(record.CoTTrace)
+					sb.WriteString("\n\n")
+				}
+			}
+			sb.WriteString("---\n\n")
+		}
+	}
 
 	// 系统状态
 	sb.WriteString(fmt.Sprintf("时间: %s | 周期: #%d | 运行: %d分钟\n\n",
