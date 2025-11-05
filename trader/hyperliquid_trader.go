@@ -272,7 +272,7 @@ func (t *HyperliquidTrader) OpenLong(symbol string, quantity float64, leverage i
 
 	// ⚠️ 关键修复：等待订单成交后，查询持仓确认订单是否真正成交
 	time.Sleep(2 * time.Second) // 等待订单成交
-	
+
 	// 重试获取持仓，最多重试3次
 	var found bool
 	var positions []map[string]interface{}
@@ -286,13 +286,13 @@ func (t *HyperliquidTrader) OpenLong(symbol string, quantity float64, leverage i
 			time.Sleep(1 * time.Second)
 		}
 	}
-	
+
 	if err != nil {
 		// 如果获取持仓失败，返回错误而不是继续执行
 		log.Printf("  ❌ 获取持仓失败，无法验证订单是否成交: %v", err)
 		return nil, fmt.Errorf("订单提交成功，但无法验证是否成交（获取持仓失败）: %w", err)
 	}
-	
+
 	found = false
 	for _, pos := range positions {
 		if pos["symbol"] == symbol && pos["side"] == "long" {
@@ -373,7 +373,7 @@ func (t *HyperliquidTrader) OpenShort(symbol string, quantity float64, leverage 
 
 	// ⚠️ 关键修复：等待订单成交后，查询持仓确认订单是否真正成交
 	time.Sleep(2 * time.Second) // 等待订单成交
-	
+
 	// 重试获取持仓，最多重试3次
 	var found bool
 	var positions []map[string]interface{}
@@ -387,13 +387,13 @@ func (t *HyperliquidTrader) OpenShort(symbol string, quantity float64, leverage 
 			time.Sleep(1 * time.Second)
 		}
 	}
-	
+
 	if err != nil {
 		// 如果获取持仓失败，返回错误而不是继续执行
 		log.Printf("  ❌ 获取持仓失败，无法验证订单是否成交: %v", err)
 		return nil, fmt.Errorf("订单提交成功，但无法验证是否成交（获取持仓失败）: %w", err)
 	}
-	
+
 	found = false
 	for _, pos := range positions {
 		if pos["symbol"] == symbol && pos["side"] == "short" {

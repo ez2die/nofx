@@ -383,7 +383,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("❌ 获取决策失败: %v", err)
 	}
-	
+
 	log.Println("\n🚀 AI决策请求已完成")
 	log.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
@@ -577,4 +577,3 @@ func main() {
 
 	log.Println("\n✅ 测试完成！")
 }
-

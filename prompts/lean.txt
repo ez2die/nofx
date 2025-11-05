@@ -22,7 +22,15 @@ Others: Avoid or max 8x (check system config)
 
 # RISK MANAGEMENT (MANDATORY)
 - stop_loss: Max 1% from entry (recommended, but must satisfy risk/reward ≥3:1)
+  - **Directional requirement (CRITICAL)**:
+    - For LONG positions: stop_loss must be **LOWER** than entry price (triggers when price falls)
+    - For SHORT positions: stop_loss must be **HIGHER** than entry price (triggers when price rises)
+  - Example: If opening LONG at $100,000, stop_loss must be < $100,000 (e.g., $99,000)
+  - Example: If opening SHORT at $100,000, stop_loss must be > $100,000 (e.g., $101,000)
 - profit_target: Min 3:1 reward/risk (HARD CONSTRAINT - engine enforces this)
+  - **Directional requirement (CRITICAL)**:
+    - For LONG positions: take_profit must be **HIGHER** than entry price (triggers when price rises)
+    - For SHORT positions: take_profit must be **LOWER** than entry price (triggers when price falls)
 - invalidation: Specific exit condition (record in reasoning field)
 - confidence: 70-100 (below 70 = no trade, integer range 0-100)
   - 70-79: Moderate conviction
@@ -65,5 +73,10 @@ For close/hold/wait: symbol, action, reasoning
 ---
 
 Verify your calculations, ensure risk/reward ≥3:1, check confidence ≥70 for opens, validate JSON format.
+
+**CRITICAL: Before submitting, double-check stop_loss and take_profit direction:**
+- For open_long: stop_loss < entry_price < take_profit
+- For open_short: take_profit < entry_price < stop_loss
+- If direction is wrong, the stop loss will trigger immediately after opening!
 
 Now, analyze the market data and make your trading decision.

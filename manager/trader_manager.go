@@ -25,13 +25,15 @@ type CompetitionCache struct {
 type TraderManager struct {
 	traders          map[string]*trader.AutoTrader // key: trader ID
 	competitionCache *CompetitionCache
+	lastReloadTime   map[string]time.Time // key: trader ID, value: 上次重新加载时间
 	mu               sync.RWMutex
 }
 
 // NewTraderManager 创建trader管理器
 func NewTraderManager() *TraderManager {
 	return &TraderManager{
-		traders: make(map[string]*trader.AutoTrader),
+		traders:        make(map[string]*trader.AutoTrader),
+		lastReloadTime: make(map[string]time.Time),
 		competitionCache: &CompetitionCache{
 			data: make(map[string]interface{}),
 		},
@@ -806,10 +808,26 @@ func (tm *TraderManager) LoadUserTraders(database *config.Database, userID strin
 
 	// 为每个交易员获取AI模型和交易所配置
 	for _, traderCfg := range traders {
-		// 检查是否已经加载过这个交易员
-		if _, exists := tm.traders[traderCfg.ID]; exists {
-			log.Printf("⚠️ 交易员 %s 已经加载，跳过", traderCfg.Name)
+		// 检查是否在冷却期内（避免频繁重新加载）
+		lastReload, exists := tm.lastReloadTime[traderCfg.ID]
+		if exists && time.Since(lastReload) < 5*time.Second {
+			// 在冷却期内，跳过重新加载
 			continue
+		}
+
+		// 记录trader之前的运行状态
+		var wasRunning bool
+
+		// 如果已经加载过这个交易员，先停止并移除，以便重新加载最新配置
+		if existingTrader, exists := tm.traders[traderCfg.ID]; exists {
+			log.Printf("🔄 交易员 %s 已存在，先停止并重新加载最新配置", traderCfg.Name)
+			status := existingTrader.GetStatus()
+			if isRunning, ok := status["is_running"].(bool); ok && isRunning {
+				wasRunning = true
+				existingTrader.Stop()
+				log.Printf("⏹  已停止运行中的交易员: %s (将在重新加载后自动重启)", traderCfg.Name)
+			}
+			delete(tm.traders, traderCfg.ID)
 		}
 
 		// 获取AI模型配置（使用该用户的配置）
@@ -877,8 +895,54 @@ func (tm *TraderManager) LoadUserTraders(database *config.Database, userID strin
 		err = tm.loadSingleTrader(traderCfg, aiModelCfg, exchangeCfg, coinPoolURL, oiTopURL, maxDailyLoss, maxDrawdown, stopTradingMinutes, defaultCoins)
 		if err != nil {
 			log.Printf("⚠️ 加载交易员 %s 失败: %v", traderCfg.Name, err)
+			continue
+		}
+
+		// 记录重新加载时间
+		tm.lastReloadTime[traderCfg.ID] = time.Now()
+
+		// 如果之前在运行，自动重新启动
+		if wasRunning {
+			newTrader, exists := tm.traders[traderCfg.ID]
+			if exists {
+				go func(traderID string, trader *trader.AutoTrader) {
+					log.Printf("🔄 自动重启交易员 %s (之前正在运行)", traderID)
+					if err := trader.Run(); err != nil {
+						log.Printf("❌ 自动重启交易员 %s 失败: %v", traderID, err)
+					}
+				}(traderCfg.ID, newTrader)
+			}
 		}
 	}
+
+	return nil
+}
+
+// LoadSingleTrader 加载单个trader到内存（公共方法）
+func (tm *TraderManager) LoadSingleTrader(traderCfg *config.TraderRecord, aiModelCfg *config.AIModelConfig, exchangeCfg *config.ExchangeConfig, coinPoolURL, oiTopURL string, maxDailyLoss, maxDrawdown float64, stopTradingMinutes int, defaultCoins []string) error {
+	tm.mu.Lock()
+	defer tm.mu.Unlock()
+
+	// 检查是否已加载
+	if existingTrader, exists := tm.traders[traderCfg.ID]; exists {
+		// 如果已加载，先停止并移除
+		log.Printf("🔄 交易员 %s 已存在，先停止并重新加载最新配置", traderCfg.Name)
+		status := existingTrader.GetStatus()
+		if isRunning, ok := status["is_running"].(bool); ok && isRunning {
+			existingTrader.Stop()
+			log.Printf("⏹  已停止运行中的交易员: %s (将在重新加载后自动重启)", traderCfg.Name)
+		}
+		delete(tm.traders, traderCfg.ID)
+	}
+
+	// 使用现有的loadSingleTrader方法加载
+	err := tm.loadSingleTrader(traderCfg, aiModelCfg, exchangeCfg, coinPoolURL, oiTopURL, maxDailyLoss, maxDrawdown, stopTradingMinutes, defaultCoins)
+	if err != nil {
+		return err
+	}
+
+	// 记录加载时间
+	tm.lastReloadTime[traderCfg.ID] = time.Now()
 
 	return nil
 }

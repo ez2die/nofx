@@ -182,34 +182,43 @@ func (s *Server) handleGetSystemConfig(c *gin.Context) {
 	})
 }
 
-// getTraderFromQuery 从query参数获取trader
+// getTraderFromQuery 从query参数获取trader（查询类API使用，不触发加载）
 func (s *Server) getTraderFromQuery(c *gin.Context) (*manager.TraderManager, string, error) {
 	userID := c.GetString("user_id")
 	traderID := c.Query("trader_id")
 
-	// 确保用户的交易员已加载到内存中
-	err := s.traderManager.LoadUserTraders(s.database, userID)
-	if err != nil {
-		log.Printf("⚠️ 加载用户 %s 的交易员失败: %v", userID, err)
+	// ✅ 只查询已加载的trader，不触发加载
+	if traderID != "" {
+		// 检查trader是否已加载到内存
+		if _, err := s.traderManager.GetTrader(traderID); err != nil {
+			// 如果未加载，返回错误（查询类API不应该加载trader）
+			return nil, "", fmt.Errorf("交易员未加载到内存，请先启动trader")
+		}
+		return s.traderManager, traderID, nil
 	}
 
-	if traderID == "" {
-		// 如果没有指定trader_id，返回该用户的第一个trader
-		ids := s.traderManager.GetTraderIDs()
-		if len(ids) == 0 {
-			return nil, "", fmt.Errorf("没有可用的trader")
-		}
+	// 如果没有指定trader_id，返回第一个已加载的trader
+	ids := s.traderManager.GetTraderIDs()
+	if len(ids) == 0 {
+		return nil, "", fmt.Errorf("没有已加载的交易员")
+	}
 
-		// 获取用户的交易员列表，优先返回用户自己的交易员
-		userTraders, err := s.database.GetTraders(userID)
-		if err == nil && len(userTraders) > 0 {
-			traderID = userTraders[0].ID
-		} else {
-			traderID = ids[0]
+	// 获取用户的交易员列表，优先返回用户自己的已加载trader
+	userTraders, err := s.database.GetTraders(userID)
+	if err == nil && len(userTraders) > 0 {
+		for _, t := range userTraders {
+			if _, err := s.traderManager.GetTrader(t.ID); err == nil {
+				return s.traderManager, t.ID, nil
+			}
 		}
 	}
 
-	return s.traderManager, traderID, nil
+	// 如果用户没有已加载的trader，返回第一个已加载的trader
+	if len(ids) > 0 {
+		return s.traderManager, ids[0], nil
+	}
+
+	return nil, "", fmt.Errorf("没有已加载的交易员")
 }
 
 // AI交易员管理相关结构体
@@ -375,11 +384,12 @@ func (s *Server) handleCreateTrader(c *gin.Context) {
 		return
 	}
 
-	// 立即将新交易员加载到TraderManager中
-	err = s.traderManager.LoadUserTraders(s.database, userID)
+	// ✅ 创建后加载单个trader到内存（方案B要求）
+	err = s.ensureTraderLoaded(userID, traderID)
 	if err != nil {
-		log.Printf("⚠️ 加载用户交易员到内存失败: %v", err)
-		// 这里不返回错误，因为交易员已经成功创建到数据库
+		log.Printf("⚠️ 创建后加载trader失败: %v", err)
+		// 这里不返回错误，因为trader已经成功创建到数据库
+		// 用户可以稍后手动启动
 	}
 
 	log.Printf("✓ 创建交易员成功: %s (模型: %s, 交易所: %s)", req.Name, req.AIModelID, req.ExchangeID)
@@ -394,17 +404,18 @@ func (s *Server) handleCreateTrader(c *gin.Context) {
 
 // UpdateTraderRequest 更新交易员请求
 type UpdateTraderRequest struct {
-	Name                string  `json:"name" binding:"required"`
-	AIModelID           string  `json:"ai_model_id" binding:"required"`
-	ExchangeID          string  `json:"exchange_id" binding:"required"`
-	InitialBalance      float64 `json:"initial_balance"`
-	BTCETHLeverage      int     `json:"btc_eth_leverage"`
-	AltcoinLeverage     int     `json:"altcoin_leverage"`
-	TradingSymbols      string  `json:"trading_symbols"`
-	CustomPrompt        string  `json:"custom_prompt"`
-	OverrideBasePrompt  bool    `json:"override_base_prompt"`
-	IsCrossMargin       *bool   `json:"is_cross_margin"`
-	ScanIntervalMinutes *int    `json:"scan_interval_minutes"` // 扫描间隔（分钟）
+	Name                 string  `json:"name" binding:"required"`
+	AIModelID            string  `json:"ai_model_id" binding:"required"`
+	ExchangeID           string  `json:"exchange_id" binding:"required"`
+	InitialBalance       float64 `json:"initial_balance"`
+	BTCETHLeverage       int     `json:"btc_eth_leverage"`
+	AltcoinLeverage      int     `json:"altcoin_leverage"`
+	TradingSymbols       string  `json:"trading_symbols"`
+	CustomPrompt         string  `json:"custom_prompt"`
+	OverrideBasePrompt   bool    `json:"override_base_prompt"`
+	SystemPromptTemplate string  `json:"system_prompt_template"` // 系统提示词模板名称
+	IsCrossMargin        *bool   `json:"is_cross_margin"`
+	ScanIntervalMinutes  *int    `json:"scan_interval_minutes"` // 扫描间隔（分钟）
 }
 
 // handleUpdateTrader 更新交易员配置
@@ -461,6 +472,16 @@ func (s *Server) handleUpdateTrader(c *gin.Context) {
 	}
 
 	// 更新交易员配置
+	// 处理 system_prompt_template：如果请求中提供了（包括空字符串），则使用请求的值；否则保持原值
+	systemPromptTemplate := existingTrader.SystemPromptTemplate // 保持原值
+	if req.SystemPromptTemplate != "" {
+		systemPromptTemplate = req.SystemPromptTemplate
+	} else if req.SystemPromptTemplate == "" && c.Request.Header.Get("Content-Type") == "application/json" {
+		// 如果请求中明确提供了空字符串，说明用户想重置为默认值
+		// 但为了安全，我们只在请求中明确包含该字段时才处理
+		// 这里保持原值，因为空字符串可能是字段未设置的情况
+	}
+
 	trader := &config.TraderRecord{
 		ID:                   traderID,
 		UserID:               userID,
@@ -473,7 +494,7 @@ func (s *Server) handleUpdateTrader(c *gin.Context) {
 		TradingSymbols:       req.TradingSymbols,
 		CustomPrompt:         req.CustomPrompt,
 		OverrideBasePrompt:   req.OverrideBasePrompt,
-		SystemPromptTemplate: existingTrader.SystemPromptTemplate, // 保持原值
+		SystemPromptTemplate: systemPromptTemplate,
 		IsCrossMargin:        isCrossMargin,
 		ScanIntervalMinutes:  scanIntervalMinutes,
 		IsRunning:            existingTrader.IsRunning, // 保持原值
@@ -486,13 +507,31 @@ func (s *Server) handleUpdateTrader(c *gin.Context) {
 		return
 	}
 
-	// 重新加载交易员到内存
-	err = s.traderManager.LoadUserTraders(s.database, userID)
+	// 保存更新前的运行状态
+	wasRunning := existingTrader.IsRunning
+
+	// ✅ 只加载更新的trader（如果已加载，重新加载；如果未加载，加载）
+	err = s.ensureTraderLoaded(userID, traderID)
 	if err != nil {
-		log.Printf("⚠️ 重新加载用户交易员到内存失败: %v", err)
+		log.Printf("⚠️ 更新后加载trader失败: %v", err)
+		// 这里不返回错误，因为trader已经成功更新到数据库
 	}
 
-	log.Printf("✓ 更新交易员成功: %s (模型: %s, 交易所: %s)", req.Name, req.AIModelID, req.ExchangeID)
+	// 如果更新前trader正在运行，更新后需要重新启动
+	if wasRunning {
+		// 异步启动trader（等待一小段时间确保trader已重新加载）
+		go func() {
+			time.Sleep(300 * time.Millisecond)
+			if at, err := s.traderManager.GetTrader(traderID); err == nil {
+				log.Printf("🔄 重新启动交易员 %s (使用新配置)...", req.Name)
+				if err := at.Run(); err != nil {
+					log.Printf("⚠️ 重新启动交易员 %s 失败: %v", req.Name, err)
+				}
+			}
+		}()
+	}
+
+	log.Printf("✓ 更新交易员成功: %s (模型: %s, 交易所: %s, 模板: %s)", req.Name, req.AIModelID, req.ExchangeID, systemPromptTemplate)
 
 	c.JSON(http.StatusOK, gin.H{
 		"trader_id":   traderID,
@@ -521,6 +560,72 @@ func (s *Server) handleDeleteTrader(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "交易员已删除"})
 }
 
+// ensureTraderLoaded 确保trader已加载到内存（启动类API使用）
+func (s *Server) ensureTraderLoaded(userID, traderID string) error {
+	// 检查是否已加载
+	if _, err := s.traderManager.GetTrader(traderID); err == nil {
+		return nil
+	}
+
+	// 从数据库加载单个trader到内存
+	log.Printf("📥 从数据库加载trader到内存: %s", traderID)
+
+	// 获取trader配置
+	traderCfg, aiModelCfg, exchangeCfg, err := s.database.GetTraderConfig(userID, traderID)
+	if err != nil {
+		return fmt.Errorf("获取trader配置失败: %w", err)
+	}
+
+	// 获取系统配置
+	maxDailyLossStr, _ := s.database.GetSystemConfig("max_daily_loss")
+	maxDrawdownStr, _ := s.database.GetSystemConfig("max_drawdown")
+	stopTradingMinutesStr, _ := s.database.GetSystemConfig("stop_trading_minutes")
+	defaultCoinsStr, _ := s.database.GetSystemConfig("default_coins")
+
+	// 获取用户信号源配置
+	var coinPoolURL, oiTopURL string
+	if userSignalSource, err := s.database.GetUserSignalSource(userID); err == nil {
+		coinPoolURL = userSignalSource.CoinPoolURL
+		oiTopURL = userSignalSource.OITopURL
+	}
+
+	// 解析配置
+	maxDailyLoss := 10.0
+	if val, err := strconv.ParseFloat(maxDailyLossStr, 64); err == nil {
+		maxDailyLoss = val
+	}
+
+	maxDrawdown := 20.0
+	if val, err := strconv.ParseFloat(maxDrawdownStr, 64); err == nil {
+		maxDrawdown = val
+	}
+
+	stopTradingMinutes := 60
+	if val, err := strconv.Atoi(stopTradingMinutesStr); err == nil {
+		stopTradingMinutes = val
+	}
+
+	var defaultCoins []string
+	if defaultCoinsStr != "" {
+		if err := json.Unmarshal([]byte(defaultCoinsStr), &defaultCoins); err != nil {
+			defaultCoins = []string{}
+		}
+	}
+
+	// 使用TraderManager的LoadSingleTrader方法加载单个trader
+	err = s.traderManager.LoadSingleTrader(traderCfg, aiModelCfg, exchangeCfg, coinPoolURL, oiTopURL, maxDailyLoss, maxDrawdown, stopTradingMinutes, defaultCoins)
+	if err != nil {
+		return fmt.Errorf("加载trader失败: %w", err)
+	}
+
+	// 再次检查是否加载成功
+	if _, err := s.traderManager.GetTrader(traderID); err != nil {
+		return fmt.Errorf("trader加载后仍不存在: %s", traderID)
+	}
+
+	return nil
+}
+
 // handleStartTrader 启动交易员
 func (s *Server) handleStartTrader(c *gin.Context) {
 	userID := c.GetString("user_id")
@@ -533,6 +638,15 @@ func (s *Server) handleStartTrader(c *gin.Context) {
 		return
 	}
 
+	// ✅ 确保trader已加载到内存（从数据库加载）
+	err = s.ensureTraderLoaded(userID, traderID)
+	if err != nil {
+		log.Printf("⚠️ 加载trader失败: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("加载trader失败: %v", err)})
+		return
+	}
+
+	// 获取trader实例
 	trader, err := s.traderManager.GetTrader(traderID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "交易员不存在"})
@@ -569,23 +683,60 @@ func (s *Server) handleStopTrader(c *gin.Context) {
 	userID := c.GetString("user_id")
 	traderID := c.Param("id")
 
-	// 校验交易员是否属于当前用户
-	_, _, _, err := s.database.GetTraderConfig(userID, traderID)
+	// 校验交易员是否属于当前用户并获取配置
+	traderCfg, _, _, err := s.database.GetTraderConfig(userID, traderID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "交易员不存在或无访问权限"})
 		return
 	}
 
+	// 尝试获取内存中的trader实例
 	trader, err := s.traderManager.GetTrader(traderID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "交易员不存在"})
-		return
+		// trader未加载到内存
+		// 检查数据库状态，如果已经是停止状态，直接返回成功
+		if !traderCfg.IsRunning {
+			log.Printf("✓ 交易员 %s 未加载但已停止（数据库状态）", traderCfg.Name)
+			c.JSON(http.StatusOK, gin.H{"message": "交易员已停止"})
+			return
+		}
+
+		// trader未加载但数据库状态是运行中，尝试加载并停止
+		log.Printf("📥 trader未加载但数据库状态为运行中，尝试加载并停止: %s", traderID)
+		err = s.ensureTraderLoaded(userID, traderID)
+		if err != nil {
+			log.Printf("⚠️ 加载trader失败: %v", err)
+			// 即使加载失败，也更新数据库状态为停止（因为停止操作是幂等的）
+			err = s.database.UpdateTraderStatus(userID, traderID, false)
+			if err != nil {
+				log.Printf("⚠️  更新交易员状态失败: %v", err)
+			}
+			c.JSON(http.StatusOK, gin.H{"message": "交易员已停止（已更新数据库状态）"})
+			return
+		}
+
+		// 重新获取trader实例
+		trader, err = s.traderManager.GetTrader(traderID)
+		if err != nil {
+			// 即使加载失败，也更新数据库状态为停止
+			err = s.database.UpdateTraderStatus(userID, traderID, false)
+			if err != nil {
+				log.Printf("⚠️  更新交易员状态失败: %v", err)
+			}
+			c.JSON(http.StatusOK, gin.H{"message": "交易员已停止（已更新数据库状态）"})
+			return
+		}
 	}
 
 	// 检查交易员是否正在运行
 	status := trader.GetStatus()
 	if isRunning, ok := status["is_running"].(bool); ok && !isRunning {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "交易员已停止"})
+		// 内存中已停止，但确保数据库状态也是停止的
+		err = s.database.UpdateTraderStatus(userID, traderID, false)
+		if err != nil {
+			log.Printf("⚠️  更新交易员状态失败: %v", err)
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "交易员已停止"})
 		return
 	}
 
@@ -823,34 +974,39 @@ func (s *Server) handleGetTraderConfig(c *gin.Context) {
 		return
 	}
 
-	// 获取实时运行状态
+	// 获取实时运行状态和内存中的实际配置
 	isRunning := traderConfig.IsRunning
+	actualSystemPromptTemplate := traderConfig.SystemPromptTemplate // 默认使用数据库配置
 	if at, err := s.traderManager.GetTrader(traderID); err == nil {
 		status := at.GetStatus()
 		if running, ok := status["is_running"].(bool); ok {
 			isRunning = running
 		}
+		// 获取内存中实际使用的模板
+		actualSystemPromptTemplate = at.GetSystemPromptTemplate()
 	}
 
 	// 返回完整的模型ID，不做转换，保持与前端模型列表一致
 	aiModelID := traderConfig.AIModelID
 
 	result := map[string]interface{}{
-		"trader_id":             traderConfig.ID,
-		"trader_name":           traderConfig.Name,
-		"ai_model":              aiModelID,
-		"exchange_id":           traderConfig.ExchangeID,
-		"initial_balance":       traderConfig.InitialBalance,
-		"scan_interval_minutes": traderConfig.ScanIntervalMinutes,
-		"btc_eth_leverage":      traderConfig.BTCETHLeverage,
-		"altcoin_leverage":      traderConfig.AltcoinLeverage,
-		"trading_symbols":       traderConfig.TradingSymbols,
-		"custom_prompt":         traderConfig.CustomPrompt,
-		"override_base_prompt":  traderConfig.OverrideBasePrompt,
-		"is_cross_margin":       traderConfig.IsCrossMargin,
-		"use_coin_pool":         traderConfig.UseCoinPool,
-		"use_oi_top":            traderConfig.UseOITop,
-		"is_running":            isRunning,
+		"trader_id":                     traderConfig.ID,
+		"trader_name":                   traderConfig.Name,
+		"ai_model":                      aiModelID,
+		"exchange_id":                   traderConfig.ExchangeID,
+		"initial_balance":               traderConfig.InitialBalance,
+		"scan_interval_minutes":         traderConfig.ScanIntervalMinutes,
+		"btc_eth_leverage":              traderConfig.BTCETHLeverage,
+		"altcoin_leverage":              traderConfig.AltcoinLeverage,
+		"trading_symbols":               traderConfig.TradingSymbols,
+		"custom_prompt":                 traderConfig.CustomPrompt,
+		"override_base_prompt":          traderConfig.OverrideBasePrompt,
+		"system_prompt_template":        traderConfig.SystemPromptTemplate, // 数据库配置
+		"actual_system_prompt_template": actualSystemPromptTemplate,        // 内存中实际使用的模板
+		"is_cross_margin":               traderConfig.IsCrossMargin,
+		"use_coin_pool":                 traderConfig.UseCoinPool,
+		"use_oi_top":                    traderConfig.UseOITop,
+		"is_running":                    isRunning,
 	}
 
 	c.JSON(http.StatusOK, result)
@@ -1012,27 +1168,6 @@ func (s *Server) handleStatistics(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, stats)
-}
-
-// handleCompetition 竞赛总览（对比所有trader）
-func (s *Server) handleCompetition(c *gin.Context) {
-	userID := c.GetString("user_id")
-
-	// 确保用户的交易员已加载到内存中
-	err := s.traderManager.LoadUserTraders(s.database, userID)
-	if err != nil {
-		log.Printf("⚠️ 加载用户 %s 的交易员失败: %v", userID, err)
-	}
-
-	competition, err := s.traderManager.GetCompetitionData()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("获取竞赛数据失败: %v", err),
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, competition)
 }
 
 // handleEquityHistory 收益率历史数据

@@ -20,8 +20,8 @@ type HyperliquidClient struct {
 	// OI数据缓存（metaAndAssetCtxs API 响应）
 	oiCache struct {
 		universe []map[string]interface{} // universe 数组
-		contexts []map[string]interface{}  // contexts 数组
-		expireAt time.Time                 // 缓存过期时间
+		contexts []map[string]interface{} // contexts 数组
+		expireAt time.Time                // 缓存过期时间
 	}
 }
 
@@ -299,6 +299,7 @@ func (c *HyperliquidClient) GetCurrentPrice(symbol string) (float64, error) {
 // API 响应格式: [universe, contexts]
 //   - universe: 包含币种信息（name 字段）
 //   - contexts: 包含市场数据（openInterest, markPx, funding, dayNtlVlm 等）
+//
 // 优化：使用缓存机制，避免重复调用 API（metaAndAssetCtxs 一次返回所有币种数据）
 func (c *HyperliquidClient) GetOpenInterest(symbol string) (*OIData, error) {
 	coin := c.symbolToCoin(symbol)
@@ -307,7 +308,7 @@ func (c *HyperliquidClient) GetOpenInterest(symbol string) (*OIData, error) {
 	now := time.Now()
 	var universe []map[string]interface{}
 	var contexts []map[string]interface{}
-	
+
 	if now.Before(c.oiCache.expireAt) && len(c.oiCache.universe) > 0 && len(c.oiCache.contexts) > 0 {
 		// 使用缓存
 		universe = c.oiCache.universe
@@ -316,7 +317,7 @@ func (c *HyperliquidClient) GetOpenInterest(symbol string) (*OIData, error) {
 	} else {
 		// 缓存失效或不存在，调用 API
 		log.Printf("🔄 调用 API 获取 OI 数据（将缓存结果供后续币种使用）...")
-		
+
 		reqBody := map[string]interface{}{
 			"type": "metaAndAssetCtxs",
 		}

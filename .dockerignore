@@ -25,8 +25,25 @@ nofx_test
 
 # Test files
 *_test.go
-test_*
+test_*.go
 hl_ws_smoke.go
+check_stopped_traders.go
+reset_password.go
+validation/validate_performance.go
+
+# Standalone scripts (not part of main application)
+fix_historical_close_quantity.go
+
+# Archived test scripts (moved to scripts/archive/)
+scripts/archive/
+analyze_trader_performance.go
+check_stopped_traders.go
+hl_ws_smoke.go
+reset_password.go
+test_lean_decision.go
+test_lean_decision_v2.go
+test_market_data_source.go
+test_nof1_decision.go
 validation/validate_performance.go
 
 # Documentation

@@ -80,9 +80,27 @@ func NewDecisionLogger(logDir string) *DecisionLogger {
 		fmt.Printf("⚠ 创建日志目录失败: %v\n", err)
 	}
 
+	// 从日志文件中恢复cycle number（找到最大的cycle number）
+	cycleNumber := 0
+	files, err := ioutil.ReadDir(logDir)
+	if err == nil {
+		for _, file := range files {
+			if file.IsDir() {
+				continue
+			}
+
+			// 尝试解析文件名：decision_YYYYMMDD_HHMMSS_cycleN.json
+			var cycle int
+			_, err := fmt.Sscanf(file.Name(), "decision_%*s_cycle%d.json", &cycle)
+			if err == nil && cycle > cycleNumber {
+				cycleNumber = cycle
+			}
+		}
+	}
+
 	return &DecisionLogger{
 		logDir:      logDir,
-		cycleNumber: 0,
+		cycleNumber: cycleNumber,
 	}
 }
 

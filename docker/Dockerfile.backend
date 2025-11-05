@@ -25,7 +25,10 @@ RUN ALPINE_VERSION=$(cat /etc/alpine-release | cut -d. -f1-2) && \
 RUN apk update && apk add --no-cache \
     wget tar make gcc g++ musl-dev autoconf automake
 
-RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-${TA_LIB_VERSION}-src.tar.gz && \
+# 尝试多个镜像源，优先使用国内镜像
+RUN (wget https://github.com/TA-Lib/ta-lib/releases/download/v${TA_LIB_VERSION}/ta-lib-${TA_LIB_VERSION}-src.tar.gz -O ta-lib-${TA_LIB_VERSION}-src.tar.gz || \
+     wget https://mirror.ghproxy.com/https://github.com/TA-Lib/ta-lib/releases/download/v${TA_LIB_VERSION}/ta-lib-${TA_LIB_VERSION}-src.tar.gz -O ta-lib-${TA_LIB_VERSION}-src.tar.gz || \
+     wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-${TA_LIB_VERSION}-src.tar.gz -O ta-lib-${TA_LIB_VERSION}-src.tar.gz) && \
     tar -xzf ta-lib-${TA_LIB_VERSION}-src.tar.gz && \
     cd ta-lib && \
     if [ "$(uname -m)" = "aarch64" ]; then \
