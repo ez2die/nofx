@@ -1,6 +1,7 @@
 package trader
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -96,6 +97,8 @@ type AutoTrader struct {
 	lastResetTime         time.Time
 	stopUntil             time.Time
 	isRunning             bool
+	ctx                   context.Context    // 用于控制goroutine停止的context
+	cancel                context.CancelFunc // 用于取消context的函数
 	startTime             time.Time               // 系统启动时间
 	callCount             int                     // AI调用次数
 	positionFirstSeenTime map[string]int64        // 持仓首次出现时间 (symbol_side -> timestamp毫秒)
@@ -223,6 +226,9 @@ func NewAutoTrader(config AutoTraderConfig) (*AutoTrader, error) {
 
 // Run 运行自动交易主循环
 func (at *AutoTrader) Run() error {
+	// 创建context，用于控制goroutine的停止
+	at.ctx, at.cancel = context.WithCancel(context.Background())
+	
 	at.isRunning = true
 	log.Println("🚀 AI驱动自动交易系统启动")
 	log.Printf("💰 初始余额: %.2f USDT", at.initialBalance)
@@ -237,21 +243,31 @@ func (at *AutoTrader) Run() error {
 		log.Printf("❌ 执行失败: %v", err)
 	}
 
-	for at.isRunning {
+	for {
 		select {
+		case <-at.ctx.Done():
+			// context被取消，立即退出
+			log.Println("⏹ 自动交易系统停止（context已取消）")
+			return nil
 		case <-ticker.C:
+			if !at.isRunning {
+				// isRunning标志为false，退出
+				return nil
+			}
 			if err := at.runCycle(); err != nil {
 				log.Printf("❌ 执行失败: %v", err)
 			}
 		}
 	}
-
-	return nil
 }
 
 // Stop 停止自动交易
 func (at *AutoTrader) Stop() {
 	at.isRunning = false
+	// 取消context，立即停止goroutine
+	if at.cancel != nil {
+		at.cancel()
+	}
 	log.Println("⏹ 自动交易系统停止")
 }
 
@@ -318,18 +334,6 @@ func (at *AutoTrader) runCycle() error {
 					actualClosePrice = marketData.CurrentPrice
 				}
 
-				// 创建自动触发的close决策记录
-				closeAction := logger.DecisionAction{
-					Action:          "close_" + lastPos.Side,
-					Symbol:          lastPos.Symbol,
-					Quantity:        lastPos.Quantity,
-					Leverage:        lastPos.Leverage,
-					Price:           actualClosePrice, // 使用当前市场价格作为实际成交价
-					Timestamp:       time.Now(),
-					Success:         true,
-					IsAutoTriggered: true, // 标记为自动触发
-				}
-
 				// 判断是止损还是止盈（通过实际成交价与开仓价的对比）
 				// 注意：只能通过价格方向推断，无法100%准确判断
 				// 但比使用上一周期的标记价更准确
@@ -349,7 +353,18 @@ func (at *AutoTrader) runCycle() error {
 					}
 				}
 
-				closeAction.WasStopLoss = wasStopLoss
+				// 创建自动触发的close决策记录
+				closeAction := logger.DecisionAction{
+					Action:          "close_" + lastPos.Side,
+					Symbol:          lastPos.Symbol,
+					Quantity:        lastPos.Quantity,
+					Leverage:        lastPos.Leverage,
+					Price:           actualClosePrice, // 使用当前市场价格作为实际成交价
+					Timestamp:       time.Now(),
+					Success:         true,
+					IsAutoTriggered: true, // 标记为自动触发
+					WasStopLoss:     wasStopLoss,
+				}
 
 				if wasStopLoss {
 					log.Printf("🛑 检测到自动止损: %s %s (开仓价: %.4f, 成交价: %.4f)",
@@ -364,6 +379,18 @@ func (at *AutoTrader) runCycle() error {
 				record.ExecutionLog = append(record.ExecutionLog,
 					fmt.Sprintf("🔄 自动触发: %s %s (数量: %.4f, 价格: %.4f)",
 						lastPos.Symbol, closeAction.Action, lastPos.Quantity, actualClosePrice))
+
+				// ⚠️ 关键修复：将自动触发信息写入Context，供AI决策时使用
+				ctx.AutoTriggeredCloses = append(ctx.AutoTriggeredCloses, decision.AutoTriggeredClose{
+					Symbol:      lastPos.Symbol,
+					Side:        lastPos.Side,
+					EntryPrice:  lastPos.EntryPrice,
+					ClosePrice:  actualClosePrice,
+					Quantity:    lastPos.Quantity,
+					Leverage:    lastPos.Leverage,
+					WasStopLoss: wasStopLoss,
+					Timestamp:   time.Now(),
+				})
 			}
 		}
 	}
@@ -662,12 +689,13 @@ func (at *AutoTrader) buildTradingContext() (*decision.Context, error) {
 
 	// 6. 构建上下文
 	ctx := &decision.Context{
-		CurrentTime:     time.Now().Format("2006-01-02 15:04:05"),
-		RuntimeMinutes:  int(time.Since(at.startTime).Minutes()),
-		CallCount:       at.callCount,
-		BTCETHLeverage:  at.config.BTCETHLeverage,  // 使用配置的杠杆倍数
-		AltcoinLeverage: at.config.AltcoinLeverage, // 使用配置的杠杆倍数
-		LogDir:          at.decisionLogger.GetLogDir(), // 设置日志目录路径
+		CurrentTime:         time.Now().Format("2006-01-02 15:04:05"),
+		RuntimeMinutes:      int(time.Since(at.startTime).Minutes()),
+		CallCount:           at.callCount,
+		BTCETHLeverage:      at.config.BTCETHLeverage,  // 使用配置的杠杆倍数
+		AltcoinLeverage:     at.config.AltcoinLeverage, // 使用配置的杠杆倍数
+		LogDir:              at.decisionLogger.GetLogDir(), // 设置日志目录路径
+		AutoTriggeredCloses: []decision.AutoTriggeredClose{}, // 初始化为空slice，将在检测到自动触发时填充
 		Account: decision.AccountInfo{
 			TotalEquity:      totalEquity,
 			AvailableBalance: availableBalance,
@@ -932,15 +960,21 @@ func (at *AutoTrader) executeCloseLongWithRecord(decision *decision.Decision, ac
 		actionRecord.OrderID = orderID
 	}
 
-	// ⚠️ 关键修复：等待订单成交后，查询当前市场价格作为实际成交价格
-	// IOC 订单会在市价附近成交，使用成交后的市场价格作为近似值
-	time.Sleep(2 * time.Second) // 等待订单成交
-	marketDataAfter, err := market.Get(decision.Symbol)
-	if err == nil {
-		actionRecord.Price = marketDataAfter.CurrentPrice // 使用实际成交后的市场价格
-		log.Printf("  ✅ 已获取实际成交价格: %.2f (成交后市场价格)", marketDataAfter.CurrentPrice)
+	// ⚠️ 关键修复：优先使用订单返回值中的真实成交价格
+	// 如果订单返回了executionPrice，使用它；否则使用成交后的市场价格作为fallback
+	if executionPrice, ok := order["executionPrice"].(float64); ok && executionPrice > 0 {
+		actionRecord.Price = executionPrice
+		log.Printf("  ✅ 已获取真实成交价格: %.2f (来自订单返回值)", executionPrice)
 	} else {
-		log.Printf("  ⚠️ 无法获取成交后价格，使用平仓前价格: %.2f", actionRecord.Price)
+		// Fallback: 等待订单成交后，查询当前市场价格作为近似值
+		time.Sleep(2 * time.Second) // 等待订单成交
+		marketDataAfter, err := market.Get(decision.Symbol)
+		if err == nil {
+			actionRecord.Price = marketDataAfter.CurrentPrice // 使用实际成交后的市场价格
+			log.Printf("  ⚠️ 订单返回值无价格，使用成交后市场价格: %.2f (近似值)", marketDataAfter.CurrentPrice)
+		} else {
+			log.Printf("  ⚠️ 无法获取成交后价格，使用平仓前价格: %.2f", actionRecord.Price)
+		}
 	}
 
 	if actionRecord.Quantity > 0 {
@@ -1023,15 +1057,21 @@ func (at *AutoTrader) executeCloseShortWithRecord(decision *decision.Decision, a
 		actionRecord.OrderID = orderID
 	}
 
-	// ⚠️ 关键修复：等待订单成交后，查询当前市场价格作为实际成交价格
-	// IOC 订单会在市价附近成交，使用成交后的市场价格作为近似值
-	time.Sleep(2 * time.Second) // 等待订单成交
-	marketDataAfter, err := market.Get(decision.Symbol)
-	if err == nil {
-		actionRecord.Price = marketDataAfter.CurrentPrice // 使用实际成交后的市场价格
-		log.Printf("  ✅ 已获取实际成交价格: %.2f (成交后市场价格)", marketDataAfter.CurrentPrice)
+	// ⚠️ 关键修复：优先使用订单返回值中的真实成交价格
+	// 如果订单返回了executionPrice，使用它；否则使用成交后的市场价格作为fallback
+	if executionPrice, ok := order["executionPrice"].(float64); ok && executionPrice > 0 {
+		actionRecord.Price = executionPrice
+		log.Printf("  ✅ 已获取真实成交价格: %.2f (来自订单返回值)", executionPrice)
 	} else {
-		log.Printf("  ⚠️ 无法获取成交后价格，使用平仓前价格: %.2f", actionRecord.Price)
+		// Fallback: 等待订单成交后，查询当前市场价格作为近似值
+		time.Sleep(2 * time.Second) // 等待订单成交
+		marketDataAfter, err := market.Get(decision.Symbol)
+		if err == nil {
+			actionRecord.Price = marketDataAfter.CurrentPrice // 使用实际成交后的市场价格
+			log.Printf("  ⚠️ 订单返回值无价格，使用成交后市场价格: %.2f (近似值)", marketDataAfter.CurrentPrice)
+		} else {
+			log.Printf("  ⚠️ 无法获取成交后价格，使用平仓前价格: %.2f", actionRecord.Price)
+		}
 	}
 
 	if actionRecord.Quantity > 0 {

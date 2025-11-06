@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-11-05T13:57:55.754308789+08:00",
+  "cycle_number": 1,
+  "system_prompt": "",
+  "input_prompt": "",
+  "cot_trace": "",
+  "decision_json": "",
+  "account_state": {
+    "total_balance": 111.389573,
+    "available_balance": 52.681128,
+    "total_unrealized_profit": 11.389572999999999,
+    "position_count": 2,
+    "margin_used_pct": 50.4640052799197
+  },
+  "positions": [
+    {
+      "symbol": "BTCUSDT",
+      "side": "short",
+      "position_amt": 0.0054,
+      "entry_price": 102226,
+      "mark_price": 101762,
+      "unrealized_profit": 2.5056,
+      "leverage": 10,
+      "liquidation_price": 111018.5183356196
+    },
+    {
+      "symbol": "SOLUSDT",
+      "side": "short",
+      "position_amt": 0.04,
+      "entry_price": 156.94,
+      "mark_price": 157.51999999999998,
+      "unrealized_profit": -0.0232,
+      "leverage": 5,
+      "liquidation_price": 183.6657560976
+    }
+  ],
+  "candidate_coins": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "BNBUSDT",
+    "XRPUSDT",
+    "DOGEUSDT",
+    "ADAUSDT",
+    "HYPEUSDT"
+  ],
+  "decisions": null,
+  "execution_log": [],
+  "success": false,
+  "error_message": "获取AI决策失败: 调用AI API失败: API返回错误 (status 402): {\"error\":{\"message\":\"Insufficient Balance\",\"type\":\"unknown_error\",\"param\":null,\"code\":\"invalid_request_error\"}}"
+}

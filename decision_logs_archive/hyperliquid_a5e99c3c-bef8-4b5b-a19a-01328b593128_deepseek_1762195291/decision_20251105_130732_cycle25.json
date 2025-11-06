@@ -1,0 +1,77 @@
+{
+  "timestamp": "2025-11-05T13:07:32.719321854+08:00",
+  "cycle_number": 25,
+  "system_prompt": "",
+  "input_prompt": "",
+  "cot_trace": "",
+  "decision_json": "",
+  "account_state": {
+    "total_balance": 113.03537,
+    "available_balance": 0.15674400000000333,
+    "total_unrealized_profit": 13.03537,
+    "position_count": 3,
+    "margin_used_pct": 100.24703241118245
+  },
+  "positions": [
+    {
+      "symbol": "BTCUSDT",
+      "side": "short",
+      "position_amt": 0.0054,
+      "entry_price": 102226,
+      "mark_price": 101969,
+      "unrealized_profit": 1.3878,
+      "leverage": 10,
+      "liquidation_price": 111018.5183356196
+    },
+    {
+      "symbol": "ETHUSDT",
+      "side": "short",
+      "position_amt": 0.1712,
+      "entry_price": 3321.3,
+      "mark_price": 3329.2,
+      "unrealized_profit": -1.35248,
+      "leverage": 10,
+      "liquidation_price": 3580.3980037108
+    },
+    {
+      "symbol": "SOLUSDT",
+      "side": "short",
+      "position_amt": 0.04,
+      "entry_price": 156.94,
+      "mark_price": 156.92999999999998,
+      "unrealized_profit": 0.0004,
+      "leverage": 5,
+      "liquidation_price": 183.6657560976
+    }
+  ],
+  "candidate_coins": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "BNBUSDT",
+    "XRPUSDT",
+    "DOGEUSDT",
+    "ADAUSDT",
+    "HYPEUSDT"
+  ],
+  "decisions": [
+    {
+      "action": "close_short",
+      "symbol": "XRPUSDT",
+      "quantity": 3,
+      "leverage": 5,
+      "price": 2.25,
+      "order_id": 0,
+      "timestamp": "2025-11-05T13:05:32.71652551+08:00",
+      "success": true,
+      "error": "",
+      "is_auto_triggered": true,
+      "was_stop_loss": true
+    }
+  ],
+  "execution_log": [
+    "🔄 自动触发: XRPUSDT close_short (数量: 3.0000, 价格: 2.2500)"
+  ],
+  "success": false,
+  "error_message": "获取AI决策失败: 调用AI API失败: 读取响应失败: context deadline exceeded (Client.Timeout or context cancellation while reading body)"
+}

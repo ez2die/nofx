@@ -17,6 +17,8 @@ type WSMonitor struct {
 	alertsChan     chan Alert
 	klineDataMap3m sync.Map // 存储每个交易对的K线历史数据
 	klineDataMap4h sync.Map // 存储每个交易对的K线历史数据
+	klineUpdateTime3m sync.Map // 存储3分钟K线数据的最后更新时间 (symbol -> time.Time)
+	klineUpdateTime4h sync.Map // 存储4小时K线数据的最后更新时间 (symbol -> time.Time)
 	tickerDataMap  sync.Map // 存储每个交易对的ticker数据
 	batchSize      int
 	filterSymbols  sync.Map // 使用sync.Map来存储需要监控的币种和其状态
@@ -97,6 +99,7 @@ func (m *WSMonitor) initializeHistoricalData() error {
 			}
 			if len(klines) > 0 {
 				m.klineDataMap3m.Store(s, klines)
+				m.klineUpdateTime3m.Store(s, time.Now())
 				log.Printf("已加载 %s 的历史K线数据-3m: %d 条", s, len(klines))
 			}
 			// 获取历史K线数据
@@ -107,6 +110,7 @@ func (m *WSMonitor) initializeHistoricalData() error {
 			}
 			if len(klines4h) > 0 {
 				m.klineDataMap4h.Store(s, klines4h)
+				m.klineUpdateTime4h.Store(s, time.Now())
 				log.Printf("已加载 %s 的历史K线数据-4h: %d 条", s, len(klines4h))
 			}
 		}(symbol)
@@ -121,6 +125,22 @@ func (m *WSMonitor) Start(coins []string) {
 }
 
 func (m *WSMonitor) startWithRetry(coins []string) {
+	// 检查当前数据源是否支持WebSocket
+	apiClient := GetMarketDataClient()
+	dataSourceName := apiClient.GetDataSourceName()
+	
+	// Hyperliquid 不使用 Binance 的 WebSocket，直接使用 REST API
+	if dataSourceName == "hyperliquid" {
+		log.Printf("📊 检测到 Hyperliquid 数据源，跳过 WebSocket 连接（Hyperliquid 不使用 Binance WebSocket）")
+		log.Printf("📊 将使用 REST API 模式，数据将通过 API 定期刷新")
+		// 初始化交易对（不启动 WebSocket）
+		err := m.Initialize(coins)
+		if err != nil {
+			log.Printf("❌ 初始化币种失败: %v", err)
+		}
+		return
+	}
+	
 	log.Printf("启动WebSocket实时监控...")
 	// 初始化交易对
 	err := m.Initialize(coins)
@@ -218,6 +238,18 @@ func (m *WSMonitor) getKlineDataMap(_time string) *sync.Map {
 	}
 	return klineDataMap
 }
+
+func (m *WSMonitor) getKlineUpdateTimeMap(_time string) *sync.Map {
+	var updateTimeMap *sync.Map
+	if _time == "3m" {
+		updateTimeMap = &m.klineUpdateTime3m
+	} else if _time == "4h" {
+		updateTimeMap = &m.klineUpdateTime4h
+	} else {
+		updateTimeMap = &sync.Map{}
+	}
+	return updateTimeMap
+}
 func (m *WSMonitor) processKlineUpdate(symbol string, wsData KlineWSData, _time string) {
 	// 转换WebSocket数据为Kline结构
 	kline := Kline{
@@ -259,30 +291,80 @@ func (m *WSMonitor) processKlineUpdate(symbol string, wsData KlineWSData, _time 
 	}
 
 	klineDataMap.Store(symbol, klines)
+	
+	// 更新该symbol的最后更新时间
+	updateTimeMap := m.getKlineUpdateTimeMap(_time)
+	updateTimeMap.Store(symbol, time.Now())
 }
 
 func (m *WSMonitor) GetCurrentKlines(symbol string, _time string) ([]Kline, error) {
-	// 对每一个进来的symbol检测是否存在内类 是否的话就订阅它
-	value, exists := m.getKlineDataMap(_time).Load(symbol)
-	if !exists {
-		// 如果Ws数据未初始化完成时,单独使用api获取 - 兼容性代码 (防止在未初始化完成是,已经有交易员运行)
-		apiClient := GetMarketDataClient()
-		klines, err := apiClient.GetKlines(symbol, _time, 100)
-		m.getKlineDataMap(_time).Store(strings.ToUpper(symbol), klines) //动态缓存进缓存
+	symbol = strings.ToUpper(symbol)
+	klineDataMap := m.getKlineDataMap(_time)
+	updateTimeMap := m.getKlineUpdateTimeMap(_time)
+	
+	// 检查缓存是否存在
+	value, exists := klineDataMap.Load(symbol)
+	if exists {
+		// 检查缓存数据的时效性
+		lastUpdate, updateExists := updateTimeMap.Load(symbol)
+		
+		// 如果存在更新时间，检查数据是否过期
+		// 对于3分钟K线，如果超过3分钟未更新，则重新获取（确保每个K线周期都会刷新）
+		// 对于4小时K线，如果超过10分钟未更新，则重新获取
+		var maxAge time.Duration
+		if _time == "3m" {
+			maxAge = 3 * time.Minute
+		} else if _time == "4h" {
+			maxAge = 10 * time.Minute
+		} else {
+			maxAge = 5 * time.Minute // 默认5分钟
+		}
+		
+		if updateExists {
+			lastUpdateTime := lastUpdate.(time.Time)
+			if time.Since(lastUpdateTime) < maxAge {
+				// 缓存数据仍然有效，直接返回
+				return value.([]Kline), nil
+			} else {
+				// 缓存数据过期，记录日志并重新获取
+				log.Printf("⚠️  %s 的 %s K线数据已过期（最后更新: %v，已过期 %v），重新从API获取", symbol, _time, lastUpdateTime, time.Since(lastUpdateTime))
+			}
+		} else {
+			// 没有更新时间记录，可能是旧数据，重新获取
+			log.Printf("⚠️  %s 的 %s K线数据缺少更新时间记录，重新从API获取", symbol, _time)
+		}
+	}
+	
+	// 缓存不存在或已过期，从API获取最新数据
+	apiClient := GetMarketDataClient()
+	klines, err := apiClient.GetKlines(symbol, _time, 100)
+	if err != nil {
+		// 如果API获取失败，尝试返回缓存数据（即使可能过期）
+		if exists {
+			log.Printf("⚠️  从API获取 %s 的 %s K线数据失败: %v，使用可能过期的缓存数据", symbol, _time, err)
+			return value.([]Kline), nil
+		}
+		return nil, fmt.Errorf("获取%v分钟K线失败: %v", _time, err)
+	}
+	
+	// 更新缓存
+	klineDataMap.Store(symbol, klines)
+	updateTimeMap.Store(symbol, time.Now())
+	log.Printf("✓ 成功从API获取并更新 %s 的 %s K线数据（%d 条）", symbol, _time, len(klines))
+	
+	// 只有在使用 Binance 数据源时才尝试订阅 WebSocket 流
+	apiClientForWS := GetMarketDataClient()
+	if apiClientForWS.GetDataSourceName() == "binance" {
+		// 尝试订阅WebSocket流（如果尚未订阅）
 		subStr := m.subscribeSymbol(symbol, _time)
 		subErr := m.combinedClient.subscribeStreams(subStr)
-		log.Printf("动态订阅流: %v", subStr)
 		if subErr != nil {
 			// 订阅失败不影响数据获取，只记录警告
 			log.Printf("⚠️  动态订阅%v分钟K线流失败: %v (将继续使用API数据)", _time, subErr)
 		}
-		if err != nil {
-			return nil, fmt.Errorf("获取%v分钟K线失败: %v", _time, err)
-		}
-		// 成功获取数据，返回klines和nil
-		return klines, nil
 	}
-	return value.([]Kline), nil
+	
+	return klines, nil
 }
 
 func (m *WSMonitor) Close() {

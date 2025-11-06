@@ -54,20 +54,33 @@ type OITopData struct {
 	NetShort          float64 // 净空仓
 }
 
+// AutoTriggeredClose 自动触发的平仓信息（止盈/止损）
+type AutoTriggeredClose struct {
+	Symbol      string  `json:"symbol"`       // 币种
+	Side        string  `json:"side"`         // "long" 或 "short"
+	EntryPrice  float64 `json:"entry_price"`  // 开仓价格
+	ClosePrice  float64 `json:"close_price"`  // 平仓价格（成交价）
+	Quantity    float64 `json:"quantity"`     // 数量
+	Leverage    int     `json:"leverage"`     // 杠杆
+	WasStopLoss bool    `json:"was_stop_loss"` // 是否为止损（true=止损, false=止盈）
+	Timestamp   time.Time `json:"timestamp"`   // 触发时间
+}
+
 // Context 交易上下文（传递给AI的完整信息）
 type Context struct {
-	CurrentTime     string                  `json:"current_time"`
-	RuntimeMinutes  int                     `json:"runtime_minutes"`
-	CallCount       int                     `json:"call_count"`
-	Account         AccountInfo             `json:"account"`
-	Positions       []PositionInfo          `json:"positions"`
-	CandidateCoins  []CandidateCoin         `json:"candidate_coins"`
-	MarketDataMap   map[string]*market.Data `json:"-"` // 不序列化，但内部使用
-	OITopDataMap    map[string]*OITopData   `json:"-"` // OI Top数据映射
-	Performance     interface{}             `json:"-"` // 历史表现分析（logger.PerformanceAnalysis）
-	BTCETHLeverage  int                     `json:"-"` // BTC/ETH杠杆倍数（从配置读取）
-	AltcoinLeverage int                     `json:"-"` // 山寨币杠杆倍数（从配置读取）
-	LogDir          string                  `json:"-"` // 决策日志目录路径（用于读取历史思维链）
+	CurrentTime         string                  `json:"current_time"`
+	RuntimeMinutes      int                     `json:"runtime_minutes"`
+	CallCount           int                     `json:"call_count"`
+	Account             AccountInfo             `json:"account"`
+	Positions           []PositionInfo          `json:"positions"`
+	CandidateCoins      []CandidateCoin         `json:"candidate_coins"`
+	AutoTriggeredCloses []AutoTriggeredClose    `json:"-"` // 本周期检测到的自动触发平仓（不序列化，但用于构建prompt）
+	MarketDataMap       map[string]*market.Data `json:"-"` // 不序列化，但内部使用
+	OITopDataMap        map[string]*OITopData   `json:"-"` // OI Top数据映射
+	Performance         interface{}             `json:"-"` // 历史表现分析（logger.PerformanceAnalysis）
+	BTCETHLeverage      int                     `json:"-"` // BTC/ETH杠杆倍数（从配置读取）
+	AltcoinLeverage     int                     `json:"-"` // 山寨币杠杆倍数（从配置读取）
+	LogDir              string                  `json:"-"` // 决策日志目录路径（用于读取历史思维链）
 }
 
 // Decision AI的交易决策
@@ -335,6 +348,35 @@ func buildUserPrompt(ctx *Context) string {
 			}
 			sb.WriteString("---\n\n")
 		}
+	}
+
+	// ⚠️ 关键修复：显示本周期检测到的自动触发平仓信息（如果有）
+	if len(ctx.AutoTriggeredCloses) > 0 {
+		sb.WriteString("## ⚠️ 重要提示：本周期检测到自动触发的平仓\n\n")
+		sb.WriteString("在本次决策周期开始时，系统检测到以下持仓被自动止盈/止损触发平仓。这些信息可能影响你的决策：\n\n")
+		for _, autoClose := range ctx.AutoTriggeredCloses {
+			triggerType := "止盈"
+			emoji := "🎯"
+			if autoClose.WasStopLoss {
+				triggerType = "止损"
+				emoji = "🛑"
+			}
+			
+			// 计算盈亏
+			var pnlPercent float64
+			if autoClose.Side == "long" {
+				pnlPercent = ((autoClose.ClosePrice - autoClose.EntryPrice) / autoClose.EntryPrice) * 100
+			} else {
+				pnlPercent = ((autoClose.EntryPrice - autoClose.ClosePrice) / autoClose.EntryPrice) * 100
+			}
+
+			sb.WriteString(fmt.Sprintf("%s **%s %s** 被自动%s触发平仓\n", emoji, autoClose.Symbol, strings.ToUpper(autoClose.Side), triggerType))
+			sb.WriteString(fmt.Sprintf("  - 开仓价: %.4f | 平仓价: %.4f | 盈亏: %+.2f%%\n", 
+				autoClose.EntryPrice, autoClose.ClosePrice, pnlPercent))
+			sb.WriteString(fmt.Sprintf("  - 数量: %.4f | 杠杆: %dx | 触发时间: %s\n\n",
+				autoClose.Quantity, autoClose.Leverage, autoClose.Timestamp.Format("15:04:05")))
+		}
+		sb.WriteString("---\n\n")
 	}
 
 	// 系统状态

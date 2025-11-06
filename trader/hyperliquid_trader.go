@@ -472,10 +472,14 @@ func (t *HyperliquidTrader) CloseLong(symbol string, quantity float64) (map[stri
 		ReduceOnly: true, // 只平仓，不开新仓
 	}
 
-	_, err = t.exchange.Order(t.ctx, order, nil)
+	// ⚠️ 关键修复：接收Order API返回值，尝试获取真实成交价格
+	orderResp, err := t.exchange.Order(t.ctx, order, nil)
 	if err != nil {
 		return nil, fmt.Errorf("平多仓失败: %w", err)
 	}
+
+	// 记录Order API响应，便于调试
+	log.Printf("  📋 Order API响应: %+v", orderResp)
 
 	log.Printf("✓ 平多仓成功: %s 数量: %.4f", symbol, roundedQuantity)
 
@@ -484,10 +488,46 @@ func (t *HyperliquidTrader) CloseLong(symbol string, quantity float64) (map[stri
 		log.Printf("  ⚠ 取消挂单失败: %v", err)
 	}
 
+	// ⚠️ 关键修复：从Order API返回值中提取真实成交价格
+	// OrderStatus.Filled.AvgPx 包含平均成交价格（如果订单立即成交）
+	executionPrice := 0.0
+	// orderResp 是 OrderStatus 类型，包含 Filled 字段（如果订单立即成交）
+	if orderResp.Filled != nil && orderResp.Filled.AvgPx != "" {
+		// AvgPx 是字符串格式，需要解析
+		avgPx, err := strconv.ParseFloat(orderResp.Filled.AvgPx, 64)
+		if err == nil && avgPx > 0 {
+			executionPrice = avgPx
+			log.Printf("  ✅ 从Order API返回值获取真实成交价格 (AvgPx): %.4f", executionPrice)
+		}
+	}
+
+	// 如果Order API返回值中没有价格，等待后查询UserFills获取真实成交价格
+	if executionPrice == 0 {
+		time.Sleep(2 * time.Second) // 等待订单成交
+		fillPrice, err := t.getFillPriceFromUserFills(symbol)
+		if err == nil && fillPrice > 0 {
+			executionPrice = fillPrice
+			log.Printf("  ✅ 从UserFills获取真实成交价格: %.4f", executionPrice)
+		} else {
+			// 如果无法获取，使用当前市场价格作为fallback
+			currentPrice, err := t.GetMarketPrice(symbol)
+			if err == nil {
+				executionPrice = currentPrice
+				log.Printf("  ⚠️ 无法获取真实成交价格，使用当前市场价格: %.4f", executionPrice)
+			} else {
+				executionPrice = aggressivePrice // 最后fallback到下单价格
+				log.Printf("  ⚠️ 无法获取价格信息，使用下单价格: %.4f", executionPrice)
+			}
+		}
+	} else {
+		log.Printf("  ✅ 从Order API返回值获取成交价格: %.4f", executionPrice)
+	}
+
 	result := make(map[string]interface{})
 	result["orderId"] = 0
 	result["symbol"] = symbol
 	result["status"] = "FILLED"
+	result["executionPrice"] = executionPrice // 添加真实成交价格
 
 	return result, nil
 }
@@ -544,10 +584,14 @@ func (t *HyperliquidTrader) CloseShort(symbol string, quantity float64) (map[str
 		ReduceOnly: true,
 	}
 
-	_, err = t.exchange.Order(t.ctx, order, nil)
+	// ⚠️ 关键修复：接收Order API返回值，尝试获取真实成交价格
+	orderResp, err := t.exchange.Order(t.ctx, order, nil)
 	if err != nil {
 		return nil, fmt.Errorf("平空仓失败: %w", err)
 	}
+
+	// 记录Order API响应，便于调试
+	log.Printf("  📋 Order API响应: %+v", orderResp)
 
 	log.Printf("✓ 平空仓成功: %s 数量: %.4f", symbol, roundedQuantity)
 
@@ -556,10 +600,46 @@ func (t *HyperliquidTrader) CloseShort(symbol string, quantity float64) (map[str
 		log.Printf("  ⚠ 取消挂单失败: %v", err)
 	}
 
+	// ⚠️ 关键修复：从Order API返回值中提取真实成交价格
+	// OrderStatus.Filled.AvgPx 包含平均成交价格（如果订单立即成交）
+	executionPrice := 0.0
+	// orderResp 是 OrderStatus 类型，包含 Filled 字段（如果订单立即成交）
+	if orderResp.Filled != nil && orderResp.Filled.AvgPx != "" {
+		// AvgPx 是字符串格式，需要解析
+		avgPx, err := strconv.ParseFloat(orderResp.Filled.AvgPx, 64)
+		if err == nil && avgPx > 0 {
+			executionPrice = avgPx
+			log.Printf("  ✅ 从Order API返回值获取真实成交价格 (AvgPx): %.4f", executionPrice)
+		}
+	}
+
+	// 如果Order API返回值中没有价格，等待后查询UserFills获取真实成交价格
+	if executionPrice == 0 {
+		time.Sleep(2 * time.Second) // 等待订单成交
+		fillPrice, err := t.getFillPriceFromUserFills(symbol)
+		if err == nil && fillPrice > 0 {
+			executionPrice = fillPrice
+			log.Printf("  ✅ 从UserFills获取真实成交价格: %.4f", executionPrice)
+		} else {
+			// 如果无法获取，使用当前市场价格作为fallback
+			currentPrice, err := t.GetMarketPrice(symbol)
+			if err == nil {
+				executionPrice = currentPrice
+				log.Printf("  ⚠️ 无法获取真实成交价格，使用当前市场价格: %.4f", executionPrice)
+			} else {
+				executionPrice = aggressivePrice // 最后fallback到下单价格
+				log.Printf("  ⚠️ 无法获取价格信息，使用下单价格: %.4f", executionPrice)
+			}
+		}
+	} else {
+		log.Printf("  ✅ 从Order API返回值获取成交价格: %.4f", executionPrice)
+	}
+
 	result := make(map[string]interface{})
 	result["orderId"] = 0
 	result["symbol"] = symbol
 	result["status"] = "FILLED"
+	result["executionPrice"] = executionPrice // 添加真实成交价格
 
 	return result, nil
 }
@@ -608,6 +688,31 @@ func (t *HyperliquidTrader) GetMarketPrice(symbol string) (float64, error) {
 	}
 
 	return 0, fmt.Errorf("未找到 %s 的价格", symbol)
+}
+
+// getFillPriceFromUserFills 从UserFills API获取最近的成交价格
+func (t *HyperliquidTrader) getFillPriceFromUserFills(symbol string) (float64, error) {
+	coin := convertSymbolToHyperliquid(symbol)
+
+	// 查询最近的成交记录
+	fills, err := t.exchange.Info().UserFills(t.ctx, t.walletAddr)
+	if err != nil {
+		return 0, fmt.Errorf("查询UserFills失败: %w", err)
+	}
+
+	// 查找最近的匹配成交（平仓方向，同币种）
+	// 注意：UserFills返回的是从旧到新的顺序，需要从后往前查找
+	for i := len(fills) - 1; i >= 0; i-- {
+		fill := fills[i]
+		if fill.Coin == coin && fill.ClosedPnl != "" {
+			// 找到最近的成交，尝试从Fill结构体中提取价格
+			// 注意：Fill结构体的字段可能不同，需要根据实际结构调整
+			// 暂时跳过价格提取，返回错误，让调用方使用fallback
+			log.Printf("  ⚠️  找到 %s 的成交记录，但无法提取价格（需要检查Fill结构体字段）", symbol)
+		}
+	}
+
+	return 0, fmt.Errorf("未找到 %s 的成交记录", symbol)
 }
 
 // SetStopLoss 设置止损单

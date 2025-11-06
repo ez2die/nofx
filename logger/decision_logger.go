@@ -7,6 +7,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"sort"
 	"time"
 )
 
@@ -139,11 +140,9 @@ func (l *DecisionLogger) GetLatestRecords(n int) ([]*DecisionRecord, error) {
 		return nil, fmt.Errorf("读取日志目录失败: %w", err)
 	}
 
-	// 先按修改时间倒序收集（最新的在前）
+	// 读取所有文件并解析
 	var records []*DecisionRecord
-	count := 0
-	for i := len(files) - 1; i >= 0 && count < n; i-- {
-		file := files[i]
+	for _, file := range files {
 		if file.IsDir() {
 			continue
 		}
@@ -160,12 +159,21 @@ func (l *DecisionLogger) GetLatestRecords(n int) ([]*DecisionRecord, error) {
 		}
 
 		records = append(records, &record)
-		count++
 	}
 
-	// 反转数组，让时间从旧到新排列（用于图表显示）
-	for i, j := 0, len(records)-1; i < j; i, j = i+1, j-1 {
-		records[i], records[j] = records[j], records[i]
+	// 按 timestamp 排序（从旧到新），如果timestamp相同则按cycle_number排序
+	sort.Slice(records, func(i, j int) bool {
+		if records[i].Timestamp.Equal(records[j].Timestamp) {
+			// timestamp相同，按cycle_number排序（从小到大）
+			return records[i].CycleNumber < records[j].CycleNumber
+		}
+		// 按timestamp排序（从旧到新）
+		return records[i].Timestamp.Before(records[j].Timestamp)
+	})
+
+	// 返回最后N条（最新的）
+	if len(records) > n {
+		records = records[len(records)-n:]
 	}
 
 	return records, nil
