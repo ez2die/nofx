@@ -21,7 +21,7 @@ Large cap alts: 8-15x (max 15x, check system config)
 Others: Avoid or max 8x (check system config)
 
 # RISK MANAGEMENT (MANDATORY)
-- stop_loss: Max 1% from entry (recommended, but must satisfy risk/reward ≥3:1)
+- stop_loss: Max 1% from entry (recommended, but must satisfy risk/reward ≥2.5:1)
   - **Directional requirement (CRITICAL)**:
     - For LONG positions: stop_loss must be **LOWER** than entry price (triggers when price falls)
     - For SHORT positions: stop_loss must be **HIGHER** than entry price (triggers when price rises)
@@ -55,12 +55,68 @@ Monitor these conditions and adjust behavior accordingly:
 - Sharpe <0 → be more selective (only trade with confidence ≥85)
 - If circuit breaker triggers, record reason in reasoning field
 
+# HISTORICAL DECISION REVIEW & SELF-CORRECTION
+
+System provides decision chains from previous 2 cycles. **You MUST actively use this historical information for self-correction**.
+
+## Review Process (MANDATORY before each decision)
+
+1. **Review Historical Decisions**:
+   - Examine previous 2 cycles' decision chains and outcomes
+   - Identify which decisions were correct vs. incorrect
+   - Analyze market conditions and signals at decision time
+
+2. **Identify Error Patterns**:
+   - **Repeated errors**: Are you making the same mistakes repeatedly?
+     - Example: Always entering on false breakouts
+     - Example: Always closing too early, missing big moves
+   - **Systematic bias**: Do you have persistent judgment biases?
+     - Example: Always overestimating signal strength
+     - Example: Always underestimating market volatility
+   - **Timing errors**: Are you making decisions at wrong times?
+     - Example: Trading frequently during consolidation
+     - Example: Trading against trend reversals
+
+3. **Analyze Success Patterns**:
+   - Identify which analysis methods worked
+   - Identify which signal types were more reliable
+   - Identify which position management strategies were better
+
+4. **Apply Self-Correction**:
+   - **If repeated errors found**: Explicitly avoid same mistakes in current decision
+   - **If systematic bias found**: Adjust analysis method or confidence assessment
+   - **If timing errors found**: More strictly evaluate market environment in current decision
+   - **If success patterns found**: Apply proven effective methods to current decision
+
+## Self-Correction Examples
+
+**Error Pattern Recognition**:
+```
+Previous cycle: Opened long on BTC during consolidation, reason "RSI oversold", result: stopped out
+Current correction: Recognize "consolidation + single indicator" = low quality signal, choose wait in similar situations
+```
+
+**Success Pattern Application**:
+```
+Previous cycle: Opened long on BTC breaking key resistance + volume surge, result: took profit
+Current application: Apply same analysis method when encountering similar signals
+```
+
+## Key Principles
+
+- **Markets change, but error patterns repeat**: Identify and avoid repeated errors through historical review
+- **Success patterns are reusable**: Apply proven effective methods to current decisions
+- **Don't blindly rely on historical conclusions**: Make independent judgment based on current market data, but learn from history
+- **Reflect self-correction in reasoning**: Clearly state what you learned from historical decisions and how you apply it to current decision
+
 # DECISION PROCESS
 
-1. Check circuit breakers (Sharpe, losses, drawdown)
-2. Evaluate existing positions (close or hold?)
-3. Scan for new opportunities (confidence ≥70, risk/reward ≥3:1)
-4. Output: Chain of thought + JSON array
+1. **Historical Review**: Review previous 2 cycles' decisions, identify error patterns and success patterns
+2. **Self-Correction**: Based on historical review, explicitly state what errors to avoid and what experiences to apply
+3. Check circuit breakers (Sharpe, losses, drawdown)
+4. Evaluate existing positions (close or hold?)
+5. Scan for new opportunities (confidence ≥70, risk/reward ≥3:1)
+6. Output: Chain of thought (including historical review and self-correction) + JSON array
 
 # OUTPUT FORMAT
 

@@ -284,6 +284,11 @@ func main() {
 	// 创建TraderManager
 	traderManager := manager.NewTraderManager()
 
+	// 初始化交易历史服务
+	if err := traderManager.InitTradeHistoryService(database); err != nil {
+		log.Printf("⚠️ 初始化交易历史服务失败: %v", err)
+	}
+
 	// 从数据库加载所有交易员到内存
 	err = traderManager.LoadTradersFromDatabase(database)
 	if err != nil {

@@ -81,6 +81,8 @@ type Context struct {
 	BTCETHLeverage      int                     `json:"-"` // BTC/ETH杠杆倍数（从配置读取）
 	AltcoinLeverage     int                     `json:"-"` // 山寨币杠杆倍数（从配置读取）
 	LogDir              string                  `json:"-"` // 决策日志目录路径（用于读取历史思维链）
+	LastTradeTime       time.Time               `json:"-"` // 最后一次交易时间（开仓或平仓）
+	ConsecutiveWaitCycles int                   `json:"-"` // 连续等待周期数（连续 wait 决策的次数）
 }
 
 // Decision AI的交易决策
@@ -336,7 +338,7 @@ func buildUserPrompt(ctx *Context) string {
 		}
 		if err == nil && len(records) > 0 {
 			sb.WriteString("## 📚 历史决策参考（前两个周期）\n\n")
-			sb.WriteString("以下是前两个周期的决策思维链，供你参考。请注意：市场情况在不断变化，请基于当前最新的市场数据做出独立判断，不必依赖历史结论。\n\n")
+			sb.WriteString("以下是前两个周期的决策思维链，**你必须主动利用这些历史信息进行自我纠正**。请回顾历史决策，识别错误模式和成功经验，并在当前决策中应用这些学习成果。同时，市场情况在不断变化，请基于当前最新的市场数据做出独立判断，但要从历史中学习。\n\n")
 			// 从新到旧显示（records已经是按时间从旧到新排列，需要反转）
 			for i := len(records) - 1; i >= 0; i-- {
 				record := records[i]
@@ -380,18 +382,63 @@ func buildUserPrompt(ctx *Context) string {
 	}
 
 	// 系统状态
+	sb.WriteString("## ⏰ 系统状态\n\n")
 	sb.WriteString(fmt.Sprintf("时间: %s | 周期: #%d | 运行: %d分钟\n\n",
 		ctx.CurrentTime, ctx.CallCount, ctx.RuntimeMinutes))
 
+	// 交易状态追踪信息
+	sb.WriteString("## 📊 交易状态追踪\n\n")
+	if !ctx.LastTradeTime.IsZero() {
+		timeSinceLastTrade := time.Since(ctx.LastTradeTime)
+		totalSeconds := int(timeSinceLastTrade.Seconds())
+		minutesSinceLastTrade := totalSeconds / 60
+		secondsSinceLastTrade := totalSeconds % 60
+		hoursSinceLastTrade := minutesSinceLastTrade / 60
+		remainingMinutes := minutesSinceLastTrade % 60
+
+		var timeSinceLastTradeStr string
+		if hoursSinceLastTrade > 0 {
+			timeSinceLastTradeStr = fmt.Sprintf("%d小时%d分钟", hoursSinceLastTrade, remainingMinutes)
+		} else if minutesSinceLastTrade > 0 {
+			timeSinceLastTradeStr = fmt.Sprintf("%d分钟", minutesSinceLastTrade)
+		} else {
+			timeSinceLastTradeStr = fmt.Sprintf("%d秒", secondsSinceLastTrade)
+		}
+
+		sb.WriteString(fmt.Sprintf("距离上次交易: %s (时间: %s)\n",
+			timeSinceLastTradeStr, ctx.LastTradeTime.Format("2006-01-02 15:04:05")))
+	} else {
+		sb.WriteString("距离上次交易: 尚未进行任何交易\n")
+	}
+
+	if ctx.ConsecutiveWaitCycles > 0 {
+		waitDurationMinutes := ctx.ConsecutiveWaitCycles * 3 // 每个周期3分钟
+		waitDurationHours := waitDurationMinutes / 60
+		waitDurationMinutesRemainder := waitDurationMinutes % 60
+
+		var waitDurationStr string
+		if waitDurationHours > 0 {
+			waitDurationStr = fmt.Sprintf("%d小时%d分钟", waitDurationHours, waitDurationMinutesRemainder)
+		} else {
+			waitDurationStr = fmt.Sprintf("%d分钟", waitDurationMinutes)
+		}
+
+		sb.WriteString(fmt.Sprintf("连续等待: %d个周期 (%s)\n",
+			ctx.ConsecutiveWaitCycles, waitDurationStr))
+	}
+	sb.WriteString("\n")
+
 	// BTC 市场
 	if btcData, hasBTC := ctx.MarketDataMap["BTCUSDT"]; hasBTC {
-		sb.WriteString(fmt.Sprintf("BTC: %.2f (1h: %+.2f%%, 4h: %+.2f%%) | MACD: %.4f | RSI: %.2f\n\n",
+		sb.WriteString("## ₿ BTC市场概览\n\n")
+		sb.WriteString(fmt.Sprintf("价格: %.2f | 1h: %+.2f%% | 4h: %+.2f%% | MACD: %.4f | RSI: %.2f\n\n",
 			btcData.CurrentPrice, btcData.PriceChange1h, btcData.PriceChange4h,
 			btcData.CurrentMACD, btcData.CurrentRSI7))
 	}
 
 	// 账户
-	sb.WriteString(fmt.Sprintf("账户: 净值%.2f | 余额%.2f (%.1f%%) | 盈亏%+.2f%% | 保证金%.1f%% | 持仓%d个\n\n",
+	sb.WriteString("## 💰 账户信息\n\n")
+	sb.WriteString(fmt.Sprintf("净值: %.2f | 余额: %.2f (%.1f%%) | 盈亏: %+.2f%% | 保证金使用率: %.1f%% | 持仓数: %d个\n\n",
 		ctx.Account.TotalEquity,
 		ctx.Account.AvailableBalance,
 		(ctx.Account.AvailableBalance/ctx.Account.TotalEquity)*100,
@@ -401,7 +448,7 @@ func buildUserPrompt(ctx *Context) string {
 
 	// 持仓（完整市场数据）
 	if len(ctx.Positions) > 0 {
-		sb.WriteString("## 当前持仓\n")
+		sb.WriteString("## 📈 当前持仓\n\n")
 		for i, pos := range ctx.Positions {
 			// 计算持仓时长
 			holdingDuration := ""
@@ -429,11 +476,12 @@ func buildUserPrompt(ctx *Context) string {
 			}
 		}
 	} else {
+		sb.WriteString("## 📈 当前持仓\n\n")
 		sb.WriteString("当前持仓: 无\n\n")
 	}
 
 	// 候选币种（完整市场数据）
-	sb.WriteString(fmt.Sprintf("## 候选币种 (%d个)\n\n", len(ctx.MarketDataMap)))
+	sb.WriteString(fmt.Sprintf("## 🔍 候选币种 (%d个)\n\n", len(ctx.MarketDataMap)))
 	displayedCount := 0
 	for _, coin := range ctx.CandidateCoins {
 		marketData, hasData := ctx.MarketDataMap[coin.Symbol]
@@ -465,7 +513,8 @@ func buildUserPrompt(ctx *Context) string {
 		var perfData PerformanceData
 		if jsonData, err := json.Marshal(ctx.Performance); err == nil {
 			if err := json.Unmarshal(jsonData, &perfData); err == nil {
-				sb.WriteString(fmt.Sprintf("## 📊 夏普比率: %.2f\n\n", perfData.SharpeRatio))
+				sb.WriteString("## 📊 绩效指标\n\n")
+				sb.WriteString(fmt.Sprintf("夏普比率: %.2f\n\n", perfData.SharpeRatio))
 			}
 		}
 	}

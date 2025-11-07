@@ -21,6 +21,14 @@ type Database struct {
 	db *sql.DB
 }
 
+// GetDB 获取底层数据库连接
+func (d *Database) GetDB() (*sql.DB, error) {
+	if d.db == nil {
+		return nil, fmt.Errorf("数据库连接未初始化")
+	}
+	return d.db, nil
+}
+
 // NewDatabase 创建配置数据库
 func NewDatabase(dbPath string) (*Database, error) {
 	db, err := sql.Open("sqlite3", dbPath)
@@ -138,6 +146,59 @@ func (d *Database) createTables() error {
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		)`,
 
+		// 交易历史表
+		`CREATE TABLE IF NOT EXISTS trade_history (
+			-- 主键
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			
+			-- 关联信息
+			trader_id TEXT NOT NULL,
+			symbol TEXT NOT NULL,
+			
+			-- 交易信息
+			side TEXT NOT NULL,
+			action TEXT NOT NULL,
+			quantity REAL NOT NULL,
+			leverage INTEGER NOT NULL,
+			
+			-- 价格信息
+			entry_price REAL,
+			exit_price REAL,
+			execution_price REAL NOT NULL,
+			
+			-- 盈亏信息（仅平仓时计算）
+			pnl REAL,
+			pnl_pct REAL,
+			
+			-- 订单信息
+			order_id TEXT,
+			exchange_order_id TEXT,
+			exchange_trade_id TEXT,
+			exchange_hash TEXT,
+			
+			-- 手续费
+			fee REAL DEFAULT 0,
+			fee_token TEXT,
+			
+			-- 自动触发信息
+			is_auto_triggered BOOLEAN DEFAULT 0,
+			was_stop_loss BOOLEAN DEFAULT 0,
+			was_take_profit BOOLEAN DEFAULT 0,
+			
+			-- 上下文信息
+			cycle_number INTEGER,
+			source TEXT DEFAULT 'api',
+			
+			-- 时间信息（优先级：交易所时间戳 > 本地时间）
+			timestamp DATETIME NOT NULL,
+			exchange_timestamp DATETIME,
+			exchange_timestamp_ms INTEGER,
+			
+			-- 元数据
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)`,
+
 		// 触发器：自动更新 updated_at
 		`CREATE TRIGGER IF NOT EXISTS update_users_updated_at
 			AFTER UPDATE ON users
@@ -173,6 +234,26 @@ func (d *Database) createTables() error {
 			AFTER UPDATE ON system_config
 			BEGIN
 				UPDATE system_config SET updated_at = CURRENT_TIMESTAMP WHERE key = NEW.key;
+			END`,
+
+		// 交易历史表索引
+		`CREATE INDEX IF NOT EXISTS idx_trade_history_trader_id ON trade_history(trader_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_trade_history_symbol ON trade_history(symbol)`,
+		`CREATE INDEX IF NOT EXISTS idx_trade_history_timestamp ON trade_history(timestamp)`,
+		`CREATE INDEX IF NOT EXISTS idx_trade_history_cycle_number ON trade_history(cycle_number)`,
+		`CREATE INDEX IF NOT EXISTS idx_trade_history_action ON trade_history(action)`,
+		`CREATE INDEX IF NOT EXISTS idx_trade_history_exchange_timestamp_ms ON trade_history(exchange_timestamp_ms)`,
+		`CREATE INDEX IF NOT EXISTS idx_trade_history_order_id ON trade_history(order_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_trade_history_exchange_order_id ON trade_history(exchange_order_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_trade_history_exchange_hash ON trade_history(exchange_hash)`,
+		`CREATE INDEX IF NOT EXISTS idx_trade_history_trader_time ON trade_history(trader_id, timestamp DESC)`,
+		`CREATE INDEX IF NOT EXISTS idx_trade_history_trader_symbol ON trade_history(trader_id, symbol)`,
+
+		// 交易历史表触发器：自动更新 updated_at
+		`CREATE TRIGGER IF NOT EXISTS update_trade_history_updated_at
+			AFTER UPDATE ON trade_history
+			BEGIN
+				UPDATE trade_history SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
 			END`,
 	}
 

@@ -10,6 +10,7 @@ import (
 	"nofx/market"
 	"nofx/mcp"
 	"nofx/pool"
+	"nofx/trade_history"
 	"strconv"
 	"strings"
 	"time"
@@ -87,6 +88,8 @@ type AutoTrader struct {
 	trader                Trader // 使用Trader接口（支持多平台）
 	mcpClient             *mcp.Client
 	decisionLogger        *logger.DecisionLogger // 决策日志记录器
+	tradeHistoryService   trade_history.Service  // 交易历史服务（可选）
+	tradeHistoryEnabled   bool                   // 是否启用交易历史
 	initialBalance        float64
 	dailyPnL              float64
 	customPrompt          string   // 自定义交易策略prompt
@@ -103,10 +106,12 @@ type AutoTrader struct {
 	callCount             int                     // AI调用次数
 	positionFirstSeenTime map[string]int64        // 持仓首次出现时间 (symbol_side -> timestamp毫秒)
 	lastCyclePositions    []decision.PositionInfo // 上一个周期的持仓列表（用于检测自动触发的止盈止损）
+	lastTradeTime         time.Time               // 最后一次交易时间（开仓或平仓）
+	consecutiveWaitCycles int                     // 连续等待周期数（连续 wait 决策的次数）
 }
 
 // NewAutoTrader 创建自动交易器
-func NewAutoTrader(config AutoTraderConfig) (*AutoTrader, error) {
+func NewAutoTrader(config AutoTraderConfig, tradeHistoryService trade_history.Service) (*AutoTrader, error) {
 	// 设置默认值
 	if config.ID == "" {
 		config.ID = "default_trader"
@@ -203,6 +208,9 @@ func NewAutoTrader(config AutoTraderConfig) (*AutoTrader, error) {
 		systemPromptTemplate = "default" // 默认使用 default 模板
 	}
 
+	// 设置交易历史服务
+	tradeHistoryEnabled := tradeHistoryService != nil
+
 	return &AutoTrader{
 		id:                    config.ID,
 		name:                  config.Name,
@@ -212,6 +220,8 @@ func NewAutoTrader(config AutoTraderConfig) (*AutoTrader, error) {
 		trader:                trader,
 		mcpClient:             mcpClient,
 		decisionLogger:        decisionLogger,
+		tradeHistoryService:   tradeHistoryService,
+		tradeHistoryEnabled:   tradeHistoryEnabled,
 		initialBalance:        config.InitialBalance,
 		systemPromptTemplate:  systemPromptTemplate,
 		defaultCoins:          config.DefaultCoins,
@@ -221,6 +231,8 @@ func NewAutoTrader(config AutoTraderConfig) (*AutoTrader, error) {
 		callCount:             0,
 		isRunning:             false,
 		positionFirstSeenTime: make(map[string]int64),
+		lastTradeTime:         time.Time{}, // 初始化为零值，表示从未交易
+		consecutiveWaitCycles: 0,            // 初始化为0
 	}, nil
 }
 
@@ -234,6 +246,30 @@ func (at *AutoTrader) Run() error {
 	log.Printf("💰 初始余额: %.2f USDT", at.initialBalance)
 	log.Printf("⚙️  扫描间隔: %v", at.config.ScanInterval)
 	log.Println("🤖 AI将全权决定杠杆、仓位大小、止损止盈等参数")
+
+	// 启动交易历史定期同步（如果启用）
+	if at.tradeHistoryEnabled && at.tradeHistoryService != nil && at.exchange == "hyperliquid" {
+		// 获取同步间隔配置（默认10分钟）
+		syncInterval := 10 * time.Minute
+		// 这里可以从配置中读取，暂时使用默认值
+		
+		// 创建同步服务
+		syncService := trade_history.NewSyncService(at.tradeHistoryService, syncInterval)
+		
+		// 获取HyperliquidTrader的exchange实例
+		if hyperliquidTrader, ok := at.trader.(*HyperliquidTrader); ok {
+			// 获取wallet地址（需要从HyperliquidTrader获取）
+			walletAddr := hyperliquidTrader.walletAddr
+			provider := trade_history.NewHyperliquidFillsProvider(
+				hyperliquidTrader.exchange,
+				at.ctx,
+				walletAddr,
+			)
+			
+			// 启动定期同步（在goroutine中运行）
+			go syncService.Start(at.ctx, at.id, provider)
+		}
+	}
 
 	ticker := time.NewTicker(at.config.ScanInterval)
 	defer ticker.Stop()
@@ -353,6 +389,18 @@ func (at *AutoTrader) runCycle() error {
 					}
 				}
 
+				// 估算自动触发平仓的时间（使用持仓更新时间或当前时间减去一个周期作为近似值）
+				// 由于我们无法知道确切的平仓时间，使用持仓的UpdateTime（如果可用）或当前时间减去一个周期
+				closeTimestamp := time.Now()
+				if lastPos.UpdateTime > 0 {
+					// 使用持仓更新时间作为平仓时间的近似值（通常更接近实际平仓时间）
+					closeTimestamp = time.Unix(0, lastPos.UpdateTime*int64(time.Millisecond))
+				} else {
+					// 如果没有更新时间，使用当前时间减去一个周期（3分钟）作为近似值
+					// 假设平仓发生在周期开始前的某个时间点
+					closeTimestamp = time.Now().Add(-3 * time.Minute)
+				}
+
 				// 创建自动触发的close决策记录
 				closeAction := logger.DecisionAction{
 					Action:          "close_" + lastPos.Side,
@@ -360,7 +408,7 @@ func (at *AutoTrader) runCycle() error {
 					Quantity:        lastPos.Quantity,
 					Leverage:        lastPos.Leverage,
 					Price:           actualClosePrice, // 使用当前市场价格作为实际成交价
-					Timestamp:       time.Now(),
+					Timestamp:       closeTimestamp,   // 使用估算的平仓时间
 					Success:         true,
 					IsAutoTriggered: true, // 标记为自动触发
 					WasStopLoss:     wasStopLoss,
@@ -389,8 +437,37 @@ func (at *AutoTrader) runCycle() error {
 					Quantity:    lastPos.Quantity,
 					Leverage:    lastPos.Leverage,
 					WasStopLoss: wasStopLoss,
-					Timestamp:   time.Now(),
+					Timestamp:   closeTimestamp, // 使用估算的平仓时间
 				})
+
+				// 记录交易历史（异步，不阻塞）
+				if at.tradeHistoryEnabled && at.tradeHistoryService != nil {
+					go func() {
+						entryPrice := lastPos.EntryPrice
+						closePrice := actualClosePrice
+
+						record := &trade_history.TradeRecord{
+							TraderID:       at.id,
+							Symbol:         lastPos.Symbol,
+							Side:           lastPos.Side,
+							Action:         "close_" + lastPos.Side,
+							Quantity:       lastPos.Quantity,
+							Leverage:       lastPos.Leverage,
+							EntryPrice:     &entryPrice,
+							ExitPrice:      &closePrice,
+							ExecutionPrice: actualClosePrice,
+							IsAutoTriggered: true,
+							WasStopLoss:     wasStopLoss,
+							WasTakeProfit:   !wasStopLoss,
+							Source:         "api",
+							Timestamp:      time.Now(),
+						}
+
+						if err := at.tradeHistoryService.RecordAutoTriggeredClose(context.Background(), record); err != nil {
+							log.Printf("  ⚠️ 记录自动触发交易历史失败: %v", err)
+						}
+					}()
+				}
 			}
 		}
 	}
@@ -552,12 +629,48 @@ func (at *AutoTrader) runCycle() error {
 		record.Decisions = append(record.Decisions, actionRecord)
 	}
 
-	// 9. 保存决策记录
+	// 9. 更新交易状态追踪
+	// 检查是否有任何交易操作（开仓或平仓）成功执行
+	// 包括AI决策和自动触发的平仓
+	for _, actionRecord := range record.Decisions {
+		if actionRecord.Success {
+			action := actionRecord.Action
+			if action == "open_long" || action == "open_short" || action == "close_long" || action == "close_short" {
+				// 使用交易操作的时间戳（对于自动触发平仓，使用估算的平仓时间）
+				at.lastTradeTime = actionRecord.Timestamp
+				break
+			}
+		}
+	}
+
+	// 检查是否有自动触发的平仓
+	hasAutoTriggeredClose := len(ctx.AutoTriggeredCloses) > 0
+
+	// 检查所有决策是否都是 wait
+	allWait := true
+	for _, d := range decision.Decisions {
+		if d.Action != "wait" {
+			allWait = false
+			break
+		}
+	}
+
+	// 更新连续等待周期数
+	// 只有当所有决策都是 wait 且没有自动触发平仓时，才增加连续等待周期数
+	if allWait && len(decision.Decisions) > 0 && !hasAutoTriggeredClose {
+		// 所有决策都是 wait 且没有自动触发平仓，增加连续等待周期数
+		at.consecutiveWaitCycles++
+	} else {
+		// 有任何非 wait 的决策或自动触发平仓，重置连续等待周期数
+		at.consecutiveWaitCycles = 0
+	}
+
+	// 10. 保存决策记录
 	if err := at.decisionLogger.LogDecision(record); err != nil {
 		log.Printf("⚠ 保存决策记录失败: %v", err)
 	}
 
-	// 10. 更新lastCyclePositions为当前持仓（用于下一个周期检测持仓变化）
+	// 11. 更新lastCyclePositions为当前持仓（用于下一个周期检测持仓变化）
 	at.lastCyclePositions = currentPositionsCopy
 
 	return nil
@@ -696,6 +809,8 @@ func (at *AutoTrader) buildTradingContext() (*decision.Context, error) {
 		AltcoinLeverage:     at.config.AltcoinLeverage, // 使用配置的杠杆倍数
 		LogDir:              at.decisionLogger.GetLogDir(), // 设置日志目录路径
 		AutoTriggeredCloses: []decision.AutoTriggeredClose{}, // 初始化为空slice，将在检测到自动触发时填充
+		LastTradeTime:       at.lastTradeTime,         // 最后一次交易时间
+		ConsecutiveWaitCycles: at.consecutiveWaitCycles, // 连续等待周期数
 		Account: decision.AccountInfo{
 			TotalEquity:      totalEquity,
 			AvailableBalance: availableBalance,
@@ -807,6 +922,33 @@ func (at *AutoTrader) executeOpenLongWithRecord(decision *decision.Decision, act
 		log.Printf("  ⚠ 设置止盈失败: %v", err)
 	}
 
+	// 记录交易历史（异步，不阻塞）
+	if at.tradeHistoryEnabled && at.tradeHistoryService != nil {
+		go func() {
+			record := &trade_history.TradeRecord{
+				TraderID:       at.id,
+				Symbol:         decision.Symbol,
+				Side:           "long",
+				Action:         "open_long",
+				Quantity:       quantity,
+				Leverage:       decision.Leverage,
+				ExecutionPrice: actionRecord.Price,
+				Source:         "api",
+				Timestamp:      time.Now(),
+			}
+
+			// 尝试从订单获取交易所ID
+			if actionRecord.OrderID != 0 {
+				orderIDStr := fmt.Sprintf("%d", actionRecord.OrderID)
+				record.OrderID = &orderIDStr
+			}
+
+			if err := at.tradeHistoryService.RecordTrade(context.Background(), record); err != nil {
+				log.Printf("  ⚠️ 记录交易历史失败: %v", err)
+			}
+		}()
+	}
+
 	return nil
 }
 
@@ -885,10 +1027,37 @@ func (at *AutoTrader) executeOpenShortWithRecord(decision *decision.Decision, ac
 		log.Printf("  ⚠ 设置止盈失败: %v", err)
 	}
 
+	// 记录交易历史（异步，不阻塞）
+	if at.tradeHistoryEnabled && at.tradeHistoryService != nil {
+		go func() {
+			record := &trade_history.TradeRecord{
+				TraderID:       at.id,
+				Symbol:         decision.Symbol,
+				Side:           "short",
+				Action:         "open_short",
+				Quantity:       quantity,
+				Leverage:       decision.Leverage,
+				ExecutionPrice: actionRecord.Price,
+				Source:         "api",
+				Timestamp:      time.Now(),
+			}
+
+			// 尝试从订单获取交易所ID
+			if actionRecord.OrderID != 0 {
+				orderIDStr := fmt.Sprintf("%d", actionRecord.OrderID)
+				record.OrderID = &orderIDStr
+			}
+
+			if err := at.tradeHistoryService.RecordTrade(context.Background(), record); err != nil {
+				log.Printf("  ⚠️ 记录交易历史失败: %v", err)
+			}
+		}()
+	}
+
 	return nil
 }
 
-// executeCloseLongWithRecord 执行平多仓并记录详细信息
+	// executeCloseLongWithRecord 执行平多仓并记录详细信息
 func (at *AutoTrader) executeCloseLongWithRecord(decision *decision.Decision, actionRecord *logger.DecisionAction) error {
 	log.Printf("  🔄 平多仓: %s", decision.Symbol)
 
@@ -982,6 +1151,41 @@ func (at *AutoTrader) executeCloseLongWithRecord(decision *decision.Decision, ac
 	} else {
 		log.Printf("  ✓ 平仓成功（数量未记录，将使用开仓quantity），成交价格: %.2f", actionRecord.Price)
 	}
+
+	// 记录交易历史（异步，不阻塞）
+	if at.tradeHistoryEnabled && at.tradeHistoryService != nil {
+		go func() {
+			// 查找对应的开仓记录以获取entry_price
+			var entryPrice *float64
+			// EntryPrice not available in decision, will need to query from trade history
+			// For now, set to nil - can be filled later via sync
+
+			record := &trade_history.TradeRecord{
+				TraderID:       at.id,
+				Symbol:         decision.Symbol,
+				Side:           "long",
+				Action:         "close_long",
+				Quantity:       actionRecord.Quantity,
+				Leverage:       actionRecord.Leverage,
+				EntryPrice:     entryPrice,
+				ExitPrice:      &actionRecord.Price,
+				ExecutionPrice: actionRecord.Price,
+				Source:         "api",
+				Timestamp:      time.Now(),
+			}
+
+			// 尝试从订单获取交易所ID
+			if actionRecord.OrderID != 0 {
+				orderIDStr := fmt.Sprintf("%d", actionRecord.OrderID)
+				record.OrderID = &orderIDStr
+			}
+
+			if err := at.tradeHistoryService.RecordTrade(context.Background(), record); err != nil {
+				log.Printf("  ⚠️ 记录交易历史失败: %v", err)
+			}
+		}()
+	}
+
 	return nil
 }
 
@@ -1079,6 +1283,41 @@ func (at *AutoTrader) executeCloseShortWithRecord(decision *decision.Decision, a
 	} else {
 		log.Printf("  ✓ 平仓成功（数量未记录，将使用开仓quantity），成交价格: %.2f", actionRecord.Price)
 	}
+
+	// 记录交易历史（异步，不阻塞）
+	if at.tradeHistoryEnabled && at.tradeHistoryService != nil {
+		go func() {
+			// 查找对应的开仓记录以获取entry_price
+			var entryPrice *float64
+			// EntryPrice not available in decision, will need to query from trade history
+			// For now, set to nil - can be filled later via sync
+
+			record := &trade_history.TradeRecord{
+				TraderID:       at.id,
+				Symbol:         decision.Symbol,
+				Side:           "short",
+				Action:         "close_short",
+				Quantity:       actionRecord.Quantity,
+				Leverage:       actionRecord.Leverage,
+				EntryPrice:     entryPrice,
+				ExitPrice:      &actionRecord.Price,
+				ExecutionPrice: actionRecord.Price,
+				Source:         "api",
+				Timestamp:      time.Now(),
+			}
+
+			// 尝试从订单获取交易所ID
+			if actionRecord.OrderID != 0 {
+				orderIDStr := fmt.Sprintf("%d", actionRecord.OrderID)
+				record.OrderID = &orderIDStr
+			}
+
+			if err := at.tradeHistoryService.RecordTrade(context.Background(), record); err != nil {
+				log.Printf("  ⚠️ 记录交易历史失败: %v", err)
+			}
+		}()
+	}
+
 	return nil
 }
 

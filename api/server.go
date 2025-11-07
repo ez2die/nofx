@@ -9,6 +9,7 @@ import (
 	"nofx/config"
 	"nofx/decision"
 	"nofx/manager"
+	"nofx/trade_history"
 	"strconv"
 	"strings"
 	"time"
@@ -130,6 +131,11 @@ func (s *Server) setupRoutes() {
 			protected.GET("/decisions/latest", s.handleLatestDecisions)
 			protected.GET("/statistics", s.handleStatistics)
 			protected.GET("/performance", s.handlePerformance)
+
+			// 交易历史
+			protected.GET("/trade-history", s.handleGetTradeHistory)
+			protected.GET("/trade-history/statistics", s.handleGetTradeStatistics)
+			protected.POST("/trade-history/sync", s.handleSyncTradeHistory)
 		}
 	}
 }
@@ -1861,4 +1867,185 @@ func (s *Server) handleGetPublicTraderConfig(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+// handleGetTradeHistory 获取交易历史
+func (s *Server) handleGetTradeHistory(c *gin.Context) {
+	traderID := c.Query("trader_id")
+	symbol := c.Query("symbol")
+	action := c.Query("action")
+	side := c.Query("side")
+	startTimeStr := c.Query("start_time")
+	endTimeStr := c.Query("end_time")
+	cycleFromStr := c.Query("cycle_from")
+	cycleToStr := c.Query("cycle_to")
+	limitStr := c.DefaultQuery("limit", "100")
+	offsetStr := c.DefaultQuery("offset", "0")
+	orderBy := c.DefaultQuery("order_by", "timestamp DESC")
+
+	if traderID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "trader_id is required"})
+		return
+	}
+
+	// 获取交易历史服务
+	service := s.traderManager.GetTradeHistoryService()
+	if service == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "交易历史服务未启用"})
+		return
+	}
+
+	// 构建过滤器
+	filter := &trade_history.TradeRecordFilter{
+		TraderID: traderID,
+		Symbol:   symbol,
+		Action:   action,
+		Side:     side,
+		Limit:    100,
+		Offset:   0,
+		OrderBy:  orderBy,
+	}
+
+	// 解析limit和offset
+	if limit, err := strconv.Atoi(limitStr); err == nil && limit > 0 {
+		filter.Limit = limit
+	}
+	if offset, err := strconv.Atoi(offsetStr); err == nil && offset >= 0 {
+		filter.Offset = offset
+	}
+
+	// 解析时间范围
+	if startTimeStr != "" {
+		if startTime, err := time.Parse(time.RFC3339, startTimeStr); err == nil {
+			filter.StartTime = &startTime
+		}
+	}
+	if endTimeStr != "" {
+		if endTime, err := time.Parse(time.RFC3339, endTimeStr); err == nil {
+			filter.EndTime = &endTime
+		}
+	}
+
+	// 解析周期范围
+	if cycleFromStr != "" {
+		if cycleFrom, err := strconv.Atoi(cycleFromStr); err == nil {
+			filter.CycleFrom = &cycleFrom
+		}
+	}
+	if cycleToStr != "" {
+		if cycleTo, err := strconv.Atoi(cycleToStr); err == nil {
+			filter.CycleTo = &cycleTo
+		}
+	}
+
+	// 查询交易历史
+	records, total, err := service.GetTradeHistory(c.Request.Context(), filter)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("查询交易历史失败: %v", err),
+		})
+		return
+	}
+
+	// 计算分页信息
+	totalPages := 0
+	if filter.Limit > 0 {
+		totalPages = (total + filter.Limit - 1) / filter.Limit
+	}
+	currentPage := 1
+	if filter.Limit > 0 {
+		currentPage = (filter.Offset / filter.Limit) + 1
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"records":      records,
+		"total":        total,
+		"limit":        filter.Limit,
+		"offset":       filter.Offset,
+		"current_page": currentPage,
+		"total_pages":  totalPages,
+	})
+}
+
+// handleGetTradeStatistics 获取交易统计
+func (s *Server) handleGetTradeStatistics(c *gin.Context) {
+	traderID := c.Query("trader_id")
+	startTimeStr := c.Query("start_time")
+	endTimeStr := c.Query("end_time")
+
+	if traderID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "trader_id is required"})
+		return
+	}
+
+	// 获取交易历史服务
+	service := s.traderManager.GetTradeHistoryService()
+	if service == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "交易历史服务未启用"})
+		return
+	}
+
+	var startTime, endTime *time.Time
+	if startTimeStr != "" {
+		if st, err := time.Parse(time.RFC3339, startTimeStr); err == nil {
+			startTime = &st
+		}
+	}
+	if endTimeStr != "" {
+		if et, err := time.Parse(time.RFC3339, endTimeStr); err == nil {
+			endTime = &et
+		}
+	}
+
+	// 获取统计信息
+	stats, err := service.GetTradeStatistics(c.Request.Context(), traderID, startTime, endTime)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("获取交易统计失败: %v", err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, stats)
+}
+
+// handleSyncTradeHistory 手动触发同步
+func (s *Server) handleSyncTradeHistory(c *gin.Context) {
+	traderID := c.Query("trader_id")
+
+	if traderID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "trader_id is required"})
+		return
+	}
+
+	// 获取trader
+	trader, err := s.traderManager.GetTrader(traderID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "交易员不存在"})
+		return
+	}
+
+	// 获取交易历史服务
+	service := s.traderManager.GetTradeHistoryService()
+	if service == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "交易历史服务未启用"})
+		return
+	}
+
+	// 获取trader的exchange信息以创建ExchangeFillsProvider
+	exchangeType := trader.GetExchange()
+	if exchangeType != "hyperliquid" {
+		c.JSON(http.StatusNotImplemented, gin.H{
+			"error": fmt.Sprintf("暂不支持 %s 交易所的同步功能", exchangeType),
+		})
+		return
+	}
+
+	// 同步功能需要从trader获取exchange实例
+	// 这里暂时返回提示，因为需要从trader内部获取exchange实例
+	// 实际实现需要添加GetExchange()方法到AutoTrader或Trader接口
+	// 或者通过TraderManager直接调用SyncService
+	c.JSON(http.StatusNotImplemented, gin.H{
+		"error": "同步功能需要从trader获取exchange实例，此功能待完善。建议使用定期自动同步功能。",
+	})
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"nofx/config"
+	"nofx/trade_history"
 	"nofx/trader"
 	"sort"
 	"strconv"
@@ -26,6 +27,7 @@ type TraderManager struct {
 	traders          map[string]*trader.AutoTrader // key: trader ID
 	competitionCache *CompetitionCache
 	lastReloadTime   map[string]time.Time // key: trader ID, value: 上次重新加载时间
+	tradeHistoryService trade_history.Service // 交易历史服务（可选）
 	mu               sync.RWMutex
 }
 
@@ -37,8 +39,48 @@ func NewTraderManager() *TraderManager {
 		competitionCache: &CompetitionCache{
 			data: make(map[string]interface{}),
 		},
+		tradeHistoryService: nil, // 默认不启用，需要手动初始化
 	}
 }
+
+// SetTradeHistoryService 设置交易历史服务
+func (tm *TraderManager) SetTradeHistoryService(service trade_history.Service) {
+	tm.mu.Lock()
+	defer tm.mu.Unlock()
+	tm.tradeHistoryService = service
+}
+
+// GetTradeHistoryService 获取交易历史服务
+func (tm *TraderManager) GetTradeHistoryService() trade_history.Service {
+	tm.mu.RLock()
+	defer tm.mu.RUnlock()
+	return tm.tradeHistoryService
+}
+
+// InitTradeHistoryService 初始化交易历史服务（从数据库）
+func (tm *TraderManager) InitTradeHistoryService(database *config.Database) error {
+	// 检查是否启用交易历史
+	enabled, _ := database.GetSystemConfig("trade_history_enabled")
+	if enabled != "true" {
+		log.Printf("ℹ️ 交易历史功能未启用")
+		return nil
+	}
+
+	// 获取数据库连接（需要从Database获取）
+	db, err := database.GetDB()
+	if err != nil {
+		return fmt.Errorf("获取数据库连接失败: %w", err)
+	}
+
+	// 创建Repository和Service
+	repo := trade_history.NewRepository(db)
+	service := trade_history.NewService(repo)
+
+	tm.SetTradeHistoryService(service)
+	log.Printf("✅ 交易历史服务已初始化")
+	return nil
+}
+
 
 // LoadTradersFromDatabase 从数据库加载所有交易员到内存
 func (tm *TraderManager) LoadTradersFromDatabase(database *config.Database) error {
@@ -287,8 +329,8 @@ func (tm *TraderManager) addTraderFromDB(traderCfg *config.TraderRecord, aiModel
 		traderConfig.DeepSeekKey = aiModelCfg.APIKey
 	}
 
-	// 创建trader实例
-	at, err := trader.NewAutoTrader(traderConfig)
+	// 创建trader实例（传递交易历史服务）
+	at, err := trader.NewAutoTrader(traderConfig, tm.tradeHistoryService)
 	if err != nil {
 		return fmt.Errorf("创建trader失败: %w", err)
 	}
@@ -393,8 +435,8 @@ func (tm *TraderManager) AddTraderFromDB(traderCfg *config.TraderRecord, aiModel
 		traderConfig.DeepSeekKey = aiModelCfg.APIKey
 	}
 
-	// 创建trader实例
-	at, err := trader.NewAutoTrader(traderConfig)
+	// 创建trader实例（传递交易历史服务）
+	at, err := trader.NewAutoTrader(traderConfig, tm.tradeHistoryService)
 	if err != nil {
 		return fmt.Errorf("创建trader失败: %w", err)
 	}
@@ -1017,8 +1059,8 @@ func (tm *TraderManager) loadSingleTrader(traderCfg *config.TraderRecord, aiMode
 		traderConfig.DeepSeekKey = aiModelCfg.APIKey
 	}
 
-	// 创建trader实例
-	at, err := trader.NewAutoTrader(traderConfig)
+	// 创建trader实例（传递交易历史服务）
+	at, err := trader.NewAutoTrader(traderConfig, tm.tradeHistoryService)
 	if err != nil {
 		return fmt.Errorf("创建trader失败: %w", err)
 	}
