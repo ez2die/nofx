@@ -229,15 +229,35 @@ func (s *service) convertFillToRecord(traderID string, fill *ExchangeFill) *Trad
 		Source:         "sync",
 	}
 
+	// 设置Action（确保Side是"long"或"short"）
+	// 如果Side为空或不是预期的值，尝试根据其他信息推断
+	side := fill.Side
+	if side != "long" && side != "short" {
+		// 如果Side不是标准值，根据StartPosition推断
+		if fill.StartPosition != nil {
+			if *fill.StartPosition > 0 {
+				side = "long"
+			} else if *fill.StartPosition < 0 {
+				side = "short"
+			}
+		}
+		// 如果仍然无法确定，使用默认值（但应该避免这种情况）
+		if side != "long" && side != "short" {
+			log.Printf("⚠️ 警告：无法确定Side，使用默认值long (trader_id=%s, symbol=%s, dir=%s)", traderID, fill.Symbol, fill.Dir)
+			side = "long" // 默认值
+		}
+	}
+	record.Side = side
+	
 	// 设置Action
 	if fill.Dir == "Open" {
-		if fill.Side == "long" {
+		if side == "long" {
 			record.Action = "open_long"
 		} else {
 			record.Action = "open_short"
 		}
 	} else {
-		if fill.Side == "long" {
+		if side == "long" {
 			record.Action = "close_long"
 		} else {
 			record.Action = "close_short"

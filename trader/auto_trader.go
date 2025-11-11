@@ -100,8 +100,8 @@ type AutoTrader struct {
 	lastResetTime         time.Time
 	stopUntil             time.Time
 	isRunning             bool
-	ctx                   context.Context    // 用于控制goroutine停止的context
-	cancel                context.CancelFunc // 用于取消context的函数
+	ctx                   context.Context         // 用于控制goroutine停止的context
+	cancel                context.CancelFunc      // 用于取消context的函数
 	startTime             time.Time               // 系统启动时间
 	callCount             int                     // AI调用次数
 	positionFirstSeenTime map[string]int64        // 持仓首次出现时间 (symbol_side -> timestamp毫秒)
@@ -232,7 +232,7 @@ func NewAutoTrader(config AutoTraderConfig, tradeHistoryService trade_history.Se
 		isRunning:             false,
 		positionFirstSeenTime: make(map[string]int64),
 		lastTradeTime:         time.Time{}, // 初始化为零值，表示从未交易
-		consecutiveWaitCycles: 0,            // 初始化为0
+		consecutiveWaitCycles: 0,           // 初始化为0
 	}, nil
 }
 
@@ -240,7 +240,7 @@ func NewAutoTrader(config AutoTraderConfig, tradeHistoryService trade_history.Se
 func (at *AutoTrader) Run() error {
 	// 创建context，用于控制goroutine的停止
 	at.ctx, at.cancel = context.WithCancel(context.Background())
-	
+
 	at.isRunning = true
 	log.Println("🚀 AI驱动自动交易系统启动")
 	log.Printf("💰 初始余额: %.2f USDT", at.initialBalance)
@@ -252,10 +252,10 @@ func (at *AutoTrader) Run() error {
 		// 获取同步间隔配置（默认10分钟）
 		syncInterval := 10 * time.Minute
 		// 这里可以从配置中读取，暂时使用默认值
-		
+
 		// 创建同步服务
 		syncService := trade_history.NewSyncService(at.tradeHistoryService, syncInterval)
-		
+
 		// 获取HyperliquidTrader的exchange实例
 		if hyperliquidTrader, ok := at.trader.(*HyperliquidTrader); ok {
 			// 获取wallet地址（需要从HyperliquidTrader获取）
@@ -265,7 +265,7 @@ func (at *AutoTrader) Run() error {
 				at.ctx,
 				walletAddr,
 			)
-			
+
 			// 启动定期同步（在goroutine中运行）
 			go syncService.Start(at.ctx, at.id, provider)
 		}
@@ -447,20 +447,20 @@ func (at *AutoTrader) runCycle() error {
 						closePrice := actualClosePrice
 
 						record := &trade_history.TradeRecord{
-							TraderID:       at.id,
-							Symbol:         lastPos.Symbol,
-							Side:           lastPos.Side,
-							Action:         "close_" + lastPos.Side,
-							Quantity:       lastPos.Quantity,
-							Leverage:       lastPos.Leverage,
-							EntryPrice:     &entryPrice,
-							ExitPrice:      &closePrice,
-							ExecutionPrice: actualClosePrice,
+							TraderID:        at.id,
+							Symbol:          lastPos.Symbol,
+							Side:            lastPos.Side,
+							Action:          "close_" + lastPos.Side,
+							Quantity:        lastPos.Quantity,
+							Leverage:        lastPos.Leverage,
+							EntryPrice:      &entryPrice,
+							ExitPrice:       &closePrice,
+							ExecutionPrice:  actualClosePrice,
 							IsAutoTriggered: true,
 							WasStopLoss:     wasStopLoss,
 							WasTakeProfit:   !wasStopLoss,
-							Source:         "api",
-							Timestamp:      time.Now(),
+							Source:          "api",
+							Timestamp:       time.Now(),
 						}
 
 						if err := at.tradeHistoryService.RecordAutoTriggeredClose(context.Background(), record); err != nil {
@@ -773,6 +773,20 @@ func (at *AutoTrader) buildTradingContext() (*decision.Context, error) {
 		}
 	}
 
+	// 为当前持仓构建入场快照信息
+	entrySnapshots := make(map[string]*decision.PositionEntrySnapshot)
+	for _, pos := range positionInfos {
+		snapshot, err := at.getPositionEntrySnapshot(pos.Symbol, pos.Side)
+		if err != nil {
+			log.Printf("⚠️  获取持仓入场快照失败 %s %s: %v", pos.Symbol, pos.Side, err)
+			continue
+		}
+		if snapshot != nil {
+			key := fmt.Sprintf("%s_%s", pos.Symbol, pos.Side)
+			entrySnapshots[key] = snapshot
+		}
+	}
+
 	// 3. 获取交易员的候选币种池
 	candidateCoins, err := at.getCandidateCoins()
 	if err != nil {
@@ -802,15 +816,15 @@ func (at *AutoTrader) buildTradingContext() (*decision.Context, error) {
 
 	// 6. 构建上下文
 	ctx := &decision.Context{
-		CurrentTime:         time.Now().Format("2006-01-02 15:04:05"),
-		RuntimeMinutes:      int(time.Since(at.startTime).Minutes()),
-		CallCount:           at.callCount,
-		BTCETHLeverage:      at.config.BTCETHLeverage,  // 使用配置的杠杆倍数
-		AltcoinLeverage:     at.config.AltcoinLeverage, // 使用配置的杠杆倍数
-		LogDir:              at.decisionLogger.GetLogDir(), // 设置日志目录路径
-		AutoTriggeredCloses: []decision.AutoTriggeredClose{}, // 初始化为空slice，将在检测到自动触发时填充
-		LastTradeTime:       at.lastTradeTime,         // 最后一次交易时间
-		ConsecutiveWaitCycles: at.consecutiveWaitCycles, // 连续等待周期数
+		CurrentTime:           time.Now().Format("2006-01-02 15:04:05"),
+		RuntimeMinutes:        int(time.Since(at.startTime).Minutes()),
+		CallCount:             at.callCount,
+		BTCETHLeverage:        at.config.BTCETHLeverage,        // 使用配置的杠杆倍数
+		AltcoinLeverage:       at.config.AltcoinLeverage,       // 使用配置的杠杆倍数
+		LogDir:                at.decisionLogger.GetLogDir(),   // 设置日志目录路径
+		AutoTriggeredCloses:   []decision.AutoTriggeredClose{}, // 初始化为空slice，将在检测到自动触发时填充
+		LastTradeTime:         at.lastTradeTime,                // 最后一次交易时间
+		ConsecutiveWaitCycles: at.consecutiveWaitCycles,        // 连续等待周期数
 		Account: decision.AccountInfo{
 			TotalEquity:      totalEquity,
 			AvailableBalance: availableBalance,
@@ -820,12 +834,103 @@ func (at *AutoTrader) buildTradingContext() (*decision.Context, error) {
 			MarginUsedPct:    marginUsedPct,
 			PositionCount:    len(positionInfos),
 		},
-		Positions:      positionInfos,
-		CandidateCoins: candidateCoins,
-		Performance:    performance, // 添加历史表现分析
+		Positions:              positionInfos,
+		PositionEntrySnapshots: entrySnapshots,
+		CandidateCoins:         candidateCoins,
+		Performance:            performance, // 添加历史表现分析
 	}
 
 	return ctx, nil
+}
+
+// getPositionEntrySnapshot 从历史决策日志中提取指定持仓的建仓快照
+func (at *AutoTrader) getPositionEntrySnapshot(symbol, side string) (*decision.PositionEntrySnapshot, error) {
+	records, err := at.decisionLogger.GetLatestRecords(500)
+	if err != nil {
+		return nil, err
+	}
+
+	targetAction := ""
+	switch strings.ToLower(side) {
+	case "long":
+		targetAction = "open_long"
+	case "short":
+		targetAction = "open_short"
+	default:
+		return nil, fmt.Errorf("未知持仓方向: %s", side)
+	}
+
+	for i := len(records) - 1; i >= 0; i-- {
+		record := records[i]
+		for j := len(record.Decisions) - 1; j >= 0; j-- {
+			action := record.Decisions[j]
+			if !action.Success {
+				continue
+			}
+			if !strings.EqualFold(action.Symbol, symbol) {
+				continue
+			}
+			if action.Action != targetAction {
+				continue
+			}
+
+			snapshot := &decision.PositionEntrySnapshot{
+				Symbol:        symbol,
+				Side:          side,
+				CycleNumber:   record.CycleNumber,
+				Timestamp:     record.Timestamp.Format("2006-01-02 15:04:05"),
+				EntryPrice:    action.Price,
+				DecisionIndex: j,
+			}
+
+			// 解析决策JSON以获取更详细的入场信息
+			if record.DecisionJSON != "" {
+				var decisions []decision.Decision
+				if err := json.Unmarshal([]byte(record.DecisionJSON), &decisions); err != nil {
+					log.Printf("⚠️  解析决策JSON失败(%s_%s): %v", symbol, side, err)
+				} else {
+					for idx, d := range decisions {
+						if d.Action != targetAction {
+							continue
+						}
+						if !strings.EqualFold(d.Symbol, symbol) {
+							continue
+						}
+						snapshot.StopLoss = d.StopLoss
+						snapshot.TakeProfit = d.TakeProfit
+						snapshot.Confidence = d.Confidence
+						snapshot.RiskUSD = d.RiskUSD
+						snapshot.Reasoning = d.Reasoning
+						snapshot.DecisionIndex = idx
+						break
+					}
+				}
+			}
+
+			// 保存思维链片段（截断以避免过长）
+			if record.CoTTrace != "" {
+				snapshot.CotTrace = truncateText(record.CoTTrace, 1200)
+			}
+
+			return snapshot, nil
+		}
+	}
+
+	return nil, nil
+}
+
+// truncateText 将文本截断到指定长度（保留中文/英文字符）
+func truncateText(s string, maxLen int) string {
+	s = strings.TrimSpace(s)
+	if maxLen <= 0 {
+		return s
+	}
+	runes := []rune(s)
+	if len(runes) <= maxLen {
+		return s
+	}
+	trimmed := strings.TrimSpace(string(runes[:maxLen]))
+	return trimmed + "…"
 }
 
 // executeDecisionWithRecord 执行AI决策并记录详细信息
@@ -1057,7 +1162,7 @@ func (at *AutoTrader) executeOpenShortWithRecord(decision *decision.Decision, ac
 	return nil
 }
 
-	// executeCloseLongWithRecord 执行平多仓并记录详细信息
+// executeCloseLongWithRecord 执行平多仓并记录详细信息
 func (at *AutoTrader) executeCloseLongWithRecord(decision *decision.Decision, actionRecord *logger.DecisionAction) error {
 	log.Printf("  🔄 平多仓: %s", decision.Symbol)
 

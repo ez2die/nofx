@@ -54,12 +54,50 @@ func convertHyperliquidFillToExchangeFill(fill hyperliquid.Fill) (ExchangeFill, 
 		return exchangeFill, fmt.Errorf("Fill.Dir为空")
 	}
 
-	// 设置Side（Side字段）
-	if fill.Side != "" {
-		exchangeFill.Side = fill.Side
-	} else {
-		// 默认值：根据Dir推断
-		exchangeFill.Side = ""
+	// 设置Side（根据StartPosition判断：正数为long，负数为short）
+	// Hyperliquid的Side字段是"A"或"B"（订单类型），不是仓位方向
+	// 我们需要根据StartPosition来判断是long还是short
+	if fill.StartPosition != "" {
+		startPos, err := strconv.ParseFloat(fill.StartPosition, 64)
+		if err == nil {
+			if startPos > 0 {
+				exchangeFill.Side = "long"
+			} else if startPos < 0 {
+				exchangeFill.Side = "short"
+			} else {
+				// 如果StartPosition为0，可能是开仓，根据Dir推断
+				if fill.Dir == "Open" {
+					// 开仓时，如果数量为正，通常是long；如果为负，通常是short
+					if fill.Size != "" {
+						sz, err := strconv.ParseFloat(fill.Size, 64)
+						if err == nil && sz > 0 {
+							exchangeFill.Side = "long"
+						} else if err == nil && sz < 0 {
+							exchangeFill.Side = "short"
+						}
+					}
+				} else {
+					// 平仓时，根据平仓前的持仓方向推断
+					// 如果ClosedPnl为正，可能是做多盈利；如果为负，可能是做空盈利
+					// 但这不够准确，最好保留原Side字段信息用于调试
+					exchangeFill.Side = "" // 需要根据历史持仓推断
+				}
+			}
+		}
+	}
+	
+	// 如果仍然无法确定Side，尝试从StartPosition推断
+	if exchangeFill.Side == "" && fill.StartPosition != "" {
+		startPos, err := strconv.ParseFloat(fill.StartPosition, 64)
+		if err == nil && startPos != 0 {
+			// 如果持仓为正（long），平仓时价格上升盈利，价格下降亏损
+			// 如果持仓为负（short），平仓时价格下降盈利，价格上升亏损
+			if startPos > 0 {
+				exchangeFill.Side = "long"
+			} else {
+				exchangeFill.Side = "short"
+			}
+		}
 	}
 
 	// 设置数量（Size字段，json:"sz"）

@@ -121,6 +121,12 @@ check_code_changes() {
             exit 1
         fi
     fi
+    
+    # 检查当前git分支和prompts目录
+    current_branch=$(git branch --show-current 2>/dev/null || echo "unknown")
+    print_info "  📌 当前Git分支: $current_branch"
+    print_info "  ⚠️  注意: Docker使用volume挂载 ./prompts 目录"
+    print_info "      Prompts会在容器启动时加载，切换分支后需要重启容器才能生效"
 }
 
 # ------------------------------------------------------------------------

@@ -27,6 +27,22 @@ type PositionInfo struct {
 	UpdateTime       int64   `json:"update_time"` // 持仓更新时间戳（毫秒）
 }
 
+// PositionEntrySnapshot 持仓入场快照（建仓时的核心信息）
+type PositionEntrySnapshot struct {
+	Symbol        string  `json:"symbol"`
+	Side          string  `json:"side"`
+	CycleNumber   int     `json:"cycle_number"`
+	Timestamp     string  `json:"timestamp"`
+	EntryPrice    float64 `json:"entry_price"`
+	StopLoss      float64 `json:"stop_loss"`
+	TakeProfit    float64 `json:"take_profit"`
+	Confidence    int     `json:"confidence"`
+	RiskUSD       float64 `json:"risk_usd"`
+	Reasoning     string  `json:"reasoning"`
+	CotTrace      string  `json:"cot_trace"`
+	DecisionIndex int     `json:"decision_index"` // 在决策数组中的索引（用于定位）
+}
+
 // AccountInfo 账户信息
 type AccountInfo struct {
 	TotalEquity      float64 `json:"total_equity"`      // 账户净值
@@ -56,33 +72,34 @@ type OITopData struct {
 
 // AutoTriggeredClose 自动触发的平仓信息（止盈/止损）
 type AutoTriggeredClose struct {
-	Symbol      string  `json:"symbol"`       // 币种
-	Side        string  `json:"side"`         // "long" 或 "short"
-	EntryPrice  float64 `json:"entry_price"`  // 开仓价格
-	ClosePrice  float64 `json:"close_price"`  // 平仓价格（成交价）
-	Quantity    float64 `json:"quantity"`     // 数量
-	Leverage    int     `json:"leverage"`     // 杠杆
-	WasStopLoss bool    `json:"was_stop_loss"` // 是否为止损（true=止损, false=止盈）
-	Timestamp   time.Time `json:"timestamp"`   // 触发时间
+	Symbol      string    `json:"symbol"`        // 币种
+	Side        string    `json:"side"`          // "long" 或 "short"
+	EntryPrice  float64   `json:"entry_price"`   // 开仓价格
+	ClosePrice  float64   `json:"close_price"`   // 平仓价格（成交价）
+	Quantity    float64   `json:"quantity"`      // 数量
+	Leverage    int       `json:"leverage"`      // 杠杆
+	WasStopLoss bool      `json:"was_stop_loss"` // 是否为止损（true=止损, false=止盈）
+	Timestamp   time.Time `json:"timestamp"`     // 触发时间
 }
 
 // Context 交易上下文（传递给AI的完整信息）
 type Context struct {
-	CurrentTime         string                  `json:"current_time"`
-	RuntimeMinutes      int                     `json:"runtime_minutes"`
-	CallCount           int                     `json:"call_count"`
-	Account             AccountInfo             `json:"account"`
-	Positions           []PositionInfo          `json:"positions"`
-	CandidateCoins      []CandidateCoin         `json:"candidate_coins"`
-	AutoTriggeredCloses []AutoTriggeredClose    `json:"-"` // 本周期检测到的自动触发平仓（不序列化，但用于构建prompt）
-	MarketDataMap       map[string]*market.Data `json:"-"` // 不序列化，但内部使用
-	OITopDataMap        map[string]*OITopData   `json:"-"` // OI Top数据映射
-	Performance         interface{}             `json:"-"` // 历史表现分析（logger.PerformanceAnalysis）
-	BTCETHLeverage      int                     `json:"-"` // BTC/ETH杠杆倍数（从配置读取）
-	AltcoinLeverage     int                     `json:"-"` // 山寨币杠杆倍数（从配置读取）
-	LogDir              string                  `json:"-"` // 决策日志目录路径（用于读取历史思维链）
-	LastTradeTime       time.Time               `json:"-"` // 最后一次交易时间（开仓或平仓）
-	ConsecutiveWaitCycles int                   `json:"-"` // 连续等待周期数（连续 wait 决策的次数）
+	CurrentTime            string                            `json:"current_time"`
+	RuntimeMinutes         int                               `json:"runtime_minutes"`
+	CallCount              int                               `json:"call_count"`
+	Account                AccountInfo                       `json:"account"`
+	Positions              []PositionInfo                    `json:"positions"`
+	PositionEntrySnapshots map[string]*PositionEntrySnapshot `json:"-"`
+	CandidateCoins         []CandidateCoin                   `json:"candidate_coins"`
+	AutoTriggeredCloses    []AutoTriggeredClose              `json:"-"` // 本周期检测到的自动触发平仓（不序列化，但用于构建prompt）
+	MarketDataMap          map[string]*market.Data           `json:"-"` // 不序列化，但内部使用
+	OITopDataMap           map[string]*OITopData             `json:"-"` // OI Top数据映射
+	Performance            interface{}                       `json:"-"` // 历史表现分析（logger.PerformanceAnalysis）
+	BTCETHLeverage         int                               `json:"-"` // BTC/ETH杠杆倍数（从配置读取）
+	AltcoinLeverage        int                               `json:"-"` // 山寨币杠杆倍数（从配置读取）
+	LogDir                 string                            `json:"-"` // 决策日志目录路径（用于读取历史思维链）
+	LastTradeTime          time.Time                         `json:"-"` // 最后一次交易时间（开仓或平仓）
+	ConsecutiveWaitCycles  int                               `json:"-"` // 连续等待周期数（连续 wait 决策的次数）
 }
 
 // Decision AI的交易决策
@@ -363,7 +380,7 @@ func buildUserPrompt(ctx *Context) string {
 				triggerType = "止损"
 				emoji = "🛑"
 			}
-			
+
 			// 计算盈亏
 			var pnlPercent float64
 			if autoClose.Side == "long" {
@@ -373,7 +390,7 @@ func buildUserPrompt(ctx *Context) string {
 			}
 
 			sb.WriteString(fmt.Sprintf("%s **%s %s** 被自动%s触发平仓\n", emoji, autoClose.Symbol, strings.ToUpper(autoClose.Side), triggerType))
-			sb.WriteString(fmt.Sprintf("  - 开仓价: %.4f | 平仓价: %.4f | 盈亏: %+.2f%%\n", 
+			sb.WriteString(fmt.Sprintf("  - 开仓价: %.4f | 平仓价: %.4f | 盈亏: %+.2f%%\n",
 				autoClose.EntryPrice, autoClose.ClosePrice, pnlPercent))
 			sb.WriteString(fmt.Sprintf("  - 数量: %.4f | 杠杆: %dx | 触发时间: %s\n\n",
 				autoClose.Quantity, autoClose.Leverage, autoClose.Timestamp.Format("15:04:05")))
@@ -474,6 +491,29 @@ func buildUserPrompt(ctx *Context) string {
 				sb.WriteString(market.Format(marketData))
 				sb.WriteString("\n")
 			}
+
+			// 入场快照信息
+			if ctx.PositionEntrySnapshots != nil {
+				posKey := fmt.Sprintf("%s_%s", pos.Symbol, pos.Side)
+				if snapshot, ok := ctx.PositionEntrySnapshots[posKey]; ok && snapshot != nil {
+					sb.WriteString(fmt.Sprintf("**入场快照**（Cycle #%d，时间 %s）\n", snapshot.CycleNumber, snapshot.Timestamp))
+					priceLine := fmt.Sprintf("- 入场价 %.4f", snapshot.EntryPrice)
+					if snapshot.StopLoss > 0 || snapshot.TakeProfit > 0 {
+						priceLine = fmt.Sprintf("%s | 止损 %.4f | 止盈 %.4f", priceLine, snapshot.StopLoss, snapshot.TakeProfit)
+					}
+					sb.WriteString(priceLine + "\n")
+					if snapshot.Confidence > 0 || snapshot.RiskUSD > 0 {
+						sb.WriteString(fmt.Sprintf("- 置信度 %d | 风险敞口 %.2f USD\n", snapshot.Confidence, snapshot.RiskUSD))
+					}
+					if snapshot.Reasoning != "" {
+						sb.WriteString(fmt.Sprintf("- 入场理由：%s\n", truncateForPrompt(snapshot.Reasoning, 280)))
+					}
+					if snapshot.CotTrace != "" {
+						sb.WriteString(fmt.Sprintf("- 思维链摘录：%s\n", truncateForPrompt(snapshot.CotTrace, 400)))
+					}
+					sb.WriteString("\n")
+				}
+			}
 		}
 	} else {
 		sb.WriteString("## 📈 当前持仓\n\n")
@@ -523,6 +563,19 @@ func buildUserPrompt(ctx *Context) string {
 	sb.WriteString("现在请分析并输出决策（思维链 + JSON）\n")
 
 	return sb.String()
+}
+
+// truncateForPrompt 截断文本以适配提示输出
+func truncateForPrompt(s string, maxRunes int) string {
+	s = strings.TrimSpace(s)
+	if maxRunes <= 0 || s == "" {
+		return s
+	}
+	runes := []rune(s)
+	if len(runes) <= maxRunes {
+		return s
+	}
+	return strings.TrimSpace(string(runes[:maxRunes])) + "…"
 }
 
 // parseFullDecisionResponse 解析AI的完整决策响应
