@@ -2,6 +2,7 @@ package decision
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"nofx/logger"
@@ -95,9 +96,12 @@ type Context struct {
 	MarketDataMap          map[string]*market.Data           `json:"-"` // 不序列化，但内部使用
 	OITopDataMap           map[string]*OITopData             `json:"-"` // OI Top数据映射
 	Performance            interface{}                       `json:"-"` // 历史表现分析（logger.PerformanceAnalysis）
+	StreakStats            interface{}                       `json:"-"` // 连续统计（trade_analytics.StreakStatistics，可选）
+	RiskMetrics            interface{}                       `json:"-"` // 风险指标（trade_analytics.RiskMetrics，可选）
 	BTCETHLeverage         int                               `json:"-"` // BTC/ETH杠杆倍数（从配置读取）
 	AltcoinLeverage        int                               `json:"-"` // 山寨币杠杆倍数（从配置读取）
 	LogDir                 string                            `json:"-"` // 决策日志目录路径（用于读取历史思维链）
+	HistoryDecisionCycles  int                               `json:"-"` // 历史决策周期数（0=禁用，默认2）
 	LastTradeTime          time.Time                         `json:"-"` // 最后一次交易时间（开仓或平仓）
 	ConsecutiveWaitCycles  int                               `json:"-"` // 连续等待周期数（连续 wait 决策的次数）
 }
@@ -140,23 +144,50 @@ func GetFullDecisionWithCustomPrompt(ctx *Context, mcpClient *mcp.Client, custom
 	systemPrompt := buildSystemPromptWithCustom(ctx.Account.TotalEquity, ctx.BTCETHLeverage, ctx.AltcoinLeverage, customPrompt, overrideBase, templateName)
 	userPrompt := buildUserPrompt(ctx)
 
-	// 3. 调用AI API（使用 system + user prompt）
-	log.Println("🚀 正在调用AI API进行决策分析...")
-	aiResponse, err := mcpClient.CallWithMessages(systemPrompt, userPrompt)
-	if err != nil {
-		return nil, fmt.Errorf("调用AI API失败: %w", err)
+	// 3. 调用AI API（使用 system + user prompt）并在缺失JSON时进行纠错重试
+	const maxDecisionAttempts = 2
+	retryPrompt := userPrompt
+	var lastDecision *FullDecision
+	var lastErr error
+
+	for attempt := 1; attempt <= maxDecisionAttempts; attempt++ {
+		if attempt > 1 {
+			log.Printf("🔁 正在重新请求AI决策 (尝试 %d/%d)...", attempt, maxDecisionAttempts)
+		} else {
+			log.Println("🚀 正在调用AI API进行决策分析...")
+		}
+
+		aiResponse, err := mcpClient.CallWithMessages(systemPrompt, retryPrompt)
+		if err != nil {
+			lastErr = fmt.Errorf("调用AI API失败: %w", err)
+			continue
+		}
+
+		decision, parseErr := parseFullDecisionResponse(aiResponse, ctx.Account.TotalEquity, ctx.BTCETHLeverage, ctx.AltcoinLeverage)
+		if parseErr != nil {
+			lastDecision = decision
+			lastErr = fmt.Errorf("解析AI响应失败: %w", parseErr)
+
+			if errors.Is(parseErr, ErrDecisionJSONNotFound) && attempt < maxDecisionAttempts {
+				log.Println("⚠️  AI 输出缺少 JSON 决策数组，已自动追加提醒并重试")
+				retryPrompt = userPrompt + "\n\n⚠️  你的上一条输出缺少 `JSON决策数组`。请严格按照输出格式重新回复：先给出思维链，然后在 ```json 代码块中输出一个有效的 JSON 数组（如果没有决策，请输出 `[]`）。不要省略 JSON，也不要添加多余文本。"
+				continue
+			}
+
+			return decision, lastErr
+		}
+
+		decision.Timestamp = time.Now()
+		decision.SystemPrompt = systemPrompt // 保存系统prompt
+		decision.UserPrompt = retryPrompt    // 保存输入prompt（含可能的纠错提示）
+		return decision, nil
 	}
 
-	// 4. 解析AI响应
-	decision, err := parseFullDecisionResponse(aiResponse, ctx.Account.TotalEquity, ctx.BTCETHLeverage, ctx.AltcoinLeverage)
-	if err != nil {
-		return decision, fmt.Errorf("解析AI响应失败: %w", err)
+	if lastErr == nil {
+		lastErr = fmt.Errorf("AI决策生成失败：未知错误")
 	}
 
-	decision.Timestamp = time.Now()
-	decision.SystemPrompt = systemPrompt // 保存系统prompt
-	decision.UserPrompt = userPrompt     // 保存输入prompt
-	return decision, nil
+	return lastDecision, lastErr
 }
 
 // fetchMarketDataForContext 为上下文中的所有币种获取市场数据和OI数据
@@ -325,14 +356,22 @@ func buildSystemPrompt(accountEquity float64, btcEthLeverage, altcoinLeverage in
 	sb.WriteString("4. 保证金: 总使用率 ≤ 90%\n\n")
 
 	// 3. 输出格式 - 动态生成
-	sb.WriteString("#输出格式\n\n")
+	sb.WriteString("# 输出格式（严格执行）\n\n")
+	sb.WriteString("⚠️ **重要**: 你必须严格按照以下格式输出，否则系统无法解析你的决策！\n\n")
 	sb.WriteString("第一步: 思维链（纯文本）\n")
 	sb.WriteString("简洁分析你的思考过程\n\n")
-	sb.WriteString("第二步: JSON决策数组\n\n")
+	sb.WriteString("第二步: JSON决策数组（必须是有效的JSON格式）\n\n")
+	sb.WriteString("**严格要求**:\n")
+	sb.WriteString("- 必须是有效的JSON数组格式，不能使用markdown格式\n")
+	sb.WriteString("- 禁止使用markdown checkbox格式（如 `[x]`）或其他markdown标记\n")
+	sb.WriteString("- JSON数组必须包含有效的决策对象或为空数组 `[]`\n")
+	sb.WriteString("- JSON必须在代码块中，格式如下：\n\n")
 	sb.WriteString("```json\n[\n")
 	sb.WriteString(fmt.Sprintf("  {\"symbol\": \"BTCUSDT\", \"action\": \"open_short\", \"leverage\": %d, \"position_size_usd\": %.0f, \"stop_loss\": 97000, \"take_profit\": 91000, \"confidence\": 85, \"risk_usd\": 300, \"reasoning\": \"下跌趋势+MACD死叉\"},\n", btcEthLeverage, accountEquity*5))
 	sb.WriteString("  {\"symbol\": \"ETHUSDT\", \"action\": \"close_long\", \"reasoning\": \"止盈离场\"}\n")
 	sb.WriteString("]\n```\n\n")
+	sb.WriteString("如果没有决策，输出空数组：\n")
+	sb.WriteString("```json\n[]\n```\n\n")
 	sb.WriteString("字段说明:\n")
 	sb.WriteString("- `action`: open_long | open_short | close_long | close_short | hold | wait\n")
 	sb.WriteString("- `confidence`: 0-100（开仓建议≥75）\n")
@@ -345,27 +384,45 @@ func buildSystemPrompt(accountEquity float64, btcEthLeverage, altcoinLeverage in
 func buildUserPrompt(ctx *Context) string {
 	var sb strings.Builder
 
-	// 获取上两个cycle的思维链（如果日志目录存在）
-	if ctx.LogDir != "" {
+	// 获取历史决策的思维链（如果日志目录存在且配置启用）
+	if ctx.LogDir != "" && ctx.HistoryDecisionCycles > 0 {
 		decisionLogger := logger.NewDecisionLogger(ctx.LogDir)
-		// 获取最近2个记录（当前cycle还未保存，所以GetLatestRecords会返回最新的2个已保存的cycle）
-		records, err := decisionLogger.GetLatestRecords(2)
+		// 获取最近N个记录（当前cycle还未保存，所以GetLatestRecords会返回最新的N个已保存的cycle）
+		records, err := decisionLogger.GetLatestRecords(ctx.HistoryDecisionCycles)
 		if err != nil {
 			log.Printf("⚠️  读取历史决策记录失败: %v", err)
 		}
 		if err == nil && len(records) > 0 {
-			sb.WriteString("## 📚 历史决策参考（前两个周期）\n\n")
-			sb.WriteString("以下是前两个周期的决策思维链，**你必须主动利用这些历史信息进行自我纠正**。请回顾历史决策，识别错误模式和成功经验，并在当前决策中应用这些学习成果。同时，市场情况在不断变化，请基于当前最新的市场数据做出独立判断，但要从历史中学习。\n\n")
-			// 从新到旧显示（records已经是按时间从旧到新排列，需要反转）
-			for i := len(records) - 1; i >= 0; i-- {
-				record := records[i]
+			// 统计实际有效的记录数（有CoTTrace的记录）
+			validCount := 0
+			for _, record := range records {
 				if record.CoTTrace != "" {
-					sb.WriteString(fmt.Sprintf("### Cycle #%d (时间: %s)\n\n", record.CycleNumber, record.Timestamp.Format("2006-01-02 15:04:05")))
-					sb.WriteString(record.CoTTrace)
-					sb.WriteString("\n\n")
+					validCount++
 				}
 			}
-			sb.WriteString("---\n\n")
+
+			if validCount > 0 {
+				// 根据实际数量调整标题
+				cycleText := "周期"
+				if validCount > 1 {
+					cycleText = fmt.Sprintf("前%d个周期", validCount)
+				} else {
+					cycleText = "前一个周期"
+				}
+
+				sb.WriteString(fmt.Sprintf("## 📚 历史决策参考（%s）\n\n", cycleText))
+				sb.WriteString("以下是历史决策的思维链，**你必须主动利用这些历史信息进行自我纠正**。请回顾历史决策，识别错误模式和成功经验，并在当前决策中应用这些学习成果。同时，市场情况在不断变化，请基于当前最新的市场数据做出独立判断，但要从历史中学习。\n\n")
+				// 从新到旧显示（records已经是按时间从旧到新排列，需要反转）
+				for i := len(records) - 1; i >= 0; i-- {
+					record := records[i]
+					if record.CoTTrace != "" {
+						sb.WriteString(fmt.Sprintf("### Cycle #%d (时间: %s)\n\n", record.CycleNumber, record.Timestamp.Format("2006-01-02 15:04:05")))
+						sb.WriteString(record.CoTTrace)
+						sb.WriteString("\n\n")
+					}
+				}
+				sb.WriteString("---\n\n")
+			}
 		}
 	}
 
@@ -544,9 +601,21 @@ func buildUserPrompt(ctx *Context) string {
 	}
 	sb.WriteString("\n")
 
-	// 夏普比率（直接传值，不要复杂格式化）
-	if ctx.Performance != nil {
-		// 直接从interface{}中提取SharpeRatio
+	// 夏普比率（从 trade_analytics 的 RiskMetrics 获取）
+	if ctx.RiskMetrics != nil {
+		// 从 RiskMetrics 中提取 SharpeRatio
+		type RiskMetricsData struct {
+			SharpeRatio float64 `json:"sharpe_ratio"`
+		}
+		var riskData RiskMetricsData
+		if jsonData, err := json.Marshal(ctx.RiskMetrics); err == nil {
+			if err := json.Unmarshal(jsonData, &riskData); err == nil {
+				sb.WriteString("## 📊 绩效指标\n\n")
+				sb.WriteString(fmt.Sprintf("夏普比率: %.2f\n\n", riskData.SharpeRatio))
+			}
+		}
+	} else if ctx.Performance != nil {
+		// 降级方案：如果 RiskMetrics 不可用，尝试从 Performance 中获取（向后兼容）
 		type PerformanceData struct {
 			SharpeRatio float64 `json:"sharpe_ratio"`
 		}
@@ -559,8 +628,71 @@ func buildUserPrompt(ctx *Context) string {
 		}
 	}
 
+	// 连续亏损信息（新增）
+	log.Printf("🔍 [DEBUG] ctx.StreakStats: %+v", ctx.StreakStats)
+	if ctx.StreakStats != nil {
+		type StreakData struct {
+			CurrentStreak       int     `json:"current_streak"`
+			CurrentStreakType   string  `json:"current_streak_type"`
+			LongestLosingStreak int     `json:"longest_losing_streak"`
+			LastLossTimestamp   *string `json:"last_loss_timestamp,omitempty"` // 使用字符串类型便于JSON解析
+		}
+		var streakData StreakData
+		if jsonData, err := json.Marshal(ctx.StreakStats); err == nil {
+			if err := json.Unmarshal(jsonData, &streakData); err == nil {
+				log.Printf("🔍 [DEBUG] streakData: %+v", streakData)
+				if streakData.CurrentStreakType == "losing" {
+					consecutiveLosses := -streakData.CurrentStreak // CurrentStreak 为负数表示连亏
+					sb.WriteString("## 🛡️ 熔断机制状态\n\n")
+					sb.WriteString(fmt.Sprintf("连续亏损: %d次", consecutiveLosses))
+					if consecutiveLosses >= 2 {
+						// 计算剩余暂停时间
+						if streakData.LastLossTimestamp != nil && *streakData.LastLossTimestamp != "" {
+							// 解析时间戳
+							lastLossTime, err := time.Parse(time.RFC3339, *streakData.LastLossTimestamp)
+							if err == nil {
+								elapsed := time.Since(lastLossTime)
+								remaining := 30*time.Minute - elapsed
+								if remaining > 0 {
+									sb.WriteString(fmt.Sprintf(" ⚠️ **已触发熔断机制**（剩余暂停时间: %.0f 分钟，从 %s 开始）\n",
+										remaining.Minutes(), lastLossTime.Format("15:04:05")))
+								} else {
+									sb.WriteString(" ⚠️ **熔断机制已过期**（可恢复交易）\n")
+								}
+							} else {
+								// 解析失败，使用默认提示
+								log.Printf("🔍 [DEBUG] 时间戳解析失败: %v", err)
+								sb.WriteString(" ⚠️ **已触发熔断机制**（应暂停交易约30分钟）\n")
+							}
+						} else {
+							// 没有时间戳信息，使用默认提示
+							sb.WriteString(" ⚠️ **已触发熔断机制**（应暂停交易约30分钟）\n")
+						}
+					} else {
+						sb.WriteString("\n")
+					}
+					sb.WriteString(fmt.Sprintf("最长连亏: %d次\n\n", streakData.LongestLosingStreak))
+					log.Printf("🔍 [DEBUG] 已添加熔断机制状态到prompt (连续亏损: %d次)", consecutiveLosses)
+				} else {
+					log.Printf("🔍 [DEBUG] CurrentStreakType 不是 'losing'，当前值: %s", streakData.CurrentStreakType)
+				}
+			} else {
+				log.Printf("🔍 [DEBUG] JSON反序列化失败: %v", err)
+			}
+		} else {
+			log.Printf("🔍 [DEBUG] JSON序列化失败: %v", err)
+		}
+	} else {
+		log.Printf("🔍 [DEBUG] ctx.StreakStats 为 nil，跳过添加熔断机制状态")
+	}
+
 	sb.WriteString("---\n\n")
-	sb.WriteString("现在请分析并输出决策（思维链 + JSON）\n")
+	sb.WriteString("**现在请分析并输出决策（思维链 + JSON）**\n\n")
+	sb.WriteString("⚠️ 提醒: 确保JSON数组是有效的JSON格式，不能是markdown checkbox或其他格式。如果没有决策，输出空数组 `[]`。\n")
+	sb.WriteString("\n## ✅ 输出自检（提交前务必检查）\n\n")
+	sb.WriteString("- 在完整回答的最后必须包含一个使用 ```json ... ``` 包裹的有效 JSON 数组；不要在 JSON 代码块后再追加说明文字。\n")
+	sb.WriteString("- 如果没有任何动作，也要输出 ```json\\n[]\\n```，不得省略。\n")
+	sb.WriteString("- 任何缺少 JSON 数组的回答都会被判为无效并导致重新提问，请务必遵守。\n")
 
 	return sb.String()
 }
@@ -579,6 +711,8 @@ func truncateForPrompt(s string, maxRunes int) string {
 }
 
 // parseFullDecisionResponse 解析AI的完整决策响应
+var ErrDecisionJSONNotFound = errors.New("未在AI响应中找到JSON决策数组")
+
 func parseFullDecisionResponse(aiResponse string, accountEquity float64, btcEthLeverage, altcoinLeverage int) (*FullDecision, error) {
 	// 1. 提取思维链
 	cotTrace := extractCoTTrace(aiResponse)
@@ -620,35 +754,204 @@ func extractCoTTrace(response string) string {
 	return strings.TrimSpace(response)
 }
 
-// extractDecisions 提取JSON决策列表
+// extractDecisions 提取JSON决策列表（增强版：支持多种格式和不规范JSON）
 func extractDecisions(response string) ([]Decision, error) {
-	// 直接查找JSON数组 - 找第一个完整的JSON数组
-	arrayStart := strings.Index(response, "[")
-	if arrayStart == -1 {
-		return nil, fmt.Errorf("无法找到JSON数组起始")
+	// 策略1: 首先尝试从 markdown 代码块中提取 JSON
+	if jsonContent := extractJSONFromMarkdownCodeBlock(response); jsonContent != "" {
+		if decisions, err := tryParseJSON(jsonContent); err == nil {
+			log.Printf("✅ 从 markdown 代码块中成功提取 JSON")
+			return decisions, nil
+		}
 	}
 
-	// 从 [ 开始，匹配括号找到对应的 ]
-	arrayEnd := findMatchingBracket(response, arrayStart)
-	if arrayEnd == -1 {
-		return nil, fmt.Errorf("无法找到JSON数组结束")
+	// 策略2: 智能查找JSON数组，跳过markdown格式（如 [x]）
+	searchStart := 0
+	maxAttempts := 100 // 防止无限循环
+	attempts := 0
+
+	for attempts < maxAttempts {
+		attempts++
+
+		// 查找JSON数组起始位置
+		arrayStart := -1
+		for searchStart < len(response) {
+			pos := strings.Index(response[searchStart:], "[")
+			if pos == -1 {
+				break
+			}
+			actualPos := searchStart + pos
+
+			// 检查是否是markdown checkbox格式 [x] 或 [ ]
+			// 使用字符串匹配更简单可靠
+			if actualPos+2 < len(response) {
+				checkText := response[actualPos : actualPos+3]
+				// 检查是否是3字符的markdown checkbox
+				runes := []rune(checkText)
+				if len(runes) == 3 && runes[0] == '[' && runes[2] == ']' {
+					middleRune := runes[1]
+					// 跳过markdown checkbox: [x], [X], [ ], [-], [✓], [✔], [☑] 等
+					if middleRune == 'x' || middleRune == 'X' || middleRune == ' ' ||
+						middleRune == '-' || middleRune == '✓' || middleRune == '✔' || middleRune == '☑' {
+						// 确认是markdown checkbox，跳过
+						searchStart = actualPos + len(checkText)
+						continue
+					}
+				}
+			}
+
+			// 找到可能的JSON数组起始位置
+			arrayStart = actualPos
+			break
+		}
+
+		if arrayStart == -1 {
+			// 没有找到 JSON 数组，返回错误让上游处理
+			log.Printf("⚠️  未在AI输出中找到 JSON 决策数组")
+			return nil, ErrDecisionJSONNotFound
+		}
+
+		// 从 [ 开始，匹配括号找到对应的 ]
+		arrayEnd := findMatchingBracket(response, arrayStart)
+		if arrayEnd == -1 {
+			// 找不到匹配的右括号，尝试更宽松的解析
+			log.Printf("⚠️  无法找到匹配的 JSON 数组结束括号，尝试宽松解析")
+			if decisions, err := tryLooseJSONExtraction(response, arrayStart); err == nil {
+				return decisions, nil
+			}
+			// 如果宽松解析也失败，继续查找下一个可能的 JSON 数组
+			searchStart = arrayStart + 1
+			continue
+		}
+
+		jsonContent := strings.TrimSpace(response[arrayStart : arrayEnd+1])
+
+		// 🔧 首先检查是否是markdown checkbox格式（必须在JSON解析之前）
+		jsonContentRunes := []rune(jsonContent)
+		if len(jsonContentRunes) == 3 && jsonContentRunes[0] == '[' && jsonContentRunes[2] == ']' {
+			middleRune := jsonContentRunes[1]
+			// 检查是否是markdown checkbox字符
+			if middleRune == 'x' || middleRune == 'X' || middleRune == ' ' ||
+				middleRune == '-' || middleRune == '✓' || middleRune == '✔' || middleRune == '☑' {
+				// 确认是markdown checkbox，跳过并继续查找下一个可能的JSON数组
+				log.Printf("⚠️  检测到markdown checkbox格式: %q，跳过", jsonContent)
+				searchStart = arrayStart + len(jsonContent)
+				continue
+			}
+		}
+
+		// 验证内容长度（空数组至少是"[]"，2个字符）
+		if len(jsonContent) < 2 {
+			// 太短，不可能是有效JSON，尝试查找下一个
+			searchStart = arrayStart + 1
+			continue
+		}
+
+		// 尝试解析JSON
+		if decisions, err := tryParseJSON(jsonContent); err == nil {
+			return decisions, nil
+		}
+
+		// 解析失败，可能是格式错误，尝试查找下一个JSON数组
+		searchStart = arrayStart + 1
+		continue
 	}
 
-	jsonContent := strings.TrimSpace(response[arrayStart : arrayEnd+1])
+	// 所有尝试都失败，返回错误
+	log.Printf("⚠️  尝试多次后仍无法提取有效的JSON数组")
+	return nil, ErrDecisionJSONNotFound
+}
 
-	// 🔧 修复常见的JSON格式错误：缺少引号的字段值
-	// 匹配: "reasoning": 内容"}  或  "reasoning": 内容}  (没有引号)
-	// 修复为: "reasoning": "内容"}
-	// 使用简单的字符串扫描而不是正则表达式
+// extractJSONFromMarkdownCodeBlock 从 markdown 代码块中提取 JSON
+func extractJSONFromMarkdownCodeBlock(response string) string {
+	// 查找 ```json 或 ``` 代码块
+	markers := []string{"```json", "```"}
+
+	for _, marker := range markers {
+		startIdx := strings.Index(response, marker)
+		if startIdx == -1 {
+			continue
+		}
+
+		// 跳过标记本身
+		contentStart := startIdx + len(marker)
+		// 跳过可能的换行符
+		for contentStart < len(response) && (response[contentStart] == '\n' || response[contentStart] == '\r') {
+			contentStart++
+		}
+
+		// 查找结束标记 ```
+		endIdx := strings.Index(response[contentStart:], "```")
+		if endIdx == -1 {
+			// 没有找到结束标记，尝试提取到文本末尾
+			content := strings.TrimSpace(response[contentStart:])
+			if len(content) > 0 {
+				return content
+			}
+			continue
+		}
+
+		actualEndIdx := contentStart + endIdx
+		content := strings.TrimSpace(response[contentStart:actualEndIdx])
+		if len(content) > 0 {
+			return content
+		}
+	}
+
+	return ""
+}
+
+// tryParseJSON 尝试解析 JSON（包含修复和验证）
+func tryParseJSON(jsonContent string) ([]Decision, error) {
+	// 🔧 修复常见的JSON格式错误
 	jsonContent = fixMissingQuotes(jsonContent)
 
-	// 解析JSON
+	// 尝试解析JSON
 	var decisions []Decision
 	if err := json.Unmarshal([]byte(jsonContent), &decisions); err != nil {
-		return nil, fmt.Errorf("JSON解析失败: %w\nJSON内容: %s", err, jsonContent)
+		return nil, err
 	}
 
 	return decisions, nil
+}
+
+// tryLooseJSONExtraction 宽松的 JSON 提取（处理不完整的 JSON）
+func tryLooseJSONExtraction(response string, arrayStart int) ([]Decision, error) {
+	// 尝试从 arrayStart 开始，查找可能的 JSON 内容
+	// 策略：查找下一个换行符或文本结束，然后尝试修复 JSON
+
+	// 查找可能的结束位置（下一个空行、代码块结束、或文本结束）
+	endPos := len(response)
+
+	// 查找空行（两个连续的换行符）
+	if idx := strings.Index(response[arrayStart:], "\n\n"); idx != -1 {
+		endPos = arrayStart + idx
+	}
+
+	// 查找代码块结束
+	if idx := strings.Index(response[arrayStart:], "```"); idx != -1 && idx < (endPos-arrayStart) {
+		endPos = arrayStart + idx
+	}
+
+	// 提取内容
+	jsonContent := strings.TrimSpace(response[arrayStart:endPos])
+
+	// 如果内容以 [ 开头但没有 ]，尝试添加 ]
+	if strings.HasPrefix(jsonContent, "[") && !strings.HasSuffix(jsonContent, "]") {
+		// 尝试找到最后一个有效的对象结束
+		lastBrace := strings.LastIndex(jsonContent, "}")
+		if lastBrace != -1 {
+			// 截取到最后一个 }，然后添加 ]
+			jsonContent = jsonContent[:lastBrace+1] + "]"
+		} else {
+			// 如果连 } 都没有，可能是空数组，直接返回 []
+			if strings.TrimSpace(jsonContent) == "[" {
+				jsonContent = "[]"
+			}
+		}
+	}
+
+	// 尝试解析修复后的 JSON
+	return tryParseJSON(jsonContent)
 }
 
 // fixMissingQuotes 替换中文引号为英文引号（避免输入法自动转换）

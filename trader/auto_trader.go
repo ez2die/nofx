@@ -10,6 +10,7 @@ import (
 	"nofx/market"
 	"nofx/mcp"
 	"nofx/pool"
+	"nofx/trade_analytics"
 	"nofx/trade_history"
 	"strconv"
 	"strings"
@@ -76,6 +77,9 @@ type AutoTraderConfig struct {
 
 	// 系统提示词模板
 	SystemPromptTemplate string // 系统提示词模板名称（如 "default", "aggressive"）
+
+	// 历史决策配置
+	HistoryDecisionCycles int // 历史决策周期数（0=禁用，默认2）
 }
 
 // AutoTrader 自动交易器
@@ -87,9 +91,10 @@ type AutoTrader struct {
 	config                AutoTraderConfig
 	trader                Trader // 使用Trader接口（支持多平台）
 	mcpClient             *mcp.Client
-	decisionLogger        *logger.DecisionLogger // 决策日志记录器
-	tradeHistoryService   trade_history.Service  // 交易历史服务（可选）
-	tradeHistoryEnabled   bool                   // 是否启用交易历史
+	decisionLogger        *logger.DecisionLogger   // 决策日志记录器
+	tradeHistoryService   trade_history.Service   // 交易历史服务（可选）
+	tradeHistoryEnabled   bool                    // 是否启用交易历史
+	tradeAnalyticsService trade_analytics.Service // 交易分析服务（可选，新增）
 	initialBalance        float64
 	dailyPnL              float64
 	customPrompt          string   // 自定义交易策略prompt
@@ -111,7 +116,7 @@ type AutoTrader struct {
 }
 
 // NewAutoTrader 创建自动交易器
-func NewAutoTrader(config AutoTraderConfig, tradeHistoryService trade_history.Service) (*AutoTrader, error) {
+func NewAutoTrader(config AutoTraderConfig, tradeHistoryService trade_history.Service, tradeAnalyticsService trade_analytics.Service) (*AutoTrader, error) {
 	// 设置默认值
 	if config.ID == "" {
 		config.ID = "default_trader"
@@ -222,6 +227,7 @@ func NewAutoTrader(config AutoTraderConfig, tradeHistoryService trade_history.Se
 		decisionLogger:        decisionLogger,
 		tradeHistoryService:   tradeHistoryService,
 		tradeHistoryEnabled:   tradeHistoryEnabled,
+		tradeAnalyticsService: tradeAnalyticsService, // 新增
 		initialBalance:        config.InitialBalance,
 		systemPromptTemplate:  systemPromptTemplate,
 		defaultCoins:          config.DefaultCoins,
@@ -234,6 +240,12 @@ func NewAutoTrader(config AutoTraderConfig, tradeHistoryService trade_history.Se
 		lastTradeTime:         time.Time{}, // 初始化为零值，表示从未交易
 		consecutiveWaitCycles: 0,           // 初始化为0
 	}, nil
+}
+
+// SetTradeAnalyticsService 设置交易分析服务（用于运行时更新）
+func (at *AutoTrader) SetTradeAnalyticsService(service trade_analytics.Service) {
+	at.tradeAnalyticsService = service
+	log.Printf("🔧 [UPDATE] Trader '%s' 的 tradeAnalyticsService 已更新", at.id)
 }
 
 // Run 运行自动交易主循环
@@ -440,34 +452,6 @@ func (at *AutoTrader) runCycle() error {
 					Timestamp:   closeTimestamp, // 使用估算的平仓时间
 				})
 
-				// 记录交易历史（异步，不阻塞）
-				if at.tradeHistoryEnabled && at.tradeHistoryService != nil {
-					go func() {
-						entryPrice := lastPos.EntryPrice
-						closePrice := actualClosePrice
-
-						record := &trade_history.TradeRecord{
-							TraderID:        at.id,
-							Symbol:          lastPos.Symbol,
-							Side:            lastPos.Side,
-							Action:          "close_" + lastPos.Side,
-							Quantity:        lastPos.Quantity,
-							Leverage:        lastPos.Leverage,
-							EntryPrice:      &entryPrice,
-							ExitPrice:       &closePrice,
-							ExecutionPrice:  actualClosePrice,
-							IsAutoTriggered: true,
-							WasStopLoss:     wasStopLoss,
-							WasTakeProfit:   !wasStopLoss,
-							Source:          "api",
-							Timestamp:       time.Now(),
-						}
-
-						if err := at.tradeHistoryService.RecordAutoTriggeredClose(context.Background(), record); err != nil {
-							log.Printf("  ⚠️ 记录自动触发交易历史失败: %v", err)
-						}
-					}()
-				}
 			}
 		}
 	}
@@ -814,6 +798,37 @@ func (at *AutoTrader) buildTradingContext() (*decision.Context, error) {
 		performance = nil
 	}
 
+	// 5.1 获取连续统计和风险指标（新增）
+	var streakStats interface{}
+	var riskMetrics interface{}
+	if at.tradeAnalyticsService != nil {
+		log.Printf("🔍 [DEBUG] tradeAnalyticsService 不为 nil，开始获取连续统计和风险指标 (trader_id: %s)", at.id)
+		filter := &trade_analytics.AnalyticsFilter{
+			TraderID: at.id,
+			// 不设置时间范围，使用所有历史数据
+		}
+		
+		// 获取连续统计
+		stats, err := at.tradeAnalyticsService.GetStreakStats(context.Background(), filter)
+		if err == nil {
+			streakStats = stats
+			log.Printf("🔍 [DEBUG] 成功获取连续统计: %+v", stats)
+		} else {
+			log.Printf("⚠️  获取连续统计失败: %v", err)
+		}
+		
+		// 获取风险指标（包含夏普比率）
+		risk, err := at.tradeAnalyticsService.GetRiskMetrics(context.Background(), filter)
+		if err == nil {
+			riskMetrics = risk
+			log.Printf("🔍 [DEBUG] 成功获取风险指标，SharpeRatio: %.2f", risk.SharpeRatio)
+		} else {
+			log.Printf("⚠️  获取风险指标失败: %v", err)
+		}
+	} else {
+		log.Printf("🔍 [DEBUG] tradeAnalyticsService 为 nil，跳过获取连续统计和风险指标 (trader_id: %s)", at.id)
+	}
+
 	// 6. 构建上下文
 	ctx := &decision.Context{
 		CurrentTime:           time.Now().Format("2006-01-02 15:04:05"),
@@ -822,6 +837,7 @@ func (at *AutoTrader) buildTradingContext() (*decision.Context, error) {
 		BTCETHLeverage:        at.config.BTCETHLeverage,        // 使用配置的杠杆倍数
 		AltcoinLeverage:       at.config.AltcoinLeverage,       // 使用配置的杠杆倍数
 		LogDir:                at.decisionLogger.GetLogDir(),   // 设置日志目录路径
+		HistoryDecisionCycles: at.config.HistoryDecisionCycles, // 历史决策周期数（0=禁用）
 		AutoTriggeredCloses:   []decision.AutoTriggeredClose{}, // 初始化为空slice，将在检测到自动触发时填充
 		LastTradeTime:         at.lastTradeTime,                // 最后一次交易时间
 		ConsecutiveWaitCycles: at.consecutiveWaitCycles,        // 连续等待周期数
@@ -838,6 +854,8 @@ func (at *AutoTrader) buildTradingContext() (*decision.Context, error) {
 		PositionEntrySnapshots: entrySnapshots,
 		CandidateCoins:         candidateCoins,
 		Performance:            performance, // 添加历史表现分析
+		StreakStats:            streakStats, // 添加连续统计（新增）
+		RiskMetrics:            riskMetrics, // 添加风险指标（包含夏普比率）
 	}
 
 	return ctx, nil
@@ -1027,33 +1045,6 @@ func (at *AutoTrader) executeOpenLongWithRecord(decision *decision.Decision, act
 		log.Printf("  ⚠ 设置止盈失败: %v", err)
 	}
 
-	// 记录交易历史（异步，不阻塞）
-	if at.tradeHistoryEnabled && at.tradeHistoryService != nil {
-		go func() {
-			record := &trade_history.TradeRecord{
-				TraderID:       at.id,
-				Symbol:         decision.Symbol,
-				Side:           "long",
-				Action:         "open_long",
-				Quantity:       quantity,
-				Leverage:       decision.Leverage,
-				ExecutionPrice: actionRecord.Price,
-				Source:         "api",
-				Timestamp:      time.Now(),
-			}
-
-			// 尝试从订单获取交易所ID
-			if actionRecord.OrderID != 0 {
-				orderIDStr := fmt.Sprintf("%d", actionRecord.OrderID)
-				record.OrderID = &orderIDStr
-			}
-
-			if err := at.tradeHistoryService.RecordTrade(context.Background(), record); err != nil {
-				log.Printf("  ⚠️ 记录交易历史失败: %v", err)
-			}
-		}()
-	}
-
 	return nil
 }
 
@@ -1130,33 +1121,6 @@ func (at *AutoTrader) executeOpenShortWithRecord(decision *decision.Decision, ac
 	}
 	if err := at.trader.SetTakeProfit(decision.Symbol, "SHORT", quantity, decision.TakeProfit); err != nil {
 		log.Printf("  ⚠ 设置止盈失败: %v", err)
-	}
-
-	// 记录交易历史（异步，不阻塞）
-	if at.tradeHistoryEnabled && at.tradeHistoryService != nil {
-		go func() {
-			record := &trade_history.TradeRecord{
-				TraderID:       at.id,
-				Symbol:         decision.Symbol,
-				Side:           "short",
-				Action:         "open_short",
-				Quantity:       quantity,
-				Leverage:       decision.Leverage,
-				ExecutionPrice: actionRecord.Price,
-				Source:         "api",
-				Timestamp:      time.Now(),
-			}
-
-			// 尝试从订单获取交易所ID
-			if actionRecord.OrderID != 0 {
-				orderIDStr := fmt.Sprintf("%d", actionRecord.OrderID)
-				record.OrderID = &orderIDStr
-			}
-
-			if err := at.tradeHistoryService.RecordTrade(context.Background(), record); err != nil {
-				log.Printf("  ⚠️ 记录交易历史失败: %v", err)
-			}
-		}()
 	}
 
 	return nil
@@ -1257,40 +1221,6 @@ func (at *AutoTrader) executeCloseLongWithRecord(decision *decision.Decision, ac
 		log.Printf("  ✓ 平仓成功（数量未记录，将使用开仓quantity），成交价格: %.2f", actionRecord.Price)
 	}
 
-	// 记录交易历史（异步，不阻塞）
-	if at.tradeHistoryEnabled && at.tradeHistoryService != nil {
-		go func() {
-			// 查找对应的开仓记录以获取entry_price
-			var entryPrice *float64
-			// EntryPrice not available in decision, will need to query from trade history
-			// For now, set to nil - can be filled later via sync
-
-			record := &trade_history.TradeRecord{
-				TraderID:       at.id,
-				Symbol:         decision.Symbol,
-				Side:           "long",
-				Action:         "close_long",
-				Quantity:       actionRecord.Quantity,
-				Leverage:       actionRecord.Leverage,
-				EntryPrice:     entryPrice,
-				ExitPrice:      &actionRecord.Price,
-				ExecutionPrice: actionRecord.Price,
-				Source:         "api",
-				Timestamp:      time.Now(),
-			}
-
-			// 尝试从订单获取交易所ID
-			if actionRecord.OrderID != 0 {
-				orderIDStr := fmt.Sprintf("%d", actionRecord.OrderID)
-				record.OrderID = &orderIDStr
-			}
-
-			if err := at.tradeHistoryService.RecordTrade(context.Background(), record); err != nil {
-				log.Printf("  ⚠️ 记录交易历史失败: %v", err)
-			}
-		}()
-	}
-
 	return nil
 }
 
@@ -1387,40 +1317,6 @@ func (at *AutoTrader) executeCloseShortWithRecord(decision *decision.Decision, a
 		log.Printf("  ✓ 平仓成功，数量: %.4f, 成交价格: %.2f", actionRecord.Quantity, actionRecord.Price)
 	} else {
 		log.Printf("  ✓ 平仓成功（数量未记录，将使用开仓quantity），成交价格: %.2f", actionRecord.Price)
-	}
-
-	// 记录交易历史（异步，不阻塞）
-	if at.tradeHistoryEnabled && at.tradeHistoryService != nil {
-		go func() {
-			// 查找对应的开仓记录以获取entry_price
-			var entryPrice *float64
-			// EntryPrice not available in decision, will need to query from trade history
-			// For now, set to nil - can be filled later via sync
-
-			record := &trade_history.TradeRecord{
-				TraderID:       at.id,
-				Symbol:         decision.Symbol,
-				Side:           "short",
-				Action:         "close_short",
-				Quantity:       actionRecord.Quantity,
-				Leverage:       actionRecord.Leverage,
-				EntryPrice:     entryPrice,
-				ExitPrice:      &actionRecord.Price,
-				ExecutionPrice: actionRecord.Price,
-				Source:         "api",
-				Timestamp:      time.Now(),
-			}
-
-			// 尝试从订单获取交易所ID
-			if actionRecord.OrderID != 0 {
-				orderIDStr := fmt.Sprintf("%d", actionRecord.OrderID)
-				record.OrderID = &orderIDStr
-			}
-
-			if err := at.tradeHistoryService.RecordTrade(context.Background(), record); err != nil {
-				log.Printf("  ⚠️ 记录交易历史失败: %v", err)
-			}
-		}()
 	}
 
 	return nil
