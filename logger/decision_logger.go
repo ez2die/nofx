@@ -207,6 +207,74 @@ func (l *DecisionLogger) GetRecordByDate(date time.Time) ([]*DecisionRecord, err
 	return records, nil
 }
 
+// GetRecordsByTimeRange 获取指定时间范围内的所有记录
+// 这是为复盘模块新增的方法，支持按时间范围查询决策日志
+func (l *DecisionLogger) GetRecordsByTimeRange(startTime, endTime time.Time) ([]*DecisionRecord, error) {
+	files, err := ioutil.ReadDir(l.logDir)
+	if err != nil {
+		return nil, fmt.Errorf("读取日志目录失败: %w", err)
+	}
+
+	var records []*DecisionRecord
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+
+		// 尝试从文件名中提取时间戳：decision_YYYYMMDD_HHMMSS_cycleN.json
+		var year, month, day, hour, minute, second int
+		var cycle int
+		_, err := fmt.Sscanf(file.Name(), "decision_%04d%02d%02d_%02d%02d%02d_cycle%d.json",
+			&year, &month, &day, &hour, &minute, &second, &cycle)
+		if err != nil {
+			// 文件名格式不匹配，跳过
+			continue
+		}
+
+		// 从文件名构造时间（使用本地时区）
+		fileTime := time.Date(year, time.Month(month), day, hour, minute, second, 0, time.Local)
+
+		// 检查时间范围
+		if fileTime.Before(startTime) || fileTime.After(endTime) {
+			continue
+		}
+
+		// 读取并解析文件
+		filepath := filepath.Join(l.logDir, file.Name())
+		data, err := ioutil.ReadFile(filepath)
+		if err != nil {
+			// 文件读取失败，记录警告但继续处理其他文件
+			fmt.Printf("⚠️ 读取决策日志文件失败 %s: %v\n", file.Name(), err)
+			continue
+		}
+
+		var record DecisionRecord
+		if err := json.Unmarshal(data, &record); err != nil {
+			// JSON解析失败，记录警告但继续处理其他文件
+			fmt.Printf("⚠️ 解析决策日志文件失败 %s: %v\n", file.Name(), err)
+			continue
+		}
+
+		// 使用记录中的实际时间戳进行二次验证（更准确）
+		// 如果记录中的时间戳不在范围内，则跳过（即使文件名在范围内）
+		if record.Timestamp.Before(startTime) || record.Timestamp.After(endTime) {
+			continue
+		}
+
+		records = append(records, &record)
+	}
+
+	// 按 timestamp 排序（从旧到新），如果timestamp相同则按cycle_number排序
+	sort.Slice(records, func(i, j int) bool {
+		if records[i].Timestamp.Equal(records[j].Timestamp) {
+			return records[i].CycleNumber < records[j].CycleNumber
+		}
+		return records[i].Timestamp.Before(records[j].Timestamp)
+	})
+
+	return records, nil
+}
+
 // GetLogDir 获取日志目录路径
 func (l *DecisionLogger) GetLogDir() string {
 	return l.logDir

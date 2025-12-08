@@ -1,0 +1,17 @@
+{
+  "MarketBenchmark": {},
+  "RuleViolations": null,
+  "DecisionLogic": null,
+  "SymbolAnalyses": {},
+  "AIvsBenchmark": {
+    "TotalTrades": 0,
+    "AITotalPnL": 0,
+    "BuyHoldTotalPnL": 0,
+    "LongOnlyTotalPnL": 0,
+    "Outperformance": 0,
+    "OutperformancePct": 0,
+    "BetterThanBuyHold": 0,
+    "WorseThanBuyHold": 0
+  },
+  "ReportPath": "phase3_report_400_1892.md"
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 import { api } from '../lib/api';
 import type { TraderInfo, CreateTraderRequest, AIModel, Exchange } from '../types';
@@ -8,7 +8,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { getExchangeIcon } from './ExchangeIcons';
 import { getModelIcon } from './ModelIcons';
 import { TraderConfigModal } from './TraderConfigModal';
-import { Bot, Brain, Landmark, BarChart3, Trash2, Plus, Users, AlertTriangle } from 'lucide-react';
+import { Bot, Brain, Landmark, BarChart3, Trash2, Plus, Users, AlertTriangle, ScrollText } from 'lucide-react';
+import { useTradeHistory } from '../hooks/useTradeHistory';
+import { TradeAnalyticsPage } from './TradeAnalyticsPage';
 
 // 获取友好的AI模型名称
 function getModelDisplayName(modelId: string): string {
@@ -53,6 +55,8 @@ export function AITradersPage({ onTraderSelect }: AITradersPageProps) {
     coinPoolUrl: '',
     oiTopUrl: ''
   });
+  const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'analytics'>('overview');
+  const [selectedHistoryTrader, setSelectedHistoryTrader] = useState<string>('');
 
   const { data: traders, mutate: mutateTraders } = useSWR<TraderInfo[]>(
     user && token ? 'traders' : null,
@@ -107,9 +111,110 @@ export function AITradersPage({ onTraderSelect }: AITradersPageProps) {
     loadConfigs();
   }, [user, token]);
 
+  useEffect(() => {
+    if (traders && traders.length > 0) {
+      setSelectedHistoryTrader((prev) =>
+        prev && traders.some((t) => t.trader_id === prev) ? prev : traders[0].trader_id,
+      );
+    } else {
+      setSelectedHistoryTrader('');
+    }
+  }, [traders]);
+
+  // 当切换到 analytics tab 时，确保有选中的交易员
+  useEffect(() => {
+    if (activeTab === 'analytics' && traders && traders.length > 0 && !selectedHistoryTrader) {
+      setSelectedHistoryTrader(traders[0].trader_id);
+    }
+  }, [activeTab, traders, selectedHistoryTrader]);
+
+  const {
+    records: tradeHistoryRecords,
+    total: tradeHistoryTotal,
+    page: tradeHistoryPage,
+    pageSize: tradeHistoryPageSize,
+    offset: tradeHistoryOffset,
+    totalPages: tradeHistoryTotalPages,
+    setPage: setTradeHistoryPage,
+    setPageSize: setTradeHistoryPageSize,
+    isLoading: tradeHistoryLoading,
+    isValidating: tradeHistoryValidating,
+    error: tradeHistoryError,
+    refresh: refreshTradeHistory,
+  } = useTradeHistory(
+    activeTab === 'history' ? selectedHistoryTrader : undefined,
+    { initialPageSize: 50 },
+  );
+
+  const dateTimeFormatter = useMemo(
+    () => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }),
+    [],
+  );
+  const quantityFormatter = useMemo(
+    () => new Intl.NumberFormat(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 4 }),
+    [],
+  );
+  const signedQuantityFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat(undefined, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 4,
+        signDisplay: 'always',
+      }),
+    [],
+  );
+  const priceFormatter = useMemo(
+    () => new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 }),
+    [],
+  );
+  const pnlFormatter = useMemo(
+    () => new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+    [],
+  );
+  const feeFormatter = useMemo(
+    () => new Intl.NumberFormat(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 6 }),
+    [],
+  );
+
+  const tradeHistoryRangeStart = tradeHistoryTotal === 0 ? 0 : tradeHistoryOffset + 1;
+  const tradeHistoryRangeEnd = tradeHistoryOffset + tradeHistoryRecords.length;
+  const canTradeHistoryGoPrev = tradeHistoryPage > 1;
+  const canTradeHistoryGoNext =
+    tradeHistoryTotalPages > 0
+      ? tradeHistoryPage < tradeHistoryTotalPages
+      : tradeHistoryRecords.length === tradeHistoryPageSize;
+
+  const formatActionLabel = (action: string) => {
+    switch (action) {
+      case 'open_long':
+        return t('tradeActionOpenLong', language);
+      case 'open_short':
+        return t('tradeActionOpenShort', language);
+      case 'close_long':
+        return t('tradeActionCloseLong', language);
+      case 'close_short':
+        return t('tradeActionCloseShort', language);
+      default:
+        return action.replace(/_/g, ' ').toUpperCase();
+    }
+  };
+
   // 显示所有用户的模型和交易所配置（用于调试）
-  const configuredModels = allModels || [];
-  const configuredExchanges = allExchanges || [];
+  const configuredModels = (allModels || []).filter(model =>
+    model.enabled ||
+    !!model.apiKey ||
+    !!model.customApiUrl ||
+    !!model.customModelName
+  );
+  const configuredExchanges = (allExchanges || []).filter(exchange =>
+    exchange.enabled ||
+    !!exchange.apiKey ||
+    !!exchange.secretKey ||
+    !!exchange.hyperliquidWalletAddr ||
+    !!exchange.asterUser ||
+    !!exchange.asterSigner ||
+    !!exchange.asterPrivateKey
+  );
   
   // 只在创建交易员时使用已启用且配置完整的
   const enabledModels = allModels?.filter(m => m.enabled && m.apiKey) || [];
@@ -267,8 +372,10 @@ export function AITradersPage({ onTraderSelect }: AITradersPageProps) {
     if (!confirm(t('confirmDeleteModel', language))) return;
 
     try {
-      const updatedModels = allModels?.map(m =>
-        m.id === modelId ? { ...m, apiKey: '', customApiUrl: '', customModelName: '', enabled: false } : m
+      const updatedModels = allModels?.map(model =>
+        model.id === modelId
+          ? { ...model, apiKey: '', customApiUrl: '', customModelName: '', enabled: false }
+          : model
       ) || [];
 
       const request = {
@@ -286,7 +393,8 @@ export function AITradersPage({ onTraderSelect }: AITradersPageProps) {
       };
 
       await api.updateModelConfigs(request);
-      setAllModels(updatedModels);
+      const refreshedModels = await api.getModelConfigs();
+      setAllModels(refreshedModels);
       setShowModelModal(false);
       setEditingModel(null);
     } catch (error) {
@@ -351,10 +459,22 @@ export function AITradersPage({ onTraderSelect }: AITradersPageProps) {
     if (!confirm(t('confirmDeleteExchange', language))) return;
     
     try {
-      const updatedExchanges = allExchanges?.map(e => 
-        e.id === exchangeId ? { ...e, apiKey: '', secretKey: '', enabled: false } : e
+      const updatedExchanges = allExchanges?.map(exchange =>
+        exchange.id === exchangeId
+          ? {
+              ...exchange,
+              enabled: false,
+              apiKey: '',
+              secretKey: '',
+              testnet: false,
+              hyperliquidWalletAddr: '',
+              asterUser: '',
+              asterSigner: '',
+              asterPrivateKey: ''
+            }
+          : exchange
       ) || [];
-      
+
       const request = {
         exchanges: Object.fromEntries(
           updatedExchanges.map(exchange => [
@@ -363,14 +483,19 @@ export function AITradersPage({ onTraderSelect }: AITradersPageProps) {
               enabled: exchange.enabled,
               api_key: exchange.apiKey || '',
               secret_key: exchange.secretKey || '',
-              testnet: exchange.testnet || false
+              testnet: exchange.testnet || false,
+              hyperliquid_wallet_addr: exchange.hyperliquidWalletAddr || '',
+              aster_user: exchange.asterUser || '',
+              aster_signer: exchange.asterSigner || '',
+              aster_private_key: exchange.asterPrivateKey || ''
             }
           ])
         )
       };
-      
+
       await api.updateExchangeConfigs(request);
-      setAllExchanges(updatedExchanges);
+      const refreshedExchanges = await api.getExchangeConfigs();
+      setAllExchanges(refreshedExchanges);
       setShowExchangeModal(false);
       setEditingExchange(null);
     } catch (error) {
@@ -557,7 +682,60 @@ export function AITradersPage({ onTraderSelect }: AITradersPageProps) {
         </div>
       </div>
 
-      {/* Configuration Status */}
+      <div className="flex flex-wrap items-center gap-2 border-b border-[#2B3139] pt-2">
+        <button
+          type="button"
+          onClick={() => setActiveTab('overview')}
+          className={`px-3 md:px-4 py-2 text-xs md:text-sm font-semibold rounded-t transition-colors ${
+            activeTab === 'overview'
+              ? 'bg-[#0B0E11] text-[#F0B90B] border border-[#2B3139] border-b-transparent'
+              : 'text-[#848E9C] hover:text-[#EAECEF]'
+          }`}
+          style={
+            activeTab === 'overview'
+              ? { boxShadow: '0 -2px 12px rgba(240, 185, 11, 0.15)' }
+              : undefined
+          }
+        >
+          {t('overviewTab', language)}
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('history')}
+          className={`px-3 md:px-4 py-2 text-xs md:text-sm font-semibold rounded-t transition-colors ${
+            activeTab === 'history'
+              ? 'bg-[#0B0E11] text-[#F0B90B] border border-[#2B3139] border-b-transparent'
+              : 'text-[#848E9C] hover:text-[#EAECEF]'
+          }`}
+          style={
+            activeTab === 'history'
+              ? { boxShadow: '0 -2px 12px rgba(240, 185, 11, 0.15)' }
+              : undefined
+          }
+        >
+          {t('tradeHistory', language)}
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('analytics')}
+          className={`px-3 md:px-4 py-2 text-xs md:text-sm font-semibold rounded-t transition-colors ${
+            activeTab === 'analytics'
+              ? 'bg-[#0B0E11] text-[#F0B90B] border border-[#2B3139] border-b-transparent'
+              : 'text-[#848E9C] hover:text-[#EAECEF]'
+          }`}
+          style={
+            activeTab === 'analytics'
+              ? { boxShadow: '0 -2px 12px rgba(240, 185, 11, 0.15)' }
+              : undefined
+          }
+        >
+          {t('tradeAnalytics', language) || 'Trade Analytics'}
+        </button>
+      </div>
+
+    {activeTab === 'overview' ? (
+      <>
+    {/* Configuration Status */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* AI Models */}
         <div className="binance-card p-3 md:p-4">
@@ -650,7 +828,7 @@ export function AITradersPage({ onTraderSelect }: AITradersPageProps) {
             )}
           </div>
         </div>
-      </div>
+    </div>
 
       {/* Traders List */}
       <div className="binance-card p-4 md:p-6">
@@ -765,7 +943,241 @@ export function AITradersPage({ onTraderSelect }: AITradersPageProps) {
           </div>
         )}
       </div>
+      </>
+    ) : activeTab === 'history' ? (
+      <div className="binance-card p-4 md:p-6 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center"
+              style={{ background: 'rgba(240, 185, 11, 0.12)', border: '1px solid rgba(240, 185, 11, 0.25)', color: '#F0B90B' }}
+            >
+              <ScrollText className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg md:text-xl font-bold" style={{ color: '#EAECEF' }}>
+                {t('tradeHistory', language)}
+              </h2>
+              <p className="text-xs md:text-sm" style={{ color: '#848E9C' }}>
+                {t('tradeHistoryDescription', language)}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 md:gap-3">
+            <select
+              value={selectedHistoryTrader}
+              onChange={(e) => {
+                setSelectedHistoryTrader(e.target.value);
+                setTradeHistoryPage(1);
+              }}
+              className="px-3 py-2 rounded text-xs md:text-sm"
+              style={{ background: '#0B0E11', border: '1px solid #2B3139', color: '#EAECEF' }}
+              disabled={!traders || traders.length === 0}
+            >
+              {(traders || []).map((trader) => (
+                <option key={trader.trader_id} value={trader.trader_id}>
+                  {trader.trader_name}
+                </option>
+              ))}
+            </select>
+            <select
+              value={tradeHistoryPageSize}
+              onChange={(e) => setTradeHistoryPageSize(Number(e.target.value))}
+              className="px-3 py-2 rounded text-xs md:text-sm"
+              style={{ background: '#0B0E11', border: '1px solid #2B3139', color: '#EAECEF' }}
+            >
+              {[20, 50, 100].map((size) => (
+                <option key={size} value={size}>
+                  {t('pageSizeOption', language, { count: size })}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={() => refreshTradeHistory()}
+              className="px-3 py-2 rounded text-xs md:text-sm font-semibold transition-all hover:scale-105"
+              style={{ background: 'rgba(240, 185, 11, 0.15)', color: '#F0B90B', border: '1px solid rgba(240, 185, 11, 0.3)' }}
+              disabled={tradeHistoryLoading || tradeHistoryValidating}
+            >
+              {t('refresh', language)}
+            </button>
+          </div>
+        </div>
 
+        {!traders || traders.length === 0 ? (
+          <div className="text-center py-12 md:py-16" style={{ color: '#848E9C' }}>
+            <AlertTriangle className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 opacity-50" />
+            <div className="text-sm md:text-base font-semibold">{t('tradeHistoryNoTraders', language)}</div>
+            <div className="text-xs md:text-sm mt-1">{t('tradeHistoryNoTradersDescription', language)}</div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {tradeHistoryError ? (
+              <div className="p-4 rounded border border-red-500/40 bg-red-500/10 text-sm" style={{ color: '#F87171' }}>
+                {t('tradeHistoryLoadError', language)}
+              </div>
+            ) : (
+              <>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-xs md:text-sm">
+                    <thead>
+                      <tr className="text-left" style={{ color: '#848E9C' }}>
+                        <th className="pb-3 pr-4 font-semibold whitespace-nowrap">{t('tradeColumnTime', language)}</th>
+                        <th className="pb-3 pr-4 font-semibold whitespace-nowrap">{t('symbol', language)}</th>
+                        <th className="pb-3 pr-4 font-semibold whitespace-nowrap">{t('tradeColumnRawDir', language)}</th>
+                        <th className="pb-3 pr-4 font-semibold whitespace-nowrap">{t('tradeColumnAction', language)}</th>
+                        <th className="pb-3 pr-4 font-semibold whitespace-nowrap">{t('tradeColumnSide', language)}</th>
+                        <th className="pb-3 pr-4 font-semibold text-right whitespace-nowrap">{t('tradeColumnQuantity', language)}</th>
+                        <th className="pb-3 pr-4 font-semibold text-right whitespace-nowrap">{t('tradeColumnSignedQuantity', language)}</th>
+                        <th className="pb-3 pr-4 font-semibold text-right whitespace-nowrap">{t('tradeColumnPrice', language)}</th>
+                        <th className="pb-3 pr-4 font-semibold text-right whitespace-nowrap">{t('tradeColumnPnL', language)}</th>
+                        <th className="pb-3 pr-4 font-semibold text-right whitespace-nowrap">{t('tradeColumnFee', language)}</th>
+                      </tr>
+                    </thead>
+                    <tbody style={{ color: '#EAECEF' }}>
+                      {tradeHistoryRecords.length === 0 && !tradeHistoryLoading ? (
+                        <tr>
+                          <td colSpan={10} className="text-center py-10 text-sm" style={{ color: '#848E9C' }}>
+                            <ScrollText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                            {t('tradeHistoryNoData', language)}
+                          </td>
+                        </tr>
+                      ) : (
+                        tradeHistoryRecords.map((record) => {
+                          const pnlColor =
+                            record.pnl == null
+                              ? 'text-[#EAECEF]'
+                              : record.pnl > 0
+                                ? 'text-emerald-400'
+                                : record.pnl < 0
+                                  ? 'text-red-400'
+                                  : 'text-[#EAECEF]';
+
+                          const sideBadgeClass =
+                            record.side === 'long'
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                              : record.side === 'short'
+                                ? 'bg-red-500/10 text-red-400 border border-red-500/30'
+                                : 'bg-slate-500/10 text-slate-300 border border-slate-500/20';
+
+                          const formattedPnL =
+                            record.pnl != null ? pnlFormatter.format(record.pnl) : '—';
+                          const formattedFee = feeFormatter.format(record.fee);
+
+                          return (
+                            <tr key={record.id} className="border-t border-[#1F242D]">
+                              <td className="py-3 pr-4 whitespace-nowrap">
+                                {record.timestamp ? dateTimeFormatter.format(new Date(record.timestamp)) : '—'}
+                              </td>
+                              <td className="py-3 pr-4 whitespace-nowrap font-semibold">{record.symbol}</td>
+                              <td className="py-3 pr-4 whitespace-nowrap font-mono text-xs md:text-sm">
+                                {record.raw_dir || '—'}
+                              </td>
+                              <td className="py-3 pr-4 whitespace-nowrap">{formatActionLabel(record.action)}</td>
+                              <td className="py-3 pr-4 whitespace-nowrap">
+                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${sideBadgeClass}`}>
+                                  {record.side ? record.side.toUpperCase() : '—'}
+                                </span>
+                              </td>
+                              <td className="py-3 pr-4 whitespace-nowrap text-right">
+                                {quantityFormatter.format(record.quantity)}
+                              </td>
+                              <td className="py-3 pr-4 whitespace-nowrap text-right">
+                                {record.signed_quantity != null ? signedQuantityFormatter.format(record.signed_quantity) : '—'}
+                              </td>
+                              <td className="py-3 pr-4 whitespace-nowrap text-right">
+                                {priceFormatter.format(record.execution_price)}
+                              </td>
+                              <td className={`py-3 pr-4 whitespace-nowrap text-right ${pnlColor}`}>
+                                {formattedPnL}
+                              </td>
+                              <td className="py-3 pr-4 whitespace-nowrap text-right">
+                                {formattedFee}
+                                {record.fee_token ? (
+                                  <span className="ml-1 text-xs text-slate-400">{record.fee_token}</span>
+                                ) : null}
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {(tradeHistoryLoading || tradeHistoryValidating) && (
+                  <div className="text-xs" style={{ color: '#848E9C' }}>
+                    {t('loading', language)}
+                  </div>
+                )}
+
+                {tradeHistoryRecords.length > 0 && (
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs md:text-sm" style={{ color: '#848E9C' }}>
+                    <div>
+                      {t('tradeHistoryRange', language, {
+                        start: tradeHistoryRangeStart,
+                        end: tradeHistoryRangeEnd,
+                        total: tradeHistoryTotal,
+                      })}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setTradeHistoryPage(tradeHistoryPage - 1)}
+                        disabled={!canTradeHistoryGoPrev}
+                        className="px-3 py-1.5 rounded font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        style={{ background: 'rgba(71, 77, 87, 0.2)', color: '#EAECEF' }}
+                      >
+                        {t('previous', language)}
+                      </button>
+                      <span
+                        className="px-2 py-1 rounded"
+                        style={{ background: '#0B0E11', border: '1px solid #2B3139', color: '#EAECEF' }}
+                      >
+                        {tradeHistoryTotalPages > 0 ? `${tradeHistoryPage} / ${tradeHistoryTotalPages}` : tradeHistoryPage}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setTradeHistoryPage(tradeHistoryPage + 1)}
+                        disabled={!canTradeHistoryGoNext}
+                        className="px-3 py-1.5 rounded font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        style={{ background: 'rgba(71, 77, 87, 0.2)', color: '#EAECEF' }}
+                      >
+                        {t('next', language)}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    ) : activeTab === 'analytics' ? (
+      <div className="mt-4">
+        <div className="mb-4 flex items-center gap-4">
+          <label className="text-sm text-[#848E9C]">选择交易员:</label>
+          <select
+            value={selectedHistoryTrader}
+            onChange={(e) => setSelectedHistoryTrader(e.target.value)}
+            className="px-4 py-2 bg-[#1E2329] border border-[#2B3139] rounded text-sm text-[#EAECEF] focus:outline-none focus:border-[#F0B90B]"
+          >
+            {traders?.map((trader) => (
+              <option key={trader.trader_id} value={trader.trader_id}>
+                {trader.trader_name} ({trader.trader_id})
+              </option>
+            ))}
+          </select>
+        </div>
+        {selectedHistoryTrader ? (
+          <TradeAnalyticsPage traderId={selectedHistoryTrader} />
+        ) : (
+          <div className="binance-card p-6 text-center">
+            <div className="text-[#848E9C]">请选择一个交易员</div>
+          </div>
+        )}
+      </div>
+    ) : null}
       {/* Create Trader Modal */}
       {showCreateModal && (
         <TraderConfigModal

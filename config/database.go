@@ -16,6 +16,51 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const createTradeHistoryTableSQL = `
+CREATE TABLE IF NOT EXISTS trade_history (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	trader_id TEXT NOT NULL,
+	symbol TEXT NOT NULL,
+	action TEXT NOT NULL,
+	side TEXT NOT NULL,
+	quantity REAL NOT NULL,
+	signed_quantity REAL,
+	execution_price REAL NOT NULL,
+	pnl REAL,
+	fee REAL DEFAULT 0,
+	fee_token TEXT,
+	raw_dir TEXT DEFAULT '',
+	start_position REAL,
+	builder_fee REAL,
+	exchange_side TEXT,
+	exchange_order_id TEXT,
+	exchange_trade_id TEXT,
+	exchange_hash TEXT,
+	timestamp DATETIME NOT NULL,
+	exchange_timestamp DATETIME,
+	exchange_timestamp_ms INTEGER,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)
+`
+
+var tradeHistoryIndexStatements = []string{
+	`CREATE INDEX IF NOT EXISTS idx_trade_history_trader_id ON trade_history(trader_id)`,
+	`CREATE INDEX IF NOT EXISTS idx_trade_history_symbol ON trade_history(symbol)`,
+	`CREATE INDEX IF NOT EXISTS idx_trade_history_action ON trade_history(action)`,
+	`CREATE INDEX IF NOT EXISTS idx_trade_history_timestamp ON trade_history(timestamp)`,
+	`CREATE INDEX IF NOT EXISTS idx_trade_history_exchange_order_id ON trade_history(exchange_order_id)`,
+	`CREATE INDEX IF NOT EXISTS idx_trade_history_exchange_trade_id ON trade_history(exchange_trade_id)`,
+	`CREATE INDEX IF NOT EXISTS idx_trade_history_exchange_hash ON trade_history(exchange_hash)`,
+}
+
+var reviewRecordsIndexStatements = []string{
+	`CREATE INDEX IF NOT EXISTS idx_review_records_trader_id ON review_records(trader_id)`,
+	`CREATE INDEX IF NOT EXISTS idx_review_records_start_time ON review_records(start_time)`,
+	`CREATE INDEX IF NOT EXISTS idx_review_records_end_time ON review_records(end_time)`,
+	`CREATE INDEX IF NOT EXISTS idx_review_records_created_at ON review_records(created_at)`,
+}
+
 // Database 配置数据库
 type Database struct {
 	db *sql.DB
@@ -147,56 +192,31 @@ func (d *Database) createTables() error {
 		)`,
 
 		// 交易历史表
-		`CREATE TABLE IF NOT EXISTS trade_history (
-			-- 主键
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			
-			-- 关联信息
-			trader_id TEXT NOT NULL,
-			symbol TEXT NOT NULL,
-			
-			-- 交易信息
-			side TEXT NOT NULL,
-			action TEXT NOT NULL,
-			quantity REAL NOT NULL,
-			leverage INTEGER NOT NULL,
-			
-			-- 价格信息
-			entry_price REAL,
-			exit_price REAL,
-			execution_price REAL NOT NULL,
-			
-			-- 盈亏信息（仅平仓时计算）
-			pnl REAL,
-			pnl_pct REAL,
-			
-			-- 订单信息
-			order_id TEXT,
-			exchange_order_id TEXT,
-			exchange_trade_id TEXT,
-			exchange_hash TEXT,
-			
-			-- 手续费
-			fee REAL DEFAULT 0,
-			fee_token TEXT,
-			
-			-- 自动触发信息
-			is_auto_triggered BOOLEAN DEFAULT 0,
-			was_stop_loss BOOLEAN DEFAULT 0,
-			was_take_profit BOOLEAN DEFAULT 0,
-			
-			-- 上下文信息
-			cycle_number INTEGER,
-			source TEXT DEFAULT 'api',
-			
-			-- 时间信息（优先级：交易所时间戳 > 本地时间）
-			timestamp DATETIME NOT NULL,
-			exchange_timestamp DATETIME,
-			exchange_timestamp_ms INTEGER,
-			
-			-- 元数据
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		createTradeHistoryTableSQL,
+
+		// 交易历史同步游标
+		`CREATE TABLE IF NOT EXISTS trade_history_sync_state (
+			trader_id TEXT PRIMARY KEY,
+			last_exchange_timestamp_ms INTEGER NOT NULL,
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)`,
+
+		// 复盘记录表
+		`CREATE TABLE IF NOT EXISTS review_records (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			trader_id TEXT NOT NULL,
+			start_time DATETIME NOT NULL,
+			end_time DATETIME NOT NULL,
+			report_path TEXT DEFAULT '',
+			summary TEXT DEFAULT '',
+			metrics TEXT DEFAULT '',
+			total_trades INTEGER DEFAULT 0,
+			total_pnl REAL DEFAULT 0,
+			win_rate REAL DEFAULT 0,
+			error_count INTEGER DEFAULT 0,
+			status TEXT DEFAULT 'success',
+			error_message TEXT DEFAULT '',
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		)`,
 
 		// 触发器：自动更新 updated_at
@@ -237,30 +257,37 @@ func (d *Database) createTables() error {
 			END`,
 
 		// 交易历史表索引
-		`CREATE INDEX IF NOT EXISTS idx_trade_history_trader_id ON trade_history(trader_id)`,
-		`CREATE INDEX IF NOT EXISTS idx_trade_history_symbol ON trade_history(symbol)`,
-		`CREATE INDEX IF NOT EXISTS idx_trade_history_timestamp ON trade_history(timestamp)`,
-		`CREATE INDEX IF NOT EXISTS idx_trade_history_cycle_number ON trade_history(cycle_number)`,
-		`CREATE INDEX IF NOT EXISTS idx_trade_history_action ON trade_history(action)`,
-		`CREATE INDEX IF NOT EXISTS idx_trade_history_exchange_timestamp_ms ON trade_history(exchange_timestamp_ms)`,
-		`CREATE INDEX IF NOT EXISTS idx_trade_history_order_id ON trade_history(order_id)`,
-		`CREATE INDEX IF NOT EXISTS idx_trade_history_exchange_order_id ON trade_history(exchange_order_id)`,
-		`CREATE INDEX IF NOT EXISTS idx_trade_history_exchange_hash ON trade_history(exchange_hash)`,
-		`CREATE INDEX IF NOT EXISTS idx_trade_history_trader_time ON trade_history(trader_id, timestamp DESC)`,
-		`CREATE INDEX IF NOT EXISTS idx_trade_history_trader_symbol ON trade_history(trader_id, symbol)`,
-
-		// 交易历史表触发器：自动更新 updated_at
-		`CREATE TRIGGER IF NOT EXISTS update_trade_history_updated_at
-			AFTER UPDATE ON trade_history
-			BEGIN
-				UPDATE trade_history SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
-			END`,
 	}
 
 	for _, query := range queries {
 		if _, err := d.db.Exec(query); err != nil {
 			return fmt.Errorf("执行SQL失败 [%s]: %w", query, err)
 		}
+	}
+
+	if err := d.migrateTradeHistoryTable(); err != nil {
+		return err
+	}
+
+	for _, stmt := range tradeHistoryIndexStatements {
+		if _, err := d.db.Exec(stmt); err != nil {
+			return fmt.Errorf("创建索引失败 [%s]: %w", stmt, err)
+		}
+	}
+
+	// 创建复盘记录表索引
+	for _, stmt := range reviewRecordsIndexStatements {
+		if _, err := d.db.Exec(stmt); err != nil {
+			return fmt.Errorf("创建索引失败 [%s]: %w", stmt, err)
+		}
+	}
+
+	if _, err := d.db.Exec(`CREATE TRIGGER IF NOT EXISTS update_trade_history_updated_at
+		AFTER UPDATE ON trade_history
+		BEGIN
+			UPDATE trade_history SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+		END`); err != nil {
+		return fmt.Errorf("创建 trade_history 更新触发器失败: %w", err)
 	}
 
 	// 为现有数据库添加新字段（向后兼容）
@@ -280,6 +307,7 @@ func (d *Database) createTables() error {
 		`ALTER TABLE traders ADD COLUMN use_coin_pool BOOLEAN DEFAULT 0`,               // 是否使用COIN POOL信号源
 		`ALTER TABLE traders ADD COLUMN use_oi_top BOOLEAN DEFAULT 0`,                  // 是否使用OI TOP信号源
 		`ALTER TABLE traders ADD COLUMN system_prompt_template TEXT DEFAULT 'default'`, // 系统提示词模板名称
+		`ALTER TABLE traders ADD COLUMN history_decision_cycles INTEGER DEFAULT 2`,      // 历史决策周期数（0=禁用，默认2）
 		`ALTER TABLE ai_models ADD COLUMN custom_api_url TEXT DEFAULT ''`,              // 自定义API地址
 		`ALTER TABLE ai_models ADD COLUMN custom_model_name TEXT DEFAULT ''`,           // 自定义模型名称
 	}
@@ -290,8 +318,7 @@ func (d *Database) createTables() error {
 	}
 
 	// 检查是否需要迁移exchanges表的主键结构
-	err := d.migrateExchangesTable()
-	if err != nil {
+	if err := d.migrateExchangesTable(); err != nil {
 		log.Printf("⚠️ 迁移exchanges表失败: %v", err)
 	}
 
@@ -339,17 +366,19 @@ func (d *Database) initDefaultData() error {
 
 	// 初始化系统配置 - 创建所有字段，设置默认值，后续由config.json同步更新
 	systemConfigs := map[string]string{
-		"admin_mode":           "true",                                                                                // 默认开启管理员模式，便于首次使用
-		"beta_mode":            "false",                                                                               // 默认关闭内测模式
-		"api_server_port":      "8080",                                                                                // 默认API端口
-		"use_default_coins":    "true",                                                                                // 默认使用内置币种列表
-		"default_coins":        `["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT","XRPUSDT","DOGEUSDT","ADAUSDT","HYPEUSDT"]`, // 默认币种列表（JSON格式）
-		"max_daily_loss":       "10.0",                                                                                // 最大日损失百分比
-		"max_drawdown":         "20.0",                                                                                // 最大回撤百分比
-		"stop_trading_minutes": "60",                                                                                  // 停止交易时间（分钟）
-		"btc_eth_leverage":     "5",                                                                                   // BTC/ETH杠杆倍数
-		"altcoin_leverage":     "5",                                                                                   // 山寨币杠杆倍数
-		"jwt_secret":           "",                                                                                    // JWT密钥，默认为空，由config.json或系统生成
+		"admin_mode":                      "true",                                                                                // 默认开启管理员模式，便于首次使用
+		"beta_mode":                       "false",                                                                               // 默认关闭内测模式
+		"api_server_port":                 "8080",                                                                                // 默认API端口
+		"use_default_coins":               "true",                                                                                // 默认使用内置币种列表
+		"default_coins":                   `["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT","XRPUSDT","DOGEUSDT","ADAUSDT","HYPEUSDT"]`, // 默认币种列表（JSON格式）
+		"max_daily_loss":                  "10.0",                                                                                // 最大日损失百分比
+		"max_drawdown":                    "20.0",                                                                                // 最大回撤百分比
+		"stop_trading_minutes":            "60",                                                                                  // 停止交易时间（分钟）
+		"btc_eth_leverage":                "5",                                                                                   // BTC/ETH杠杆倍数
+		"altcoin_leverage":                "5",                                                                                   // 山寨币杠杆倍数
+		"jwt_secret":                      "",                                                                                    // JWT密钥，默认为空，由config.json或系统生成
+		"performance_recent_trades_limit": "20",                                                                                  // 交易表现-最近交易数量
+		"performance_sharpe_window":       "30",                                                                                  // 交易表现-Sharpe窗口
 	}
 
 	for key, value := range systemConfigs {
@@ -511,6 +540,7 @@ type TraderRecord struct {
 	OverrideBasePrompt   bool      `json:"override_base_prompt"`   // 是否覆盖基础prompt
 	SystemPromptTemplate string    `json:"system_prompt_template"` // 系统提示词模板名称
 	IsCrossMargin        bool      `json:"is_cross_margin"`        // 是否为全仓模式（true=全仓，false=逐仓）
+	HistoryDecisionCycles int      `json:"history_decision_cycles"` // 历史决策周期数（0=禁用，默认2）
 	CreatedAt            time.Time `json:"created_at"`
 	UpdatedAt            time.Time `json:"updated_at"`
 }
@@ -861,10 +891,16 @@ func (d *Database) CreateExchange(userID, id, name, typ string, enabled bool, ap
 
 // CreateTrader 创建交易员
 func (d *Database) CreateTrader(trader *TraderRecord) error {
+	// 设置默认值
+	historyDecisionCycles := trader.HistoryDecisionCycles
+	if historyDecisionCycles < 0 {
+		historyDecisionCycles = 2 // 默认2个周期
+	}
+
 	_, err := d.db.Exec(`
-		INSERT INTO traders (id, user_id, name, ai_model_id, exchange_id, initial_balance, scan_interval_minutes, is_running, btc_eth_leverage, altcoin_leverage, trading_symbols, use_coin_pool, use_oi_top, custom_prompt, override_base_prompt, system_prompt_template, is_cross_margin)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, trader.ID, trader.UserID, trader.Name, trader.AIModelID, trader.ExchangeID, trader.InitialBalance, trader.ScanIntervalMinutes, trader.IsRunning, trader.BTCETHLeverage, trader.AltcoinLeverage, trader.TradingSymbols, trader.UseCoinPool, trader.UseOITop, trader.CustomPrompt, trader.OverrideBasePrompt, trader.SystemPromptTemplate, trader.IsCrossMargin)
+		INSERT INTO traders (id, user_id, name, ai_model_id, exchange_id, initial_balance, scan_interval_minutes, is_running, btc_eth_leverage, altcoin_leverage, trading_symbols, use_coin_pool, use_oi_top, custom_prompt, override_base_prompt, system_prompt_template, is_cross_margin, history_decision_cycles)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`, trader.ID, trader.UserID, trader.Name, trader.AIModelID, trader.ExchangeID, trader.InitialBalance, trader.ScanIntervalMinutes, trader.IsRunning, trader.BTCETHLeverage, trader.AltcoinLeverage, trader.TradingSymbols, trader.UseCoinPool, trader.UseOITop, trader.CustomPrompt, trader.OverrideBasePrompt, trader.SystemPromptTemplate, trader.IsCrossMargin, historyDecisionCycles)
 	return err
 }
 
@@ -877,7 +913,9 @@ func (d *Database) GetTraders(userID string) ([]*TraderRecord, error) {
 		       COALESCE(use_coin_pool, 0) as use_coin_pool, COALESCE(use_oi_top, 0) as use_oi_top,
 		       COALESCE(custom_prompt, '') as custom_prompt, COALESCE(override_base_prompt, 0) as override_base_prompt,
 		       COALESCE(system_prompt_template, 'default') as system_prompt_template,
-		       COALESCE(is_cross_margin, 1) as is_cross_margin, created_at, updated_at
+		       COALESCE(is_cross_margin, 1) as is_cross_margin,
+		       COALESCE(history_decision_cycles, 2) as history_decision_cycles,
+		       created_at, updated_at
 		FROM traders WHERE user_id = ? ORDER BY created_at DESC
 	`, userID)
 	if err != nil {
@@ -894,7 +932,7 @@ func (d *Database) GetTraders(userID string) ([]*TraderRecord, error) {
 			&trader.BTCETHLeverage, &trader.AltcoinLeverage, &trader.TradingSymbols,
 			&trader.UseCoinPool, &trader.UseOITop,
 			&trader.CustomPrompt, &trader.OverrideBasePrompt, &trader.SystemPromptTemplate,
-			&trader.IsCrossMargin,
+			&trader.IsCrossMargin, &trader.HistoryDecisionCycles,
 			&trader.CreatedAt, &trader.UpdatedAt,
 		)
 		if err != nil {
@@ -919,12 +957,14 @@ func (d *Database) UpdateTrader(trader *TraderRecord) error {
 			name = ?, ai_model_id = ?, exchange_id = ?, initial_balance = ?,
 			scan_interval_minutes = ?, btc_eth_leverage = ?, altcoin_leverage = ?,
 			trading_symbols = ?, custom_prompt = ?, override_base_prompt = ?,
-			system_prompt_template = ?, is_cross_margin = ?, updated_at = CURRENT_TIMESTAMP
+			system_prompt_template = ?, is_cross_margin = ?, history_decision_cycles = ?,
+			updated_at = CURRENT_TIMESTAMP
 		WHERE id = ? AND user_id = ?
 	`, trader.Name, trader.AIModelID, trader.ExchangeID, trader.InitialBalance,
 		trader.ScanIntervalMinutes, trader.BTCETHLeverage, trader.AltcoinLeverage,
 		trader.TradingSymbols, trader.CustomPrompt, trader.OverrideBasePrompt,
-		trader.SystemPromptTemplate, trader.IsCrossMargin, trader.ID, trader.UserID)
+		trader.SystemPromptTemplate, trader.IsCrossMargin, trader.HistoryDecisionCycles,
+		trader.ID, trader.UserID)
 	return err
 }
 
@@ -958,6 +998,7 @@ func (d *Database) GetTraderConfig(userID, traderID string) (*TraderRecord, *AIM
 			COALESCE(t.is_cross_margin, 1) as is_cross_margin,
 			COALESCE(t.use_coin_pool, 0) as use_coin_pool,
 			COALESCE(t.use_oi_top, 0) as use_oi_top,
+			COALESCE(t.history_decision_cycles, 2) as history_decision_cycles,
 			t.created_at, t.updated_at,
 			a.id, a.user_id, a.name, a.provider, a.enabled, a.api_key, a.created_at, a.updated_at,
 			e.id, e.user_id, e.name, e.type, e.enabled, e.api_key, e.secret_key, e.testnet,
@@ -975,7 +1016,7 @@ func (d *Database) GetTraderConfig(userID, traderID string) (*TraderRecord, *AIM
 		&trader.InitialBalance, &trader.ScanIntervalMinutes, &trader.IsRunning,
 		&trader.BTCETHLeverage, &trader.AltcoinLeverage, &trader.TradingSymbols,
 		&trader.CustomPrompt, &trader.OverrideBasePrompt, &trader.SystemPromptTemplate,
-		&trader.IsCrossMargin, &trader.UseCoinPool, &trader.UseOITop,
+		&trader.IsCrossMargin, &trader.UseCoinPool, &trader.UseOITop, &trader.HistoryDecisionCycles,
 		&trader.CreatedAt, &trader.UpdatedAt,
 		&aiModel.ID, &aiModel.UserID, &aiModel.Name, &aiModel.Provider, &aiModel.Enabled, &aiModel.APIKey,
 		&aiModel.CreatedAt, &aiModel.UpdatedAt,

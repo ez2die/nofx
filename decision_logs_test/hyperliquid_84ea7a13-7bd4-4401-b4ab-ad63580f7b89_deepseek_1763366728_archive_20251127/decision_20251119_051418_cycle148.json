@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-11-19T05:14:18.246903403+08:00",
+  "cycle_number": 148,
+  "system_prompt": "",
+  "input_prompt": "",
+  "cot_trace": "## 思维链\n\n**历史审查与自我纠正**：\n从周期#147学习到：HYPEUSDT提供了高质量的多头机会，信号在多个K线上持续且满足时间稳定性要求。当前市场环境继续呈现分化特征，需要保持选择性。\n\n**当前市场分析**：\n- **整体环境**：市场继续分化，BTC和ETH在关键技术位附近震荡，缺乏明确方向。HYPEUSDT继续表现强势，但需要重新评估风险回报比。\n\n**BTCUSDT**：价格92951在EMA20（92940）附近徘徊，RSI 55.82显示中性，MACD负值收窄显示下跌动能减弱，但4小时级别EMA20（93931）仍低于EMA50（96962），大趋势仍向下。\n\n**ETHUSDT**：价格3124.60略低于EMA20（3133.48），RSI 39.56仍处于弱势区间，缺乏明确信号。\n\n**HYPEUSDT**：继续表现强势 - 价格39.06高于EMA20（38.87），RSI 65.55显示强势，MACD正值0.076。但相比前周期，当前价格更接近EMA20，信号强度有所减弱。\n\n**机会评估**：\n- **HYPEUSDT**：重新计算风险回报比，当前价格39.06，若设置止损38.50（-1.44%），止盈41.50（+6.25%），风险回报比4.34:1仍满足要求，但置信度从前周期的80降至75，因价格更接近支撑位。\n\n**预执行检查清单验证**：\n- ✅ **风险回报比**：4.34:1 \u003e 3:1\n- ✅ **杠杆限制**：使用8x杠杆，在系统限制范围内\n- ✅ **止损方向**：多仓，stop_loss \u003c entry_price \u003c take_profit\n- ✅ **置信度**：75 ≥ 70\n- ✅ **杠杆调整后的账户风险**：1.44% × 8 = 11.52%（在推荐范围内）\n- ✅ **市场噪音检查**：1.44%止损远大于山寨币最小0.7%要求\n- ✅ **时间稳定性**：看涨信号在多个K线上持续，预计在执行延迟后仍然有效\n- ✅ **熔断机制**：Sharpe 0.02 \u003e 0，置信度75 \u003e 70\n\n**最终决策**：\nHYPEUSDT仍提供可接受的多头机会，但信号强度相比前周期有所减弱，降低置信度至75。其他币种继续缺乏明确方向。\n\n```json",
+  "decision_json": "[\n  {\n    \"symbol\": \"HYPEUSDT\",\n    \"action\": \"open_long\",\n    \"leverage\": 8,\n    \"position_size_usd\": 89,\n    \"stop_loss\": 38.5,\n    \"take_profit\": 41.5,\n    \"confidence\": 75,\n    \"risk_usd\": 10,\n    \"reasoning\": \"持续看涨信号+RSI强势+MACD正值，但价格更接近支撑，降低置信度\"\n  }\n]",
+  "account_state": {
+    "total_balance": 110.723959,
+    "available_balance": 110.723959,
+    "total_unrealized_profit": 10.723958999999994,
+    "position_count": 0,
+    "margin_used_pct": 0
+  },
+  "positions": null,
+  "candidate_coins": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "BNBUSDT",
+    "XRPUSDT",
+    "HYPEUSDT"
+  ],
+  "decisions": null,
+  "execution_log": [],
+  "success": false,
+  "error_message": "获取AI决策失败: 解析AI响应失败: 决策验证失败: 决策 #1 验证失败: 杠杆必须在1-5之间（HYPEUSDT，当前配置上限5倍）: 8"
+}

@@ -31,7 +31,10 @@ Thumbs.db
 config.json
 config.db
 
-# 决策日志
+# 数据与日志
+data/logs/
+data/backups/
+config/runtime/
 decision_logs/
 coin_pool_cache/
 nofx_test

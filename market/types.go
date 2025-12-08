@@ -25,12 +25,14 @@ type OIData struct {
 
 // IntradayData 日内数据(3分钟间隔)
 type IntradayData struct {
-	MidPrices   []float64
-	EMA20Values []float64
-	MACDValues  []float64
-	RSI7Values  []float64
-	RSI14Values []float64
-	ATR14Values []float64 // ATR (14-period) for 3-minute intervals
+	MidPrices    []float64
+	EMA20Values  []float64
+	MACDValues   []float64
+	RSI7Values   []float64
+	RSI14Values  []float64
+	ATR14Values  []float64 // ATR (14-period) for 3-minute intervals
+	VolumeValues []float64 // Volume sequence for 3-minute intervals
+	AverageVolume float64  // Average volume for 3-minute intervals
 }
 
 // LongerTermData 长期数据(4小时时间框架)

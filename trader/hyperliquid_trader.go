@@ -727,6 +727,13 @@ func (t *HyperliquidTrader) SetStopLoss(symbol string, positionSide string, quan
 	// ⚠️ 关键：价格也需要处理为5位有效数字
 	roundedStopPrice := t.roundPriceToSigfigs(stopPrice)
 
+	// 📊 增强日志：记录止损设置详情
+	log.Printf("  📊 [止损设置] %s %s:", symbol, positionSide)
+	log.Printf("     原始止损价: %.8f", stopPrice)
+	log.Printf("     四舍五入后: %.8f (5位有效数字)", roundedStopPrice)
+	log.Printf("     数量: %.8f -> %.8f (szDecimals=%d)", quantity, roundedQuantity, t.getSzDecimals(coin))
+	log.Printf("     方向: %s (isBuy=%v)", positionSide, isBuy)
+
 	// 创建止损单（Trigger Order）
 	order := hyperliquid.CreateOrderRequest{
 		Coin:  coin,
@@ -743,12 +750,23 @@ func (t *HyperliquidTrader) SetStopLoss(symbol string, positionSide string, quan
 		ReduceOnly: true,
 	}
 
-	_, err := t.exchange.Order(t.ctx, order, nil)
+	// 📊 增强日志：记录订单请求详情
+	log.Printf("  📋 [止损订单请求] Coin=%s, IsBuy=%v, Size=%.8f, Price=%.8f, TriggerPx=%.8f, ReduceOnly=true",
+		coin, isBuy, roundedQuantity, roundedStopPrice, roundedStopPrice)
+
+	// 调用 API
+	orderResp, err := t.exchange.Order(t.ctx, order, nil)
+	
+	// 📊 增强日志：记录 API 响应
 	if err != nil {
+		log.Printf("  ❌ [止损设置失败] %s %s: %v", symbol, positionSide, err)
+		log.Printf("     请求详情: Coin=%s, TriggerPx=%.8f, Size=%.8f", coin, roundedStopPrice, roundedQuantity)
 		return fmt.Errorf("设置止损失败: %w", err)
 	}
 
-	log.Printf("  止损价设置: %.4f", roundedStopPrice)
+	// 📊 增强日志：记录成功响应
+	log.Printf("  ✅ [止损设置成功] %s %s: 止损价=%.8f", symbol, positionSide, roundedStopPrice)
+	log.Printf("     API响应: %+v", orderResp)
 	return nil
 }
 
@@ -763,6 +781,13 @@ func (t *HyperliquidTrader) SetTakeProfit(symbol string, positionSide string, qu
 
 	// ⚠️ 关键：价格也需要处理为5位有效数字
 	roundedTakeProfitPrice := t.roundPriceToSigfigs(takeProfitPrice)
+
+	// 📊 增强日志：记录止盈设置详情
+	log.Printf("  📊 [止盈设置] %s %s:", symbol, positionSide)
+	log.Printf("     原始止盈价: %.8f", takeProfitPrice)
+	log.Printf("     四舍五入后: %.8f (5位有效数字)", roundedTakeProfitPrice)
+	log.Printf("     数量: %.8f -> %.8f (szDecimals=%d)", quantity, roundedQuantity, t.getSzDecimals(coin))
+	log.Printf("     方向: %s (isBuy=%v)", positionSide, isBuy)
 
 	// 创建止盈单（Trigger Order）
 	order := hyperliquid.CreateOrderRequest{
@@ -780,12 +805,23 @@ func (t *HyperliquidTrader) SetTakeProfit(symbol string, positionSide string, qu
 		ReduceOnly: true,
 	}
 
-	_, err := t.exchange.Order(t.ctx, order, nil)
+	// 📊 增强日志：记录订单请求详情
+	log.Printf("  📋 [止盈订单请求] Coin=%s, IsBuy=%v, Size=%.8f, Price=%.8f, TriggerPx=%.8f, ReduceOnly=true",
+		coin, isBuy, roundedQuantity, roundedTakeProfitPrice, roundedTakeProfitPrice)
+
+	// 调用 API
+	orderResp, err := t.exchange.Order(t.ctx, order, nil)
+	
+	// 📊 增强日志：记录 API 响应
 	if err != nil {
+		log.Printf("  ❌ [止盈设置失败] %s %s: %v", symbol, positionSide, err)
+		log.Printf("     请求详情: Coin=%s, TriggerPx=%.8f, Size=%.8f", coin, roundedTakeProfitPrice, roundedQuantity)
 		return fmt.Errorf("设置止盈失败: %w", err)
 	}
 
-	log.Printf("  止盈价设置: %.4f", roundedTakeProfitPrice)
+	// 📊 增强日志：记录成功响应
+	log.Printf("  ✅ [止盈设置成功] %s %s: 止盈价=%.8f", symbol, positionSide, roundedTakeProfitPrice)
+	log.Printf("     API响应: %+v", orderResp)
 	return nil
 }
 

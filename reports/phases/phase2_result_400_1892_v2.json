@@ -1,0 +1,108 @@
+{
+  "SymbolAnalysis": {},
+  "DirectionAnalysis": {
+    "LongTrades": 0,
+    "ShortTrades": 0,
+    "LongPnL": 0,
+    "ShortPnL": 0,
+    "LongWinRate": 0,
+    "ShortWinRate": 0,
+    "LongAvgPnL": 0,
+    "ShortAvgPnL": 0
+  },
+  "CycleAnalysis": [
+    {
+      "CycleRange": "400-549",
+      "StartCycle": 400,
+      "EndCycle": 549,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "549-698",
+      "StartCycle": 549,
+      "EndCycle": 698,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "698-847",
+      "StartCycle": 698,
+      "EndCycle": 847,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "847-996",
+      "StartCycle": 847,
+      "EndCycle": 996,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "996-1145",
+      "StartCycle": 996,
+      "EndCycle": 1145,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "1145-1294",
+      "StartCycle": 1145,
+      "EndCycle": 1294,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "1294-1443",
+      "StartCycle": 1294,
+      "EndCycle": 1443,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "1443-1592",
+      "StartCycle": 1443,
+      "EndCycle": 1592,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "1592-1741",
+      "StartCycle": 1592,
+      "EndCycle": 1741,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "1741-1892",
+      "StartCycle": 1741,
+      "EndCycle": 1892,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    }
+  ],
+  "LeverageAnalysis": {},
+  "TradePairAnalysis": null,
+  "ReportPath": "phase2_report_400_1892.md"
+}

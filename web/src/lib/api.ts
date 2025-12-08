@@ -11,6 +11,20 @@ import type {
   UpdateModelConfigRequest,
   UpdateExchangeConfigRequest,
   CompetitionData,
+  TradeHistoryListResponse,
+  TradeAnalytics,
+  TradeOverview,
+  PnLStatistics,
+  WinRateStatistics,
+  FeeStatistics,
+  RiskMetrics,
+  SymbolStatistics,
+  TimeSeriesStatistics,
+  TradeFrequencyStats,
+  ActionStatistics,
+  TrendAnalysis,
+  PairStatistics,
+  TradePerformance,
 } from '../types';
 
 const API_BASE = '/api';
@@ -223,6 +237,73 @@ export const api = {
     return res.json();
   },
 
+  async getTradeHistory(params: {
+    traderId: string;
+    limit?: number;
+    offset?: number;
+    symbol?: string;
+    action?: string;
+    side?: string;
+    orderBy?: string;
+    startTime?: string;
+    endTime?: string;
+  }): Promise<TradeHistoryListResponse> {
+    const {
+      traderId,
+      limit,
+      offset,
+      symbol,
+      action,
+      side,
+      orderBy,
+      startTime,
+      endTime,
+    } = params;
+
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', traderId);
+
+    if (limit !== undefined) searchParams.set('limit', String(limit));
+    if (offset !== undefined) searchParams.set('offset', String(offset));
+    if (symbol) searchParams.set('symbol', symbol);
+    if (action) searchParams.set('action', action);
+    if (side) searchParams.set('side', side);
+    if (orderBy) searchParams.set('order_by', orderBy);
+    if (startTime) searchParams.set('start_time', startTime);
+    if (endTime) searchParams.set('end_time', endTime);
+
+    const res = await fetch(`${API_BASE}/trade-history?${searchParams.toString()}`, {
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) {
+      throw new Error('获取交易历史失败');
+    }
+    return res.json();
+  },
+
+  async getTradePerformanceStats(params: {
+    trader_id: string;
+    start_time?: string;
+    end_time?: string;
+    recent_limit?: number;
+    sharpe_window?: number;
+  }): Promise<TradePerformance> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', params.trader_id);
+    if (params.start_time) searchParams.set('start_time', params.start_time);
+    if (params.end_time) searchParams.set('end_time', params.end_time);
+    if (params.recent_limit) searchParams.set('recent_limit', params.recent_limit.toString());
+    if (params.sharpe_window) searchParams.set('sharpe_window', params.sharpe_window.toString());
+
+    const res = await fetch(`${API_BASE}/trade-history/performance?${searchParams.toString()}`, {
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) {
+      throw new Error('获取交易表现失败');
+    }
+    return res.json();
+  },
+
   // 获取统计信息（支持trader_id）
   async getStatistics(traderId?: string): Promise<Statistics> {
     const url = traderId
@@ -312,5 +393,332 @@ export const api = {
       }),
     });
     if (!res.ok) throw new Error('保存用户信号源配置失败');
+  },
+
+  // Trade Analytics API
+  async getTradeAnalytics(filter: {
+    trader_id: string;
+    symbol?: string;
+    side?: string;
+    action?: string;
+    start_time?: string;
+    end_time?: string;
+    group_by?: string;
+    include_pairs?: boolean;
+  }): Promise<TradeAnalytics> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    if (filter.symbol) searchParams.set('symbol', filter.symbol);
+    if (filter.side) searchParams.set('side', filter.side);
+    if (filter.action) searchParams.set('action', filter.action);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+    if (filter.group_by) searchParams.set('group_by', filter.group_by);
+    if (filter.include_pairs) searchParams.set('include_pairs', 'true');
+
+    const res = await fetch(`${API_BASE}/trade-analytics?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取交易分析失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
+  },
+
+  async getTradeAnalyticsOverview(filter: {
+    trader_id: string;
+    symbol?: string;
+    side?: string;
+    start_time?: string;
+    end_time?: string;
+  }): Promise<TradeOverview> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    if (filter.symbol) searchParams.set('symbol', filter.symbol);
+    if (filter.side) searchParams.set('side', filter.side);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+
+    const res = await fetch(`${API_BASE}/trade-analytics/overview?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取概览统计失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
+  },
+
+  async getTradeAnalyticsPnL(filter: {
+    trader_id: string;
+    symbol?: string;
+    side?: string;
+    start_time?: string;
+    end_time?: string;
+  }): Promise<PnLStatistics> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    if (filter.symbol) searchParams.set('symbol', filter.symbol);
+    if (filter.side) searchParams.set('side', filter.side);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+
+    const res = await fetch(`${API_BASE}/trade-analytics/pnl?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取盈亏统计失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
+  },
+
+  async getTradeAnalyticsWinRate(filter: {
+    trader_id: string;
+    symbol?: string;
+    side?: string;
+    start_time?: string;
+    end_time?: string;
+  }): Promise<WinRateStatistics> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    if (filter.symbol) searchParams.set('symbol', filter.symbol);
+    if (filter.side) searchParams.set('side', filter.side);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+
+    const res = await fetch(`${API_BASE}/trade-analytics/win-rate?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取胜率统计失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
+  },
+
+  async getTradeAnalyticsFees(filter: {
+    trader_id: string;
+    symbol?: string;
+    side?: string;
+    start_time?: string;
+    end_time?: string;
+  }): Promise<FeeStatistics> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    if (filter.symbol) searchParams.set('symbol', filter.symbol);
+    if (filter.side) searchParams.set('side', filter.side);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+
+    const res = await fetch(`${API_BASE}/trade-analytics/fees?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取费用统计失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
+  },
+
+  async getTradeAnalyticsRisk(filter: {
+    trader_id: string;
+    symbol?: string;
+    side?: string;
+    start_time?: string;
+    end_time?: string;
+  }): Promise<RiskMetrics> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    if (filter.symbol) searchParams.set('symbol', filter.symbol);
+    if (filter.side) searchParams.set('side', filter.side);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+
+    const res = await fetch(`${API_BASE}/trade-analytics/risk?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取风险指标失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
+  },
+
+  async getTradeAnalyticsSymbols(filter: {
+    trader_id: string;
+    side?: string;
+    start_time?: string;
+    end_time?: string;
+  }): Promise<Record<string, SymbolStatistics>> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    if (filter.side) searchParams.set('side', filter.side);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+
+    const res = await fetch(`${API_BASE}/trade-analytics/symbols?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取币种统计失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
+  },
+
+  async getTradeAnalyticsTimeSeries(filter: {
+    trader_id: string;
+    group_by: string;
+    start_time?: string;
+    end_time?: string;
+  }): Promise<TimeSeriesStatistics> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    searchParams.set('group_by', filter.group_by);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+
+    const res = await fetch(`${API_BASE}/trade-analytics/time-series?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取时间序列统计失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
+  },
+
+  async getTradeAnalyticsFrequency(filter: {
+    trader_id: string;
+    symbol?: string;
+    side?: string;
+    start_time?: string;
+    end_time?: string;
+  }): Promise<TradeFrequencyStats> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    if (filter.symbol) searchParams.set('symbol', filter.symbol);
+    if (filter.side) searchParams.set('side', filter.side);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+
+    const res = await fetch(`${API_BASE}/trade-analytics/frequency?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取交易频率统计失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
+  },
+
+  async getTradeAnalyticsActions(filter: {
+    trader_id: string;
+    symbol?: string;
+    side?: string;
+    start_time?: string;
+    end_time?: string;
+  }): Promise<ActionStatistics> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    if (filter.symbol) searchParams.set('symbol', filter.symbol);
+    if (filter.side) searchParams.set('side', filter.side);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+
+    const res = await fetch(`${API_BASE}/trade-analytics/actions?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取交易类型统计失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
+  },
+
+  async getTradeAnalyticsTrends(filter: {
+    trader_id: string;
+    symbol?: string;
+    side?: string;
+    start_time?: string;
+    end_time?: string;
+  }): Promise<TrendAnalysis> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    if (filter.symbol) searchParams.set('symbol', filter.symbol);
+    if (filter.side) searchParams.set('side', filter.side);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+
+    const res = await fetch(`${API_BASE}/trade-analytics/trends?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取趋势分析失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
+  },
+
+  async getTradeAnalyticsPairs(filter: {
+    trader_id: string;
+    symbol?: string;
+    start_time?: string;
+    end_time?: string;
+    limit?: number;
+  }): Promise<PairStatistics> {
+    const searchParams = new URLSearchParams();
+    searchParams.set('trader_id', filter.trader_id);
+    if (filter.symbol) searchParams.set('symbol', filter.symbol);
+    if (filter.start_time) searchParams.set('start_time', filter.start_time);
+    if (filter.end_time) searchParams.set('end_time', filter.end_time);
+    if (filter.limit) searchParams.set('limit', String(filter.limit));
+
+    const res = await fetch(`${API_BASE}/trade-analytics/pairs?${searchParams.toString()}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error || `获取配对统计失败 (${res.status})`;
+      throw new Error(errorMessage);
+    }
+    return res.json();
   },
 };

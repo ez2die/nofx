@@ -1,0 +1,875 @@
+{
+  "SymbolAnalysis": {
+    "BNBUSDT": {
+      "Symbol": "BNBUSDT",
+      "TotalTrades": 1,
+      "WinningTrades": 1,
+      "LosingTrades": 0,
+      "WinRate": 100,
+      "TotalPnL": 0.14388,
+      "AvgPnL": 0.14388,
+      "MaxProfit": 0.14388,
+      "MaxLoss": 0,
+      "TotalFees": 0.08451,
+      "AvgDuration": 2870069000000,
+      "StopLossTriggers": 0,
+      "TakeProfitTriggers": 1
+    },
+    "BTCUSDT": {
+      "Symbol": "BTCUSDT",
+      "TotalTrades": 2,
+      "WinningTrades": 1,
+      "LosingTrades": 1,
+      "WinRate": 50,
+      "TotalPnL": -0.25229,
+      "AvgPnL": -0.126145,
+      "MaxProfit": 0.2065,
+      "MaxLoss": -0.45879,
+      "TotalFees": 0.569172,
+      "AvgDuration": 722186500000,
+      "StopLossTriggers": 0,
+      "TakeProfitTriggers": 2
+    },
+    "ETHUSDT": {
+      "Symbol": "ETHUSDT",
+      "TotalTrades": 7,
+      "WinningTrades": 3,
+      "LosingTrades": 4,
+      "WinRate": 42.857142857142854,
+      "TotalPnL": -1.73731,
+      "AvgPnL": -0.24818714285714286,
+      "MaxProfit": 0.34565,
+      "MaxLoss": -1.21434,
+      "TotalFees": 1.865144,
+      "AvgDuration": 11365534571428,
+      "StopLossTriggers": 7,
+      "TakeProfitTriggers": 0
+    },
+    "SOLUSDT": {
+      "Symbol": "SOLUSDT",
+      "TotalTrades": 1,
+      "WinningTrades": 1,
+      "LosingTrades": 0,
+      "WinRate": 100,
+      "TotalPnL": 0.2108,
+      "AvgPnL": 0.2108,
+      "MaxProfit": 0.2108,
+      "MaxLoss": 0,
+      "TotalFees": 0.084979,
+      "AvgDuration": 2523412000000,
+      "StopLossTriggers": 0,
+      "TakeProfitTriggers": 1
+    }
+  },
+  "DirectionAnalysis": {
+    "LongTrades": 11,
+    "ShortTrades": 0,
+    "LongPnL": -1.6349200000000002,
+    "ShortPnL": 0,
+    "LongWinRate": 54.54545454545454,
+    "ShortWinRate": 0,
+    "LongAvgPnL": -0.14862909090909093,
+    "ShortAvgPnL": 0
+  },
+  "CycleAnalysis": [
+    {
+      "CycleRange": "1-41",
+      "StartCycle": 1,
+      "EndCycle": 41,
+      "TotalTrades": 7,
+      "TotalPnL": -1.73731,
+      "WinRate": 42.857142857142854,
+      "AvgPnL": -0.24818714285714286
+    },
+    {
+      "CycleRange": "41-81",
+      "StartCycle": 41,
+      "EndCycle": 81,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "81-121",
+      "StartCycle": 81,
+      "EndCycle": 121,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "121-161",
+      "StartCycle": 121,
+      "EndCycle": 161,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "161-201",
+      "StartCycle": 161,
+      "EndCycle": 201,
+      "TotalTrades": 2,
+      "TotalPnL": -0.25229,
+      "WinRate": 50,
+      "AvgPnL": -0.126145
+    },
+    {
+      "CycleRange": "201-241",
+      "StartCycle": 201,
+      "EndCycle": 241,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "241-281",
+      "StartCycle": 241,
+      "EndCycle": 281,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "281-321",
+      "StartCycle": 281,
+      "EndCycle": 321,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "321-361",
+      "StartCycle": 321,
+      "EndCycle": 361,
+      "TotalTrades": 2,
+      "TotalPnL": 0.35468,
+      "WinRate": 100,
+      "AvgPnL": 0.17734
+    },
+    {
+      "CycleRange": "361-404",
+      "StartCycle": 361,
+      "EndCycle": 404,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    }
+  ],
+  "LeverageAnalysis": {
+    "10": {
+      "Leverage": 10,
+      "TotalTrades": 9,
+      "WinningTrades": 4,
+      "LosingTrades": 5,
+      "WinRate": 44.44444444444444,
+      "TotalPnL": -1.9896,
+      "AvgPnL": -0.22106666666666666,
+      "MaxProfit": 0.34565,
+      "MaxLoss": -1.21434
+    },
+    "5": {
+      "Leverage": 5,
+      "TotalTrades": 2,
+      "WinningTrades": 2,
+      "LosingTrades": 0,
+      "WinRate": 100,
+      "TotalPnL": 0.35468,
+      "AvgPnL": 0.17734,
+      "MaxProfit": 0.2108,
+      "MaxLoss": 0
+    }
+  },
+  "TradePairAnalysis": [
+    {
+      "Trade": {
+        "CycleNumber": 12,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.11253249418525106,
+          "leverage": 10,
+          "price": 2922.4,
+          "order_id": 0,
+          "timestamp": "2025-11-25T15:10:25.266732689+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.1049,
+          "leverage": 10,
+          "price": 2968.8,
+          "order_id": 0,
+          "timestamp": "2025-11-26T09:46:12.066+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": true,
+          "was_stop_loss": true
+        },
+        "OpenTrade": {
+          "ID": 1184,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.0783,
+          "ExecutionPrice": 2922.4,
+          "PnL": 0,
+          "Fee": 0.10297,
+          "Timestamp": "2025-11-25T15:10:27.531+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1183,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.1125,
+          "ExecutionPrice": 2917.6,
+          "PnL": -0.54,
+          "Fee": 0.147703,
+          "Timestamp": "2025-11-25T15:16:19.936+08:00"
+        },
+        "PnL": -0.54,
+        "Duration": 352405000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "neutral",
+      "ExitReason": "stop_loss",
+      "HoldDuration": 352405000000,
+      "PriceMovement": -0.1642485628250815
+    },
+    {
+      "Trade": {
+        "CycleNumber": 12,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.11253249418525106,
+          "leverage": 10,
+          "price": 2922.4,
+          "order_id": 0,
+          "timestamp": "2025-11-25T15:10:25.266732689+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.1049,
+          "leverage": 10,
+          "price": 2968.8,
+          "order_id": 0,
+          "timestamp": "2025-11-26T09:46:12.066+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": true,
+          "was_stop_loss": true
+        },
+        "OpenTrade": {
+          "ID": 1185,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.0342,
+          "ExecutionPrice": 2922.4,
+          "PnL": 0,
+          "Fee": 0.044975,
+          "Timestamp": "2025-11-25T15:10:27.531+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1187,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.1115,
+          "ExecutionPrice": 2919,
+          "PnL": 0.34565,
+          "Fee": 0.14646,
+          "Timestamp": "2025-11-25T20:37:12.375+08:00"
+        },
+        "PnL": 0.34565,
+        "Duration": 19604844000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "good",
+      "ExitReason": "stop_loss",
+      "HoldDuration": 19604844000000,
+      "PriceMovement": -0.11634273200109808
+    },
+    {
+      "Trade": {
+        "CycleNumber": 197,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "BTCUSDT",
+          "quantity": 0.00373065797327701,
+          "leverage": 10,
+          "price": 87121,
+          "order_id": 0,
+          "timestamp": "2025-11-26T00:25:11.965728775+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "BTCUSDT",
+          "quantity": 0.0035,
+          "leverage": 10,
+          "price": 87911,
+          "order_id": 0,
+          "timestamp": "2025-11-26T09:58:15.598+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": true,
+          "was_stop_loss": false
+        },
+        "OpenTrade": {
+          "ID": 1188,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BTCUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.00373,
+          "ExecutionPrice": 87121,
+          "PnL": 0,
+          "Fee": 0.146232,
+          "Timestamp": "2025-11-26T00:25:14.21+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1189,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BTCUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.00373,
+          "ExecutionPrice": 86998,
+          "PnL": -0.45879,
+          "Fee": 0.146026,
+          "Timestamp": "2025-11-26T00:37:14.252+08:00"
+        },
+        "PnL": -0.45879,
+        "Duration": 720042000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "neutral",
+      "ExitReason": "take_profit",
+      "HoldDuration": 720042000000,
+      "PriceMovement": -0.14118295244544943
+    },
+    {
+      "Trade": {
+        "CycleNumber": 12,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.11253249418525106,
+          "leverage": 10,
+          "price": 2922.4,
+          "order_id": 0,
+          "timestamp": "2025-11-25T15:10:25.266732689+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.1049,
+          "leverage": 10,
+          "price": 2968.8,
+          "order_id": 0,
+          "timestamp": "2025-11-26T09:46:12.066+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": true,
+          "was_stop_loss": true
+        },
+        "OpenTrade": {
+          "ID": 1186,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.1115,
+          "ExecutionPrice": 2915.9,
+          "PnL": 0,
+          "Fee": 0.146305,
+          "Timestamp": "2025-11-25T20:16:06.272+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1192,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.1096,
+          "ExecutionPrice": 2926.4,
+          "PnL": -0.03288,
+          "Fee": 0.14433,
+          "Timestamp": "2025-11-26T05:01:15.329+08:00"
+        },
+        "PnL": -0.03288,
+        "Duration": 31509057000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "neutral",
+      "ExitReason": "stop_loss",
+      "HoldDuration": 31509057000000,
+      "PriceMovement": 0.36009465345176445
+    },
+    {
+      "Trade": {
+        "CycleNumber": 12,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.11253249418525106,
+          "leverage": 10,
+          "price": 2922.4,
+          "order_id": 0,
+          "timestamp": "2025-11-25T15:10:25.266732689+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.1049,
+          "leverage": 10,
+          "price": 2968.8,
+          "order_id": 0,
+          "timestamp": "2025-11-26T09:46:12.066+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": true,
+          "was_stop_loss": true
+        },
+        "OpenTrade": {
+          "ID": 1190,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.1096,
+          "ExecutionPrice": 2926.7,
+          "PnL": 0,
+          "Fee": 0.144344,
+          "Timestamp": "2025-11-26T04:10:13.907+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1193,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.1094,
+          "ExecutionPrice": 2914.6,
+          "PnL": -1.21434,
+          "Fee": 0.143485,
+          "Timestamp": "2025-11-26T06:04:13.676+08:00"
+        },
+        "PnL": -1.21434,
+        "Duration": 6839769000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "bad",
+      "ExitReason": "stop_loss",
+      "HoldDuration": 6839769000000,
+      "PriceMovement": -0.41343492670925985
+    },
+    {
+      "Trade": {
+        "CycleNumber": 330,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "SOLUSDT",
+          "quantity": 0.6776728426212962,
+          "leverage": 5,
+          "price": 138.7,
+          "order_id": 0,
+          "timestamp": "2025-11-26T07:04:10.644872236+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "SOLUSDT",
+          "quantity": 0.68,
+          "leverage": 5,
+          "price": 138.97,
+          "order_id": 0,
+          "timestamp": "2025-11-26T07:04:17.798+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": true,
+          "was_stop_loss": false
+        },
+        "OpenTrade": {
+          "ID": 1195,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "SOLUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.68,
+          "ExecutionPrice": 138.7,
+          "PnL": 0,
+          "Fee": 0.042442,
+          "Timestamp": "2025-11-26T07:04:13.173+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1196,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "SOLUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.68,
+          "ExecutionPrice": 139.01,
+          "PnL": 0.2108,
+          "Fee": 0.042537,
+          "Timestamp": "2025-11-26T07:46:16.585+08:00"
+        },
+        "PnL": 0.2108,
+        "Duration": 2523412000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "good",
+      "ExitReason": "take_profit",
+      "HoldDuration": 2523412000000,
+      "PriceMovement": 0.22350396539293607
+    },
+    {
+      "Trade": {
+        "CycleNumber": 330,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "BNBUSDT",
+          "quantity": 0.10915509313019649,
+          "leverage": 5,
+          "price": 860.82,
+          "order_id": 0,
+          "timestamp": "2025-11-26T07:04:21.353944407+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "BNBUSDT",
+          "quantity": 0.109,
+          "leverage": 5,
+          "price": 862.14,
+          "order_id": 0,
+          "timestamp": "2025-11-26T07:04:28.956+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": true,
+          "was_stop_loss": false
+        },
+        "OpenTrade": {
+          "ID": 1194,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BNBUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.109,
+          "ExecutionPrice": 860.82,
+          "PnL": 0,
+          "Fee": 0.042223,
+          "Timestamp": "2025-11-26T07:04:24.214+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1197,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BNBUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.109,
+          "ExecutionPrice": 862.14,
+          "PnL": 0.14388,
+          "Fee": 0.042287,
+          "Timestamp": "2025-11-26T07:52:14.283+08:00"
+        },
+        "PnL": 0.14388,
+        "Duration": 2870069000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "good",
+      "ExitReason": "take_profit",
+      "HoldDuration": 2870069000000,
+      "PriceMovement": 0.15334216212447854
+    },
+    {
+      "Trade": {
+        "CycleNumber": 12,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.11253249418525106,
+          "leverage": 10,
+          "price": 2922.4,
+          "order_id": 0,
+          "timestamp": "2025-11-25T15:10:25.266732689+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.1049,
+          "leverage": 10,
+          "price": 2968.8,
+          "order_id": 0,
+          "timestamp": "2025-11-26T09:46:12.066+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": true,
+          "was_stop_loss": true
+        },
+        "OpenTrade": {
+          "ID": 1191,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.1094,
+          "ExecutionPrice": 2925.7,
+          "PnL": 0,
+          "Fee": 0.144032,
+          "Timestamp": "2025-11-26T05:04:09.985+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1198,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.1059,
+          "ExecutionPrice": 2957,
+          "PnL": 0.05295,
+          "Fee": 0.140915,
+          "Timestamp": "2025-11-26T08:46:13.813+08:00"
+        },
+        "PnL": 0.05295,
+        "Duration": 13323828000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "good",
+      "ExitReason": "stop_loss",
+      "HoldDuration": 13323828000000,
+      "PriceMovement": 1.069829442526581
+    },
+    {
+      "Trade": {
+        "CycleNumber": 12,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.11253249418525106,
+          "leverage": 10,
+          "price": 2922.4,
+          "order_id": 0,
+          "timestamp": "2025-11-25T15:10:25.266732689+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.1049,
+          "leverage": 10,
+          "price": 2968.8,
+          "order_id": 0,
+          "timestamp": "2025-11-26T09:46:12.066+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": true,
+          "was_stop_loss": true
+        },
+        "OpenTrade": {
+          "ID": 1199,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.1059,
+          "ExecutionPrice": 2956.5,
+          "PnL": 0,
+          "Fee": 0.140892,
+          "Timestamp": "2025-11-26T08:43:15.83+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1201,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.1049,
+          "ExecutionPrice": 2969.5,
+          "PnL": -0.56646,
+          "Fee": 0.140175,
+          "Timestamp": "2025-11-26T09:52:10.96+08:00"
+        },
+        "PnL": -0.56646,
+        "Duration": 4135130000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "neutral",
+      "ExitReason": "stop_loss",
+      "HoldDuration": 4135130000000,
+      "PriceMovement": 0.43970911550820224
+    },
+    {
+      "Trade": {
+        "CycleNumber": 197,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "BTCUSDT",
+          "quantity": 0.00373065797327701,
+          "leverage": 10,
+          "price": 87121,
+          "order_id": 0,
+          "timestamp": "2025-11-26T00:25:11.965728775+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "BTCUSDT",
+          "quantity": 0.0035,
+          "leverage": 10,
+          "price": 87911,
+          "order_id": 0,
+          "timestamp": "2025-11-26T09:58:15.598+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": true,
+          "was_stop_loss": false
+        },
+        "OpenTrade": {
+          "ID": 1202,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BTCUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.0035,
+          "ExecutionPrice": 87880,
+          "PnL": 0,
+          "Fee": 0.138411,
+          "Timestamp": "2025-11-26T09:58:10.68+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1203,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BTCUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.0035,
+          "ExecutionPrice": 87939,
+          "PnL": 0.2065,
+          "Fee": 0.138503,
+          "Timestamp": "2025-11-26T10:10:15.011+08:00"
+        },
+        "PnL": 0.2065,
+        "Duration": 724331000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "good",
+      "ExitReason": "take_profit",
+      "HoldDuration": 724331000000,
+      "PriceMovement": 0.0671370050068275
+    },
+    {
+      "Trade": {
+        "CycleNumber": 12,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.11253249418525106,
+          "leverage": 10,
+          "price": 2922.4,
+          "order_id": 0,
+          "timestamp": "2025-11-25T15:10:25.266732689+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "ETHUSDT",
+          "quantity": 0.1049,
+          "leverage": 10,
+          "price": 2968.8,
+          "order_id": 0,
+          "timestamp": "2025-11-26T09:46:12.066+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": true,
+          "was_stop_loss": true
+        },
+        "OpenTrade": {
+          "ID": 1200,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.1049,
+          "ExecutionPrice": 2974.9,
+          "PnL": 0,
+          "Fee": 0.14043,
+          "Timestamp": "2025-11-26T09:46:06.966+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1205,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "ETHUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.1037,
+          "ExecutionPrice": 2960,
+          "PnL": 0.21777,
+          "Fee": 0.138128,
+          "Timestamp": "2025-11-26T10:49:20.675+08:00"
+        },
+        "PnL": 0.21777,
+        "Duration": 3793709000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "good",
+      "ExitReason": "stop_loss",
+      "HoldDuration": 3793709000000,
+      "PriceMovement": -0.500857171669639
+    }
+  ],
+  "ReportPath": "phase2_report_1_404.md"
+}

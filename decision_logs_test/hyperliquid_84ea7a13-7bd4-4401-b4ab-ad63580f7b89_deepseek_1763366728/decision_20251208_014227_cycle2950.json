@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-12-08T01:42:27.457230499+08:00",
+  "cycle_number": 2950,
+  "system_prompt": "",
+  "input_prompt": "",
+  "cot_trace": "",
+  "decision_json": "",
+  "account_state": {
+    "total_balance": 24.7005,
+    "available_balance": 24.7005,
+    "total_unrealized_profit": -75.2995,
+    "position_count": 0,
+    "margin_used_pct": 0
+  },
+  "positions": null,
+  "candidate_coins": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "BNBUSDT",
+    "XRPUSDT",
+    "HYPEUSDT"
+  ],
+  "decisions": null,
+  "execution_log": [],
+  "success": false,
+  "error_message": "获取AI决策失败: 调用AI API失败: API返回错误 (status 400): {\"error\":{\"message\":\"Access denied, please make sure your account is in good standing. For details, see: https://help.aliyun.com/zh/model-studio/error-code#overdue-payment\",\"type\":\"Arrearage\",\"param\":null,\"code\":\"Arrearage\"},\"id\":\"chatcmpl-2f47e3ba-0366-4fa7-a60b-d4aa90b3f9b7\",\"request_id\":\"2f47e3ba-0366-4fa7-a60b-d4aa90b3f9b7\"}"
+}

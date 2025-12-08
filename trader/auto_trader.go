@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"nofx/decision"
 	"nofx/logger"
 	"nofx/market"
@@ -91,7 +92,7 @@ type AutoTrader struct {
 	config                AutoTraderConfig
 	trader                Trader // 使用Trader接口（支持多平台）
 	mcpClient             *mcp.Client
-	decisionLogger        *logger.DecisionLogger   // 决策日志记录器
+	decisionLogger        *logger.DecisionLogger  // 决策日志记录器
 	tradeHistoryService   trade_history.Service   // 交易历史服务（可选）
 	tradeHistoryEnabled   bool                    // 是否启用交易历史
 	tradeAnalyticsService trade_analytics.Service // 交易分析服务（可选，新增）
@@ -494,15 +495,15 @@ func (at *AutoTrader) runCycle() error {
 
 	// 4. 调用AI获取完整决策
 	log.Printf("🤖 正在请求AI分析并决策... [模板: %s]", at.systemPromptTemplate)
-	decision, err := decision.GetFullDecisionWithCustomPrompt(ctx, at.mcpClient, at.customPrompt, at.overrideBasePrompt, at.systemPromptTemplate)
+	aiDecision, err := decision.GetFullDecisionWithCustomPrompt(ctx, at.mcpClient, at.customPrompt, at.overrideBasePrompt, at.systemPromptTemplate)
 
 	// 即使有错误，也保存思维链、决策和输入prompt（用于debug）
-	if decision != nil {
-		record.SystemPrompt = decision.SystemPrompt // 保存系统提示词
-		record.InputPrompt = decision.UserPrompt
-		record.CoTTrace = decision.CoTTrace
-		if len(decision.Decisions) > 0 {
-			decisionJSON, _ := json.MarshalIndent(decision.Decisions, "", "  ")
+	if aiDecision != nil {
+		record.SystemPrompt = aiDecision.SystemPrompt // 保存系统提示词
+		record.InputPrompt = aiDecision.UserPrompt
+		record.CoTTrace = aiDecision.CoTTrace
+		if len(aiDecision.Decisions) > 0 {
+			decisionJSON, _ := json.MarshalIndent(aiDecision.Decisions, "", "  ")
 			record.DecisionJSON = string(decisionJSON)
 		}
 	}
@@ -512,20 +513,20 @@ func (at *AutoTrader) runCycle() error {
 		record.ErrorMessage = fmt.Sprintf("获取AI决策失败: %v", err)
 
 		// 打印系统提示词和AI思维链（即使有错误，也要输出以便调试）
-		if decision != nil {
-			if decision.SystemPrompt != "" {
+		if aiDecision != nil {
+			if aiDecision.SystemPrompt != "" {
 				log.Println("\n" + strings.Repeat("=", 70))
 				log.Printf("📋 系统提示词 [模板: %s] (错误情况)", at.systemPromptTemplate)
 				log.Println(strings.Repeat("=", 70))
-				log.Println(decision.SystemPrompt)
+				log.Println(aiDecision.SystemPrompt)
 				log.Println(strings.Repeat("=", 70))
 			}
 
-			if decision.CoTTrace != "" {
+			if aiDecision.CoTTrace != "" {
 				log.Println("\n" + strings.Repeat("-", 70))
 				log.Println("💭 AI思维链分析（错误情况）:")
 				log.Println(strings.Repeat("-", 70))
-				log.Println(decision.CoTTrace)
+				log.Println(aiDecision.CoTTrace)
 				log.Println(strings.Repeat("-", 70))
 			}
 		}
@@ -560,7 +561,7 @@ func (at *AutoTrader) runCycle() error {
 	log.Println()
 
 	// 8. 对决策排序：确保先平仓后开仓（防止仓位叠加超限）
-	sortedDecisions := sortDecisionsByPriority(decision.Decisions)
+	sortedDecisions := sortDecisionsByPriority(aiDecision.Decisions)
 
 	log.Println("🔄 执行顺序（已优化）: 先平仓→后开仓")
 	for i, d := range sortedDecisions {
@@ -613,6 +614,93 @@ func (at *AutoTrader) runCycle() error {
 		record.Decisions = append(record.Decisions, actionRecord)
 	}
 
+	// ⚠️ 关键修复：在AI决策执行后，重新获取持仓并更新currentPositionsCopy
+	// 这样可以确保lastCyclePositions反映周期结束时的实际持仓，而不是周期开始时的持仓
+	// 避免下一个周期误判为自动触发
+	// 检查是否有实际执行的交易操作（包括AI决策和自动触发）
+	hasTradingAction := false
+	for _, actionRecord := range record.Decisions {
+		if actionRecord.Success {
+			action := actionRecord.Action
+			if action == "open_long" || action == "open_short" ||
+				action == "close_long" || action == "close_short" {
+				hasTradingAction = true
+				break
+			}
+		}
+	}
+
+	// 如果有交易操作，重新获取持仓并更新currentPositionsCopy
+	if hasTradingAction {
+		// 等待交易操作完成（给交易所一些时间处理）
+		time.Sleep(2 * time.Second)
+
+		// 重新获取持仓
+		positions, err := at.trader.GetPositions()
+		if err != nil {
+			log.Printf("⚠️  重新获取持仓失败（用于更新currentPositionsCopy）: %v", err)
+			// 如果获取失败，继续使用原来的currentPositionsCopy
+		} else {
+			// 将持仓转换为PositionInfo格式
+			var updatedPositionInfos []decision.PositionInfo
+			for _, pos := range positions {
+				symbol := pos["symbol"].(string)
+				side := pos["side"].(string)
+				entryPrice := pos["entryPrice"].(float64)
+				markPrice := pos["markPrice"].(float64)
+				quantity := pos["positionAmt"].(float64)
+				if quantity < 0 {
+					quantity = -quantity
+				}
+				unrealizedPnl := pos["unRealizedProfit"].(float64)
+				liquidationPrice := pos["liquidationPrice"].(float64)
+
+				// 计算盈亏百分比
+				pnlPct := 0.0
+				if side == "long" {
+					pnlPct = ((markPrice - entryPrice) / entryPrice) * 100
+				} else {
+					pnlPct = ((entryPrice - markPrice) / entryPrice) * 100
+				}
+
+				// 计算占用保证金
+				leverage := 10
+				if lev, ok := pos["leverage"].(float64); ok {
+					leverage = int(lev)
+				}
+				marginUsed := (quantity * markPrice) / float64(leverage)
+
+				// 获取或更新持仓首次出现时间
+				posKey := symbol + "_" + side
+				updateTime := int64(0)
+				if existingTime, exists := at.positionFirstSeenTime[posKey]; exists {
+					updateTime = existingTime
+				} else {
+					updateTime = time.Now().UnixMilli()
+					at.positionFirstSeenTime[posKey] = updateTime
+				}
+
+				updatedPositionInfos = append(updatedPositionInfos, decision.PositionInfo{
+					Symbol:           symbol,
+					Side:             side,
+					EntryPrice:       entryPrice,
+					MarkPrice:        markPrice,
+					Quantity:         quantity,
+					Leverage:         leverage,
+					UnrealizedPnL:    unrealizedPnl,
+					UnrealizedPnLPct: pnlPct,
+					LiquidationPrice: liquidationPrice,
+					MarginUsed:       marginUsed,
+					UpdateTime:       updateTime,
+				})
+			}
+
+			// 更新currentPositionsCopy为实际持仓
+			currentPositionsCopy = updatedPositionInfos
+			log.Printf("✅ 已更新currentPositionsCopy: %d个持仓", len(currentPositionsCopy))
+		}
+	}
+
 	// 9. 更新交易状态追踪
 	// 检查是否有任何交易操作（开仓或平仓）成功执行
 	// 包括AI决策和自动触发的平仓
@@ -632,7 +720,7 @@ func (at *AutoTrader) runCycle() error {
 
 	// 检查所有决策是否都是 wait
 	allWait := true
-	for _, d := range decision.Decisions {
+	for _, d := range aiDecision.Decisions {
 		if d.Action != "wait" {
 			allWait = false
 			break
@@ -641,7 +729,7 @@ func (at *AutoTrader) runCycle() error {
 
 	// 更新连续等待周期数
 	// 只有当所有决策都是 wait 且没有自动触发平仓时，才增加连续等待周期数
-	if allWait && len(decision.Decisions) > 0 && !hasAutoTriggeredClose {
+	if allWait && len(aiDecision.Decisions) > 0 && !hasAutoTriggeredClose {
 		// 所有决策都是 wait 且没有自动触发平仓，增加连续等待周期数
 		at.consecutiveWaitCycles++
 	} else {
@@ -807,7 +895,7 @@ func (at *AutoTrader) buildTradingContext() (*decision.Context, error) {
 			TraderID: at.id,
 			// 不设置时间范围，使用所有历史数据
 		}
-		
+
 		// 获取连续统计
 		stats, err := at.tradeAnalyticsService.GetStreakStats(context.Background(), filter)
 		if err == nil {
@@ -816,7 +904,7 @@ func (at *AutoTrader) buildTradingContext() (*decision.Context, error) {
 		} else {
 			log.Printf("⚠️  获取连续统计失败: %v", err)
 		}
-		
+
 		// 获取风险指标（包含夏普比率）
 		risk, err := at.tradeAnalyticsService.GetRiskMetrics(context.Background(), filter)
 		if err == nil {
@@ -1037,12 +1125,33 @@ func (at *AutoTrader) executeOpenLongWithRecord(decision *decision.Decision, act
 	posKey := decision.Symbol + "_long"
 	at.positionFirstSeenTime[posKey] = time.Now().UnixMilli()
 
+	// 📊 增强日志：记录止损止盈设置尝试
+	stopLossDistance := math.Abs((actionRecord.Price-decision.StopLoss)/actionRecord.Price) * 100
+	takeProfitDistance := math.Abs((decision.TakeProfit-actionRecord.Price)/actionRecord.Price) * 100
+	log.Printf("  📊 [开仓后设置止损止盈] %s:", decision.Symbol)
+	log.Printf("     入场价: %.8f", actionRecord.Price)
+	log.Printf("     止损价: %.8f (距离: %.4f%%)", decision.StopLoss, stopLossDistance)
+	log.Printf("     止盈价: %.8f (距离: %.4f%%)", decision.TakeProfit, takeProfitDistance)
+	log.Printf("     数量: %.8f, 杠杆: %dx", quantity, decision.Leverage)
+
 	// 设置止损止盈
 	if err := at.trader.SetStopLoss(decision.Symbol, "LONG", quantity, decision.StopLoss); err != nil {
-		log.Printf("  ⚠ 设置止损失败: %v", err)
+		log.Printf("  ❌ [止损设置失败] %s: %v", decision.Symbol, err)
+		log.Printf("     尝试设置的止损价: %.8f", decision.StopLoss)
+		log.Printf("     入场价: %.8f", actionRecord.Price)
+		log.Printf("     止损距离: %.4f%%", stopLossDistance)
+		log.Printf("     ⚠️  警告: 止损设置失败，但开仓操作已成功完成")
+	} else {
+		log.Printf("  ✅ [止损设置成功] %s: 止损价=%.8f", decision.Symbol, decision.StopLoss)
 	}
 	if err := at.trader.SetTakeProfit(decision.Symbol, "LONG", quantity, decision.TakeProfit); err != nil {
-		log.Printf("  ⚠ 设置止盈失败: %v", err)
+		log.Printf("  ❌ [止盈设置失败] %s: %v", decision.Symbol, err)
+		log.Printf("     尝试设置的止盈价: %.8f", decision.TakeProfit)
+		log.Printf("     入场价: %.8f", actionRecord.Price)
+		log.Printf("     止盈距离: %.4f%%", takeProfitDistance)
+		log.Printf("     ⚠️  警告: 止盈设置失败，但开仓操作已成功完成")
+	} else {
+		log.Printf("  ✅ [止盈设置成功] %s: 止盈价=%.8f", decision.Symbol, decision.TakeProfit)
 	}
 
 	return nil
@@ -1115,12 +1224,33 @@ func (at *AutoTrader) executeOpenShortWithRecord(decision *decision.Decision, ac
 	posKey := decision.Symbol + "_short"
 	at.positionFirstSeenTime[posKey] = time.Now().UnixMilli()
 
+	// 📊 增强日志：记录止损止盈设置尝试
+	stopLossDistance := math.Abs((decision.StopLoss-actionRecord.Price)/actionRecord.Price) * 100
+	takeProfitDistance := math.Abs((actionRecord.Price-decision.TakeProfit)/actionRecord.Price) * 100
+	log.Printf("  📊 [开仓后设置止损止盈] %s:", decision.Symbol)
+	log.Printf("     入场价: %.8f", actionRecord.Price)
+	log.Printf("     止损价: %.8f (距离: %.4f%%)", decision.StopLoss, stopLossDistance)
+	log.Printf("     止盈价: %.8f (距离: %.4f%%)", decision.TakeProfit, takeProfitDistance)
+	log.Printf("     数量: %.8f, 杠杆: %dx", quantity, decision.Leverage)
+
 	// 设置止损止盈
 	if err := at.trader.SetStopLoss(decision.Symbol, "SHORT", quantity, decision.StopLoss); err != nil {
-		log.Printf("  ⚠ 设置止损失败: %v", err)
+		log.Printf("  ❌ [止损设置失败] %s: %v", decision.Symbol, err)
+		log.Printf("     尝试设置的止损价: %.8f", decision.StopLoss)
+		log.Printf("     入场价: %.8f", actionRecord.Price)
+		log.Printf("     止损距离: %.4f%%", stopLossDistance)
+		log.Printf("     ⚠️  警告: 止损设置失败，但开仓操作已成功完成")
+	} else {
+		log.Printf("  ✅ [止损设置成功] %s: 止损价=%.8f", decision.Symbol, decision.StopLoss)
 	}
 	if err := at.trader.SetTakeProfit(decision.Symbol, "SHORT", quantity, decision.TakeProfit); err != nil {
-		log.Printf("  ⚠ 设置止盈失败: %v", err)
+		log.Printf("  ❌ [止盈设置失败] %s: %v", decision.Symbol, err)
+		log.Printf("     尝试设置的止盈价: %.8f", decision.TakeProfit)
+		log.Printf("     入场价: %.8f", actionRecord.Price)
+		log.Printf("     止盈距离: %.4f%%", takeProfitDistance)
+		log.Printf("     ⚠️  警告: 止盈设置失败，但开仓操作已成功完成")
+	} else {
+		log.Printf("  ✅ [止盈设置成功] %s: 止盈价=%.8f", decision.Symbol, decision.TakeProfit)
 	}
 
 	return nil

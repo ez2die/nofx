@@ -16,6 +16,7 @@
 
 ## 📑 Table of Contents
 
+- [📂 Repository Layout](#-repository-layout)
 - [🚀 Universal AI Trading Operating System](#-universal-ai-trading-operating-system)
 - [👥 Developer Community](#-developer-community)
 - [🆕 What's New](#-whats-new-latest-update)
@@ -35,6 +36,17 @@
 - [🔄 Changelog](#-changelog)
 - [📄 License](#-license)
 - [🤝 Contributing](#-contributing)
+
+---
+
+## 📂 Repository Layout
+
+- `data/` – runtime logs and backups (`logs/`, `backups/`); heavy outputs stay here and are gitignored by default
+- `config/runtime/` – generated config/db artifacts; keep templates like `config.json.example` in `config/`
+- `ops/` – deployment tooling, including Docker and PM2 configurations
+- `scripts/` – categorized helper scripts under `dev/`, `ops/`, and `maintenance/`
+- `assets/` – static images and media not required at runtime
+- `docs/` – consolidated guides, analyses, reviews, incidents, and testing docs
 
 ---
 

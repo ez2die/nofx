@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"nofx/config"
+	"nofx/trade_analytics"
 	"nofx/trade_history"
 	"nofx/trader"
 	"sort"
@@ -24,11 +25,12 @@ type CompetitionCache struct {
 
 // TraderManager 管理多个trader实例
 type TraderManager struct {
-	traders          map[string]*trader.AutoTrader // key: trader ID
-	competitionCache *CompetitionCache
-	lastReloadTime   map[string]time.Time // key: trader ID, value: 上次重新加载时间
-	tradeHistoryService trade_history.Service // 交易历史服务（可选）
-	mu               sync.RWMutex
+	traders              map[string]*trader.AutoTrader // key: trader ID
+	competitionCache     *CompetitionCache
+	lastReloadTime       map[string]time.Time         // key: trader ID, value: 上次重新加载时间
+	tradeHistoryService  trade_history.Service         // 交易历史服务（可选）
+	tradeAnalyticsService trade_analytics.Service      // 交易分析服务（可选，新增）
+	mu                   sync.RWMutex
 }
 
 // NewTraderManager 创建trader管理器
@@ -55,6 +57,36 @@ func (tm *TraderManager) GetTradeHistoryService() trade_history.Service {
 	tm.mu.RLock()
 	defer tm.mu.RUnlock()
 	return tm.tradeHistoryService
+}
+
+// SetTradeAnalyticsService 设置交易分析服务
+func (tm *TraderManager) SetTradeAnalyticsService(service trade_analytics.Service) {
+	tm.mu.Lock()
+	defer tm.mu.Unlock()
+	tm.tradeAnalyticsService = service
+}
+
+// GetTradeAnalyticsService 获取交易分析服务
+func (tm *TraderManager) GetTradeAnalyticsService() trade_analytics.Service {
+	tm.mu.RLock()
+	defer tm.mu.RUnlock()
+	return tm.tradeAnalyticsService
+}
+
+// UpdateTradersTradeAnalyticsService 更新所有已加载traders的tradeAnalyticsService
+func (tm *TraderManager) UpdateTradersTradeAnalyticsService(service trade_analytics.Service) {
+	tm.mu.Lock()
+	defer tm.mu.Unlock()
+	
+	updatedCount := 0
+	for _, at := range tm.traders {
+		at.SetTradeAnalyticsService(service)
+		updatedCount++
+	}
+	
+	if updatedCount > 0 {
+		log.Printf("🔧 [UPDATE] 已更新 %d 个已加载trader的tradeAnalyticsService", updatedCount)
+	}
 }
 
 // InitTradeHistoryService 初始化交易历史服务（从数据库）
@@ -307,6 +339,7 @@ func (tm *TraderManager) addTraderFromDB(traderCfg *config.TraderRecord, aiModel
 		DefaultCoins:          defaultCoins,
 		TradingCoins:          tradingCoins,
 		SystemPromptTemplate:  traderCfg.SystemPromptTemplate, // 系统提示词模板
+		HistoryDecisionCycles: traderCfg.HistoryDecisionCycles, // 历史决策周期数（0=禁用，默认2）
 	}
 
 	// 根据交易所类型设置API密钥
@@ -329,8 +362,8 @@ func (tm *TraderManager) addTraderFromDB(traderCfg *config.TraderRecord, aiModel
 		traderConfig.DeepSeekKey = aiModelCfg.APIKey
 	}
 
-	// 创建trader实例（传递交易历史服务）
-	at, err := trader.NewAutoTrader(traderConfig, tm.tradeHistoryService)
+	// 创建trader实例（传递交易历史服务和交易分析服务）
+	at, err := trader.NewAutoTrader(traderConfig, tm.tradeHistoryService, tm.tradeAnalyticsService)
 	if err != nil {
 		return fmt.Errorf("创建trader失败: %w", err)
 	}
@@ -413,6 +446,8 @@ func (tm *TraderManager) AddTraderFromDB(traderCfg *config.TraderRecord, aiModel
 		IsCrossMargin:         traderCfg.IsCrossMargin,
 		DefaultCoins:          defaultCoins,
 		TradingCoins:          tradingCoins,
+		SystemPromptTemplate:  traderCfg.SystemPromptTemplate, // 系统提示词模板
+		HistoryDecisionCycles: traderCfg.HistoryDecisionCycles, // 历史决策周期数（0=禁用，默认2）
 	}
 
 	// 根据交易所类型设置API密钥
@@ -435,8 +470,8 @@ func (tm *TraderManager) AddTraderFromDB(traderCfg *config.TraderRecord, aiModel
 		traderConfig.DeepSeekKey = aiModelCfg.APIKey
 	}
 
-	// 创建trader实例（传递交易历史服务）
-	at, err := trader.NewAutoTrader(traderConfig, tm.tradeHistoryService)
+	// 创建trader实例（传递交易历史服务和交易分析服务）
+	at, err := trader.NewAutoTrader(traderConfig, tm.tradeHistoryService, tm.tradeAnalyticsService)
 	if err != nil {
 		return fmt.Errorf("创建trader失败: %w", err)
 	}
@@ -1037,6 +1072,7 @@ func (tm *TraderManager) loadSingleTrader(traderCfg *config.TraderRecord, aiMode
 		DefaultCoins:         defaultCoins,
 		TradingCoins:         tradingCoins,
 		SystemPromptTemplate: traderCfg.SystemPromptTemplate, // 系统提示词模板
+		HistoryDecisionCycles: traderCfg.HistoryDecisionCycles, // 历史决策周期数（0=禁用，默认2）
 	}
 
 	// 根据交易所类型设置API密钥
@@ -1059,8 +1095,8 @@ func (tm *TraderManager) loadSingleTrader(traderCfg *config.TraderRecord, aiMode
 		traderConfig.DeepSeekKey = aiModelCfg.APIKey
 	}
 
-	// 创建trader实例（传递交易历史服务）
-	at, err := trader.NewAutoTrader(traderConfig, tm.tradeHistoryService)
+	// 创建trader实例（传递交易历史服务和交易分析服务）
+	at, err := trader.NewAutoTrader(traderConfig, tm.tradeHistoryService, tm.tradeAnalyticsService)
 	if err != nil {
 		return fmt.Errorf("创建trader失败: %w", err)
 	}

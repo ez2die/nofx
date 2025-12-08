@@ -203,3 +203,5 @@ export interface TraderConfigData {
   scan_interval_minutes: number;
   is_running: boolean;
 }
+
+export * from './types/index';

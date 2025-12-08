@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-12-03T09:35:36.269927185+08:00",
+  "cycle_number": 708,
+  "system_prompt": "",
+  "input_prompt": "",
+  "cot_trace": "分析当前市场状况：\n\n**市场环境识别**：\n- BTC处于温和上涨趋势（1h +1.08%，4h +0.77%）\n- RSI 68.41接近超买但未极端\n- MACD 138.98正值显示动量向上\n- 价格高于EMA20，短期趋势偏多\n\n**持仓状态**：无持仓，可以开新仓\n\n**候选币种分析**：\n- **BTCUSDT**：价格91941 \u003e EMA20 91672，MACD正值，RSI 68.41显示买压但未极端超买\n- **ETHUSDT**：价格3011.40 ≈ EMA20 3005.99，技术指标中性偏多\n- **SOLUSDT**：价格138.50 ≈ EMA20 138.32，MACD接近零轴，无明显方向\n- **BNBUSDT**：价格882.68 \u003e EMA20 880.36，RSI 69.90接近超买\n- **XRPUSDT**：价格2.15 ≈ EMA20 2.153，技术指标中性\n- **HYPEUSDT**：价格33.69 ≈ EMA20 33.64，无明显信号\n\n**硬约束检查**：\n- 风险回报比必须≥3:1\n- 止损距离最小值：BTC需要≥0.4%\n\n**具体机会评估**：\nBNB显示相对较强的看涨信号：价格高于EMA20，MACD正值1.488，RSI 69.90接近超买但仍有空间。考虑开多仓，但需要验证所有约束。\n\n**预执行检查清单验证**：\n- 入场价：882.68\n- 止损：877.00（距离0.64%，满足≥0.6%硬约束）\n- 止盈：900.00（距离1.96%）\n- 风险回报比：(900-882.68)/(882.68-877) = 17.32/5.68 = 3.05:1（满足≥3:1硬约束）\n- 杠杆：10x（在系统限制内）\n- 账户风险：0.64% × 10 = 6.4%（可接受）\n\n信号已持续多个K线，符合时间稳定性要求。\n\n```json",
+  "decision_json": "[\n  {\n    \"symbol\": \"BNBUSDT\",\n    \"action\": \"open_long\",\n    \"leverage\": 10,\n    \"position_size_usd\": 78,\n    \"stop_loss\": 877,\n    \"take_profit\": 900,\n    \"confidence\": 75,\n    \"risk_usd\": 5,\n    \"reasoning\": \"价格高于EMA20，MACD正值1.488，RSI 69.90显示买压但未极端超买，风险回报比3.05:1满足硬约束\"\n  }\n]",
+  "account_state": {
+    "total_balance": 52.259877,
+    "available_balance": 52.259877,
+    "total_unrealized_profit": -47.740123,
+    "position_count": 0,
+    "margin_used_pct": 0
+  },
+  "positions": null,
+  "candidate_coins": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "BNBUSDT",
+    "XRPUSDT",
+    "HYPEUSDT"
+  ],
+  "decisions": null,
+  "execution_log": [],
+  "success": false,
+  "error_message": "获取AI决策失败: 解析AI响应失败: 决策验证失败: 决策 #1 验证失败: 杠杆必须在1-5之间（BNBUSDT，当前配置上限5倍）: 10"
+}

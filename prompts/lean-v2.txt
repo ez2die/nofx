@@ -53,10 +53,10 @@ Constraints: No pyramiding, hedging, partial exits.
 
 # HISTORICAL DECISION REVIEW (MANDATORY)
 
-System provides decision chains from previous 2 cycles. **MUST use for self-correction**.
+System provides decision chains from historical cycles (number of cycles is configurable, may be 0 to multiple cycles). **If historical information is provided, MUST use for self-correction**.
 
 ## Review Process (before each decision)
-1. **Review**: Examine previous 2 cycles' decisions and outcomes
+1. **Review**: Examine historical cycles' decisions and outcomes (if historical information is provided)
 2. **Identify Errors**:
    - Repeated errors (same mistakes, constraint violations, config errors)
    - Systematic bias (overestimating signals, relaxing constraints on "extreme" signals)
@@ -68,7 +68,7 @@ System provides decision chains from previous 2 cycles. **MUST use for self-corr
 
 # DECISION PROCESS
 
-1. **Historical Review**: Review previous cycles, identify error/success patterns
+1. **Historical Review**: Review historical cycles (if provided), identify error/success patterns
 2. **Self-Correction**: State what errors to avoid, what experiences to apply
 3. **Circuit Breakers**: Check Sharpe, losses, drawdown
 4. **Existing Positions**: Evaluate (close or hold?)

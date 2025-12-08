@@ -9,6 +9,7 @@ import (
 	"nofx/config"
 	"nofx/decision"
 	"nofx/manager"
+	"nofx/trade_analytics"
 	"nofx/trade_history"
 	"strconv"
 	"strings"
@@ -135,9 +136,98 @@ func (s *Server) setupRoutes() {
 			// 交易历史
 			protected.GET("/trade-history", s.handleGetTradeHistory)
 			protected.GET("/trade-history/statistics", s.handleGetTradeStatistics)
+			protected.GET("/trade-history/performance", s.handleGetTradePerformance)
 			protected.POST("/trade-history/sync", s.handleSyncTradeHistory)
 		}
+
+		// 交易分析 API（无需认证，但需要 trader_id）
+		s.setupTradeAnalyticsRoutes(api)
 	}
+}
+
+// setupTradeAnalyticsRoutes 设置交易分析路由
+func (s *Server) setupTradeAnalyticsRoutes(router *gin.RouterGroup) {
+	// 初始化 trade_analytics 服务
+	db, err := s.database.GetDB()
+	if err != nil {
+		log.Printf("⚠️ 无法初始化交易分析服务: %v", err)
+		// 即使数据库连接失败，也注册路由以返回友好错误
+		s.registerTradeAnalyticsErrorRoutes(router, "数据库连接失败")
+		return
+	}
+
+	// 获取 trade_history repository
+	tradeHistoryService := s.traderManager.GetTradeHistoryService()
+	if tradeHistoryService == nil {
+		log.Printf("⚠️ 交易历史服务未启用，交易分析功能不可用")
+		// 即使服务未启用，也注册路由以返回友好错误
+		s.registerTradeAnalyticsErrorRoutes(router, "交易历史服务未启用，请先启用交易历史功能")
+		return
+	}
+
+	// 创建 trade_analytics repository（需要 trade_history repository）
+	tradeHistoryRepo := trade_history.NewRepository(db)
+	analyticsRepo := trade_analytics.NewRepository(db, tradeHistoryRepo)
+	analyticsAnalyzer := trade_analytics.NewAnalyzer(analyticsRepo)
+	analyticsPairMatcher := trade_analytics.NewPairMatcher(analyticsRepo)
+	analyticsService := trade_analytics.NewService(analyticsRepo, analyticsAnalyzer, analyticsPairMatcher)
+
+	// 设置到 TraderManager（新增）
+	s.traderManager.SetTradeAnalyticsService(analyticsService)
+
+	// 更新所有已加载traders的tradeAnalyticsService（修复初始化顺序问题）
+	s.traderManager.UpdateTradersTradeAnalyticsService(analyticsService)
+
+	// 创建 API handler 并注册路由
+	analyticsHandler := trade_analytics.NewAPIHandler(analyticsService)
+	analyticsHandler.RegisterRoutes(router)
+
+	log.Printf("✅ 交易分析 API 已注册，服务已设置到 TraderManager")
+}
+
+// registerTradeAnalyticsErrorRoutes 注册返回错误的路由（当服务未初始化时）
+func (s *Server) registerTradeAnalyticsErrorRoutes(router *gin.RouterGroup, errorMsg string) {
+	analytics := router.Group("/trade-analytics")
+	{
+		// 注册所有路由，但都返回相同的错误信息
+		analytics.GET("", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+		analytics.GET("/overview", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+		analytics.GET("/pnl", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+		analytics.GET("/win-rate", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+		analytics.GET("/fees", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+		analytics.GET("/risk", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+		analytics.GET("/symbols", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+		analytics.GET("/time-series", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+		analytics.GET("/pairs", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+		analytics.GET("/frequency", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+		analytics.GET("/actions", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+		analytics.GET("/trends", func(c *gin.Context) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": errorMsg})
+		})
+	}
+	log.Printf("⚠️ 交易分析 API 路由已注册（服务不可用），将返回错误: %s", errorMsg)
 }
 
 // handleHealth 健康检查
@@ -243,6 +333,7 @@ type CreateTraderRequest struct {
 	IsCrossMargin        *bool   `json:"is_cross_margin"`        // 指针类型，nil表示使用默认值true
 	UseCoinPool          bool    `json:"use_coin_pool"`
 	UseOITop             bool    `json:"use_oi_top"`
+	HistoryDecisionCycles *int   `json:"history_decision_cycles"` // 历史决策周期数（nil或<0表示使用默认值2，0=禁用）
 }
 
 type ModelConfig struct {
@@ -362,6 +453,15 @@ func (s *Server) handleCreateTrader(c *gin.Context) {
 		scanIntervalMinutes = 3 // 默认3分钟
 	}
 
+	// 设置历史决策周期数默认值
+	historyDecisionCycles := 2 // 默认2个周期
+	if req.HistoryDecisionCycles != nil {
+		historyDecisionCycles = *req.HistoryDecisionCycles
+		if historyDecisionCycles < 0 {
+			historyDecisionCycles = 2 // 如果为负数，使用默认值
+		}
+	}
+
 	// 创建交易员配置（数据库实体）
 	trader := &config.TraderRecord{
 		ID:                   traderID,
@@ -380,6 +480,7 @@ func (s *Server) handleCreateTrader(c *gin.Context) {
 		SystemPromptTemplate: systemPromptTemplate,
 		IsCrossMargin:        isCrossMargin,
 		ScanIntervalMinutes:  scanIntervalMinutes,
+		HistoryDecisionCycles: historyDecisionCycles,
 		IsRunning:            false,
 	}
 
@@ -1877,8 +1978,6 @@ func (s *Server) handleGetTradeHistory(c *gin.Context) {
 	side := c.Query("side")
 	startTimeStr := c.Query("start_time")
 	endTimeStr := c.Query("end_time")
-	cycleFromStr := c.Query("cycle_from")
-	cycleToStr := c.Query("cycle_to")
 	limitStr := c.DefaultQuery("limit", "100")
 	offsetStr := c.DefaultQuery("offset", "0")
 	orderBy := c.DefaultQuery("order_by", "timestamp DESC")
@@ -1923,18 +2022,6 @@ func (s *Server) handleGetTradeHistory(c *gin.Context) {
 	if endTimeStr != "" {
 		if endTime, err := time.Parse(time.RFC3339, endTimeStr); err == nil {
 			filter.EndTime = &endTime
-		}
-	}
-
-	// 解析周期范围
-	if cycleFromStr != "" {
-		if cycleFrom, err := strconv.Atoi(cycleFromStr); err == nil {
-			filter.CycleFrom = &cycleFrom
-		}
-	}
-	if cycleToStr != "" {
-		if cycleTo, err := strconv.Atoi(cycleToStr); err == nil {
-			filter.CycleTo = &cycleTo
 		}
 	}
 
@@ -2009,6 +2096,62 @@ func (s *Server) handleGetTradeStatistics(c *gin.Context) {
 	c.JSON(http.StatusOK, stats)
 }
 
+// handleGetTradePerformance 获取扩展交易表现
+func (s *Server) handleGetTradePerformance(c *gin.Context) {
+	traderID := c.Query("trader_id")
+	startTimeStr := c.Query("start_time")
+	endTimeStr := c.Query("end_time")
+	recentLimitStr := c.Query("recent_limit")
+	sharpeWindowStr := c.Query("sharpe_window")
+
+	if traderID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "trader_id is required"})
+		return
+	}
+
+	service := s.traderManager.GetTradeHistoryService()
+	if service == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "交易历史服务未启用"})
+		return
+	}
+
+	opts := &trade_history.PerformanceOptions{}
+	if startTimeStr != "" {
+		if st, err := time.Parse(time.RFC3339, startTimeStr); err == nil {
+			opts.StartTime = &st
+		}
+	}
+	if endTimeStr != "" {
+		if et, err := time.Parse(time.RFC3339, endTimeStr); err == nil {
+			opts.EndTime = &et
+		}
+	}
+
+	opts.RecentLimit = s.getPerformanceConfigInt("performance_recent_trades_limit", trade_history.DefaultRecentTradesLimit)
+	if recentLimitStr != "" {
+		if limit, err := strconv.Atoi(recentLimitStr); err == nil && limit > 0 {
+			opts.RecentLimit = limit
+		}
+	}
+
+	opts.SharpeWindow = s.getPerformanceConfigInt("performance_sharpe_window", trade_history.DefaultSharpeWindow)
+	if sharpeWindowStr != "" {
+		if win, err := strconv.Atoi(sharpeWindowStr); err == nil && win > 0 {
+			opts.SharpeWindow = win
+		}
+	}
+
+	perf, err := service.GetTradePerformance(c.Request.Context(), traderID, opts)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("获取交易表现失败: %v", err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, perf)
+}
+
 // handleSyncTradeHistory 手动触发同步
 func (s *Server) handleSyncTradeHistory(c *gin.Context) {
 	traderID := c.Query("trader_id")
@@ -2048,4 +2191,19 @@ func (s *Server) handleSyncTradeHistory(c *gin.Context) {
 	c.JSON(http.StatusNotImplemented, gin.H{
 		"error": "同步功能需要从trader获取exchange实例，此功能待完善。建议使用定期自动同步功能。",
 	})
+}
+
+func (s *Server) getPerformanceConfigInt(key string, fallback int) int {
+	if s.database == nil {
+		return fallback
+	}
+	value, err := s.database.GetSystemConfig(key)
+	if err != nil || value == "" {
+		return fallback
+	}
+	parsed, err := strconv.Atoi(value)
+	if err != nil || parsed <= 0 {
+		return fallback
+	}
+	return parsed
 }

@@ -214,12 +214,13 @@ func calculateATR(klines []Kline, period int) float64 {
 // calculateIntradaySeries 计算日内系列数据
 func calculateIntradaySeries(klines []Kline) *IntradayData {
 	data := &IntradayData{
-		MidPrices:   make([]float64, 0, 10),
-		EMA20Values: make([]float64, 0, 10),
-		MACDValues:  make([]float64, 0, 10),
-		RSI7Values:  make([]float64, 0, 10),
-		RSI14Values: make([]float64, 0, 10),
-		ATR14Values: make([]float64, 0, 10),
+		MidPrices:    make([]float64, 0, 10),
+		EMA20Values:  make([]float64, 0, 10),
+		MACDValues:   make([]float64, 0, 10),
+		RSI7Values:   make([]float64, 0, 10),
+		RSI14Values:  make([]float64, 0, 10),
+		ATR14Values:  make([]float64, 0, 10),
+		VolumeValues: make([]float64, 0, 10),
 	}
 
 	// 获取最近10个数据点
@@ -230,6 +231,7 @@ func calculateIntradaySeries(klines []Kline) *IntradayData {
 
 	for i := start; i < len(klines); i++ {
 		data.MidPrices = append(data.MidPrices, klines[i].Close)
+		data.VolumeValues = append(data.VolumeValues, klines[i].Volume)
 
 		// 计算每个点的EMA20
 		if i >= 19 {
@@ -258,6 +260,15 @@ func calculateIntradaySeries(klines []Kline) *IntradayData {
 			atr14 := calculateATR(klines[:i+1], 14)
 			data.ATR14Values = append(data.ATR14Values, atr14)
 		}
+	}
+
+	// 计算平均成交量
+	if len(data.VolumeValues) > 0 {
+		sum := 0.0
+		for _, v := range data.VolumeValues {
+			sum += v
+		}
+		data.AverageVolume = sum / float64(len(data.VolumeValues))
 	}
 
 	return data
@@ -396,6 +407,11 @@ func Format(data *Data) string {
 
 		if len(data.IntradaySeries.ATR14Values) > 0 {
 			sb.WriteString(fmt.Sprintf("ATR indicators (14‑Period): %s\n\n", formatFloatSlice(data.IntradaySeries.ATR14Values)))
+		}
+
+		if len(data.IntradaySeries.VolumeValues) > 0 {
+			sb.WriteString(fmt.Sprintf("Volume indicators (3‑minute): %s\n\n", formatFloatSlice(data.IntradaySeries.VolumeValues)))
+			sb.WriteString(fmt.Sprintf("Average Volume (3‑minute): %.3f\n\n", data.IntradaySeries.AverageVolume))
 		}
 	}
 

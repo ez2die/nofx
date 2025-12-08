@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-11-26T08:34:12.331258515+08:00",
+  "cycle_number": 360,
+  "system_prompt": "",
+  "input_prompt": "",
+  "cot_trace": "**思维链分析：**\n\n当前市场环境分析：\n- BTC处于横盘震荡状态（价格87617，EMA20 87506，RSI 60），4小时级别显示EMA20(87108) \u003c EMA50(88937)，整体仍处于下跌趋势中的反弹\n- ETH明显弱势，价格2956低于EMA20(2959)，RSI仅43.9，MACD接近零轴\n- 其他山寨币多数处于横盘或弱势状态\n\n从历史表现看，账户已亏损-37.37%，夏普比率为-0.06，触发熔断机制。根据规则，在Sharpe \u003c 0且当前无持仓时，必须更加选择性，仅以置信度≥85交易。\n\n检查各币种机会：\n- **BTC**：横盘震荡，无明显方向性信号，MACD虽为正但动量不强\n- **ETH**：弱势明显，但RSI超卖可能带来反弹，信号不够稳定且持续时间不足\n- **SOL**：价格139.42略高于EMA20(139.24)，但MACD接近零轴，成交量一般，缺乏强烈入场信号\n- **BNB**：相对强势，价格865高于EMA20(864)，MACD 0.83显示正向动量\n- **XRP**：弱势震荡，RSI仅40.4，但缺乏明确方向\n- **HYPE**：相对强势，价格34高于EMA20(33.80)，RSI 65.2显示超买，不适合做多\n\n**BNB机会评估**：\n- 价格865.02 \u003e EMA20 863.85，显示短期趋势向上\n- MACD 0.83显示正向动量\n- 4小时级别EMA20(854) \u003c 价格 \u003c EMA50(870)，处于区间震荡\n- 风险回报计算：止损设860（约0.58%下跌），止盈设880（约1.73%上涨），风险回报比约3:1\n- 置信度：考虑到弱势市场环境，需要更高门槛。BNB信号相对稳定，但考虑到熔断机制，要求≥85置信度\n\n**最终决策**：在弱势市场环境下，仅BNB显示出相对稳定的多头信号，且满足风险回报比要求。其他币种缺乏明确入场条件。\n\n```json",
+  "decision_json": "[\n  {\n    \"symbol\": \"BNBUSDT\",\n    \"action\": \"open_long\",\n    \"leverage\": 8,\n    \"position_size_usd\": 94,\n    \"stop_loss\": 860,\n    \"take_profit\": 880,\n    \"confidence\": 85,\n    \"risk_usd\": 8,\n    \"reasoning\": \"相对强势+价格\\u003eEMA20+MACD正向动量，风险回报比3:1，信号稳定持续多根K线\"\n  }\n]",
+  "account_state": {
+    "total_balance": 62.631441,
+    "available_balance": 62.631441,
+    "total_unrealized_profit": -37.368559,
+    "position_count": 0,
+    "margin_used_pct": 0
+  },
+  "positions": null,
+  "candidate_coins": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "BNBUSDT",
+    "XRPUSDT",
+    "HYPEUSDT"
+  ],
+  "decisions": null,
+  "execution_log": [],
+  "success": false,
+  "error_message": "获取AI决策失败: 解析AI响应失败: 决策验证失败: 决策 #1 验证失败: 杠杆必须在1-5之间（BNBUSDT，当前配置上限5倍）: 8"
+}

@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-11-25T17:22:21.126931321+08:00",
+  "cycle_number": 56,
+  "system_prompt": "",
+  "input_prompt": "",
+  "cot_trace": "## 思维链\n\n**历史审查与自我纠正**：\n- 上一周期无持仓，当前账户回撤-35.02%，Sharpe比率-0.05，处于亏损状态\n- 需要更加谨慎，仅选择高置信度机会（≥85）\n\n**市场环境分析**：\n- **弱势市场**：BTC、ETH、BNB等主要币种均处于下跌趋势，价格低于EMA20，MACD为负值\n- **波动性**：ATR显示正常波动性，但整体市场情绪偏空\n\n**机会评估**：\n1. **BTCUSDT**：RSI 31.28显示超卖，但趋势仍向下（EMA20 \u003e 价格，MACD -195），单一RSI信号不足以逆势操作\n2. **ETHUSDT**：类似BTC，RSI 28.27超卖，但趋势向下，需要更多确认\n3. **SOLUSDT**：价格接近EMA20，RSI 35.8，但缺乏明确方向信号\n4. **BNBUSDT**：RSI仅16.49极度超卖，但价格仍在下跌趋势中\n5. **XRPUSDT**：横盘整理，无明显趋势\n6. **HYPEUSDT**：唯一显示看涨信号的币种，价格高于EMA20，MACD为正\n\n**HYPEUSDT详细分析**：\n- 价格32.95 \u003e EMA20 32.809（轻微看涨）\n- MACD 0.189为正（动量看涨）\n- RSI 53.9处于健康水平\n- 成交量相对稳定\n- 符合弱势市场中的反弹信号特征\n\n**风险回报计算**：\n- 入场价：32.95\n- 止损：32.50（约1.37%距离）\n- 止盈：34.50（约4.70%距离）\n- 风险回报比：4.70 / 1.37 = 3.43:1 \u003e 3.0:1（符合硬约束）\n- 账户风险：1.37% × 8x = 10.96%（在推荐范围内）\n\n**决策**：在弱势市场中，HYPEUSDT显示出相对强势，符合高置信度要求，风险回报比达标。\n\n```json",
+  "decision_json": "[\n  {\n    \"symbol\": \"HYPEUSDT\",\n    \"action\": \"open_long\",\n    \"leverage\": 8,\n    \"position_size_usd\": 97,\n    \"stop_loss\": 32.5,\n    \"take_profit\": 34.5,\n    \"confidence\": 85,\n    \"risk_usd\": 6,\n    \"reasoning\": \"弱势市场中相对强势，价格\\u003eEMA20，MACD正，RSI健康，风险回报比3.43:1达标\"\n  }\n]",
+  "account_state": {
+    "total_balance": 64.975846,
+    "available_balance": 64.975846,
+    "total_unrealized_profit": -35.024153999999996,
+    "position_count": 0,
+    "margin_used_pct": 0
+  },
+  "positions": null,
+  "candidate_coins": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "BNBUSDT",
+    "XRPUSDT",
+    "HYPEUSDT"
+  ],
+  "decisions": null,
+  "execution_log": [],
+  "success": false,
+  "error_message": "获取AI决策失败: 解析AI响应失败: 决策验证失败: 决策 #1 验证失败: 杠杆必须在1-5之间（HYPEUSDT，当前配置上限5倍）: 8"
+}

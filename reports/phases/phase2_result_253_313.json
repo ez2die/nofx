@@ -1,0 +1,323 @@
+{
+  "SymbolAnalysis": {
+    "BTCUSDT": {
+      "Symbol": "BTCUSDT",
+      "TotalTrades": 3,
+      "WinningTrades": 2,
+      "LosingTrades": 1,
+      "WinRate": 66.66666666666666,
+      "TotalPnL": -1.1506499999999997,
+      "AvgPnL": -0.3835499999999999,
+      "MaxProfit": 0.08736,
+      "MaxLoss": -1.25829,
+      "TotalFees": 0.349569,
+      "AvgDuration": 3777049666666,
+      "StopLossTriggers": 0,
+      "TakeProfitTriggers": 0
+    }
+  },
+  "DirectionAnalysis": {
+    "LongTrades": 2,
+    "ShortTrades": 1,
+    "LongPnL": 0.10763999999999999,
+    "ShortPnL": -1.25829,
+    "LongWinRate": 100,
+    "ShortWinRate": 0,
+    "LongAvgPnL": 0.05381999999999999,
+    "ShortAvgPnL": -1.25829
+  },
+  "CycleAnalysis": [
+    {
+      "CycleRange": "253-259",
+      "StartCycle": 253,
+      "EndCycle": 259,
+      "TotalTrades": 1,
+      "TotalPnL": -1.25829,
+      "WinRate": 0,
+      "AvgPnL": -1.25829
+    },
+    {
+      "CycleRange": "259-265",
+      "StartCycle": 259,
+      "EndCycle": 265,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "265-271",
+      "StartCycle": 265,
+      "EndCycle": 271,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "271-277",
+      "StartCycle": 271,
+      "EndCycle": 277,
+      "TotalTrades": 2,
+      "TotalPnL": 0.10763999999999999,
+      "WinRate": 100,
+      "AvgPnL": 0.05381999999999999
+    },
+    {
+      "CycleRange": "277-283",
+      "StartCycle": 277,
+      "EndCycle": 283,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "283-289",
+      "StartCycle": 283,
+      "EndCycle": 289,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "289-295",
+      "StartCycle": 289,
+      "EndCycle": 295,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "295-301",
+      "StartCycle": 295,
+      "EndCycle": 301,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "301-307",
+      "StartCycle": 301,
+      "EndCycle": 307,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    },
+    {
+      "CycleRange": "307-313",
+      "StartCycle": 307,
+      "EndCycle": 313,
+      "TotalTrades": 0,
+      "TotalPnL": 0,
+      "WinRate": 0,
+      "AvgPnL": 0
+    }
+  ],
+  "LeverageAnalysis": {
+    "10": {
+      "Leverage": 10,
+      "TotalTrades": 3,
+      "WinningTrades": 2,
+      "LosingTrades": 1,
+      "WinRate": 66.66666666666666,
+      "TotalPnL": -1.1506499999999997,
+      "AvgPnL": -0.3835499999999999,
+      "MaxProfit": 0.08736,
+      "MaxLoss": -1.25829
+    }
+  },
+  "TradePairAnalysis": [
+    {
+      "Trade": {
+        "CycleNumber": 258,
+        "OpenAction": {
+          "action": "open_short",
+          "symbol": "BTCUSDT",
+          "quantity": 0.0027888676734363245,
+          "leverage": 10,
+          "price": 86414,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:07:12.192662224+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_short",
+          "symbol": "BTCUSDT",
+          "quantity": 0.00279,
+          "leverage": 10,
+          "price": 86865,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:46:08.121115981+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "OpenTrade": {
+          "ID": 1308,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BTCUSDT",
+          "Action": "open_short",
+          "Side": "short",
+          "Quantity": 0.00279,
+          "ExecutionPrice": 86414,
+          "PnL": 0,
+          "Fee": 0.108492,
+          "Timestamp": "2025-12-02T11:07:14.935+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1311,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BTCUSDT",
+          "Action": "close_short",
+          "Side": "short",
+          "Quantity": 0.00279,
+          "ExecutionPrice": 86865,
+          "PnL": -1.25829,
+          "Fee": 0.109059,
+          "Timestamp": "2025-12-02T11:46:10.518+08:00"
+        },
+        "PnL": -1.25829,
+        "Duration": 2335583000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "bad",
+      "ExitReason": "manual",
+      "HoldDuration": 2335583000000,
+      "PriceMovement": -0.5219061726109195
+    },
+    {
+      "Trade": {
+        "CycleNumber": 272,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "BTCUSDT",
+          "quantity": 0.0026853836756333127,
+          "leverage": 10,
+          "price": 86766,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:49:12.297180727+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "BTCUSDT",
+          "quantity": 0.00269,
+          "leverage": 10,
+          "price": 86924.5,
+          "order_id": 0,
+          "timestamp": "2025-12-02T13:04:09.930542374+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "OpenTrade": {
+          "ID": 1309,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BTCUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.00175,
+          "ExecutionPrice": 86766,
+          "PnL": 0,
+          "Fee": 0.068328,
+          "Timestamp": "2025-12-02T11:49:14.36+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1312,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BTCUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.00056,
+          "ExecutionPrice": 86922,
+          "PnL": 0.08736,
+          "Fee": 0.021904,
+          "Timestamp": "2025-12-02T13:04:12.143+08:00"
+        },
+        "PnL": 0.08736,
+        "Duration": 4497783000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "good",
+      "ExitReason": "manual",
+      "HoldDuration": 4497783000000,
+      "PriceMovement": 0.17979392849733766
+    },
+    {
+      "Trade": {
+        "CycleNumber": 272,
+        "OpenAction": {
+          "action": "open_long",
+          "symbol": "BTCUSDT",
+          "quantity": 0.0026853836756333127,
+          "leverage": 10,
+          "price": 86766,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:49:12.297180727+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "CloseAction": {
+          "action": "close_long",
+          "symbol": "BTCUSDT",
+          "quantity": 0.00269,
+          "leverage": 10,
+          "price": 86924.5,
+          "order_id": 0,
+          "timestamp": "2025-12-02T13:04:09.930542374+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        },
+        "OpenTrade": {
+          "ID": 1310,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BTCUSDT",
+          "Action": "open_long",
+          "Side": "long",
+          "Quantity": 0.00094,
+          "ExecutionPrice": 86766,
+          "PnL": 0,
+          "Fee": 0.036702,
+          "Timestamp": "2025-12-02T11:49:14.36+08:00"
+        },
+        "CloseTrade": {
+          "ID": 1313,
+          "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+          "Symbol": "BTCUSDT",
+          "Action": "close_long",
+          "Side": "long",
+          "Quantity": 0.00013,
+          "ExecutionPrice": 86922,
+          "PnL": 0.02028,
+          "Fee": 0.005084,
+          "Timestamp": "2025-12-02T13:04:12.143+08:00"
+        },
+        "PnL": 0.02028,
+        "Duration": 4497783000000,
+        "RiskRewardRatio": 0
+      },
+      "EntryTiming": "good",
+      "ExitReason": "manual",
+      "HoldDuration": 4497783000000,
+      "PriceMovement": 0.17979392849733766
+    }
+  ],
+  "ReportPath": "phase2_report_253_313.md"
+}

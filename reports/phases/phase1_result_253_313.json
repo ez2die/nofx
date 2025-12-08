@@ -1,0 +1,2944 @@
+{
+  "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+  "StartCycle": 253,
+  "EndCycle": 313,
+  "TotalCycles": 61,
+  "CyclesWithTrades": 4,
+  "DecisionRecords": [
+    {
+      "timestamp": "2025-12-02T10:52:05.017154119+08:00",
+      "cycle_number": 253,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 距离上次交易已82小时，说明市场缺乏明确机会或之前决策保守\n- 账户回撤-51.88%，需要严格控制风险，仅交易高确信度机会\n- 夏普比率-0.05，根据熔断机制要求，开仓置信度必须≥85\n\n**市场环境识别**：\n- BTC处于轻微反弹状态（1h +0.21%，4h +0.45%），但整体仍在下跌趋势中（EMA20: 88274 \u003e 当前86605）\n- 多数币种价格低于EMA20，属于弱势市场环境\n\n**持仓评估**：当前无持仓\n\n**新机会扫描**（严格应用弱势市场规则）：\n\n**BTCUSDT**：\n- 价格86605，EMA20 86630，价格略低于EMA\n- RSI 43.29显示超卖，但趋势仍然向下（4H EMA 88274 \u003e 当前价格）\n- 在弱势市场中，单一RSI超卖不足以作为开多理由，需要多个指标综合确认\n- 目前缺乏明确的趋势反转信号，成交量一般\n\n**ETHUSDT**：\n- 价格2805.80，EMA20 2804.35，价格与EMA基本持平\n- MACD 2.896为正但较弱，RSI 49.426中性\n- 信号不够强烈，不符合弱势市场的高确信度要求\n\n**SOLUSDT**：\n- RSI 38.162超卖，但价格低于EMA20，且4H趋势明显向下\n- 在弱势市场中，反弹信号需要更长时间验证（10-15分钟）\n\n**其他币种**：均缺乏明确的突破或反转信号\n\n**预执行检查清单验证**：\n- 无符合风险回报≥3:1且置信度≥85的机会\n- 所有币种都处于震荡或弱势反弹状态，没有稳定的多时间框架确认\n\n**决策**：保持等待，继续观察市场发展，特别是等待更明确的趋势反转信号和成交量确认。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T10:55:04.608630383+08:00",
+      "cycle_number": 254,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 距离上次交易已82小时，无近期历史决策可分析，但注意到账户处于-51.88%的回撤状态，需要更加谨慎\n- 夏普比率为-0.05，根据熔断机制要求，开仓置信度需≥85\n\n**市场环境识别：**\nBTC价格86605，EMA20在86630，价格略低于EMA20，MACD为正值但RSI 43.29显示偏弱，4小时EMA显示长期趋势向下，整体处于弱势市场\n\n**候选币种分析：**\n\n1. **BTCUSDT**：价格在EMA20附近徘徊，MACD正值但RSI中性偏弱，成交量低于平均，无明显突破信号\n\n2. **ETHUSDT**：价格2805.8，EMA20 2804.35，几乎持平，MACD小幅正值，RSI 49.4中性，资金费率微正但持仓量稳定，无明显方向性信号\n\n3. **SOLUSDT**：价格127.32，EMA20 127.45，价格略低于均线，RSI 38.16显示超卖但成交量一般\n\n4. **BNBUSDT**：价格830.82，EMA20 830.4，几乎持平，MACD正值但RSI中性，无明显突破\n\n5. **XRPUSDT**：价格2.02，EMA20 2.025，价格略低于均线，RSI 42.7偏弱\n\n5. **HYPEUSDT**：价格30.86，EMA20 30.71，价格略高于均线，RSI 66显示偏强但成交量一般\n\n**综合判断：**\n- 所有币种均处于横盘或弱势震荡状态\n- 无明显的多指标确认的突破信号\n- 在弱势市场环境下，需要非常选择性的入场，当前无满足条件的机会\n- 由于夏普比率为负且无持仓，选择等待更明确的信号\n\n**预执行检查清单验证：**\n- 无满足风险回报比≥3:1的机会\n- 信号均不稳定，不符合时间稳定性要求\n- 弱势市场要求信号持续10-15分钟，当前无明显持续信号\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T10:58:00.602530534+08:00",
+      "cycle_number": 255,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：系统显示距离上次交易已82小时50分钟，说明市场缺乏明确机会或我在等待高确信度信号。连续亏损1次，夏普比率-0.05，根据熔断机制要求，当前开仓需要置信度≥85。\n\n市场环境识别：BTC/ETH等主要币种普遍处于弱势状态：\n- BTC：RSI 35.22（超卖），但EMA20(86614) \u003e 当前价(86529)，MACD仍为正值但快速下降，显示下跌趋势中的弱势反弹\n- ETH：类似模式，RSI 34.79超卖，EMA20(2803.54) \u003e 当前价(2799.70）\n- 多数币种4小时EMA \u003e 20小时EMA，表明中长期趋势仍向下\n\n**关键发现**：\n1. **弱势市场特征明显**：多数币种价格低于EMA20，MACD为负或快速下降\n2. **RSI普遍超卖**但趋势指标仍然偏空\n3. **成交量普遍偏低**，缺乏强劲的方向性确认\n\n**预执行检查**：\n- 虽然多个币种RSI超卖（BTC 35.22，ETH 34.79，SOL 25.17），但在弱势市场中，单一RSI信号不足以作为入场依据\n- 需要多个指标（趋势、动量、成交量）同时确认反转\n- 信号持续时间不足：当前信号多为刚刚出现，需要等待10-15分钟确认稳定性\n\n**当前决策**：\n- 没有满足置信度≥85且风险回报≥3:1的稳定机会\n- 所有候选币种都缺乏成交量确认和趋势反转的明确信号\n- 弱势市场要求更高选择性，宁愿错过也不做错\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:01:02.983886075+08:00",
+      "cycle_number": 256,
+      "cot_trace": "**思维链分析：**\n\n审查当前市场环境：\n- 距离上次交易已82小时，账户回撤51.88%，夏普比率-0.05，需要非常谨慎\n- BTC：价格86529，EMA20 86614（价格略低于EMA20），MACD 18.77（正值但下降），RSI 35.22（超卖区域）\n- ETH：类似BTC，RSI 34.79超卖，但MACD仍为正值\n- 其他山寨币普遍RSI超卖（SOL 25.17，BNB 28.96，XRP 36.86，HYPE 42.42）\n\n关键观察：\n1. **普遍超卖状态**：所有币种RSI均在35-45区间，处于超卖区域\n2. **趋势偏弱**：多数币种价格低于EMA20，4小时MACD多为负值\n- BTC 4H MACD从523跌至-1101，显示强烈下跌动能\n- ETH 4H MACD从13跌至-52\n- SOL 4H MACD -3.20，BNB -14.74，均显示持续下跌趋势\n3. **成交量特征**：多数币种成交量低于平均水平，缺乏买盘支撑\n\n**预执行检查清单验证**：\n- 风险回报比：需要≥3:1（硬约束）\n- 止损距离：BTC/ETH必须≥0.4%（硬约束）\n- 置信度：由于夏普比率\u003c0，需要≥85（硬约束）\n- 当前信号虽然显示超卖，但缺乏明确的反弹确认\n- 趋势仍然向下，单一RSI超卖不足以作为开仓依据\n\n**决策**：\n- 虽然多个币种处于超卖状态，但缺乏成交量放大和趋势反转确认\n- 在弱势市场环境下，需要等待更明确的反弹信号和多个指标确认\n- 当前持仓为0，选择等待更好的机会\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:04:12.349637613+08:00",
+      "cycle_number": 257,
+      "cot_trace": "## 思维链\n\n**历史审查与自我纠正**：\n- 系统显示距离上次交易已82小时56分钟，表明市场缺乏明确机会或我过于谨慎\n- 夏普比率为-0.05，触发熔断机制，要求置信度≥85才能开仓\n- 连续亏损1次，需要更加选择性\n\n**市场环境分析**：\n- 整体市场处于弱势环境：BTC、ETH、SOL、BNB、XRP均显示RSI超卖（36.87, 37.83, 21.93, 25.80, 31.50）\n- 4小时时间框架显示多数币种处于下跌趋势（EMA20 \u003c EMA50）\n- 成交量普遍低于平均水平，缺乏买盘支撑\n\n**持仓评估**：\n- 当前无持仓，无需平仓操作\n\n**新机会扫描**：\n- **BTCUSDT**：RSI 36.87超卖，但MACD为负值-2.478，EMA20仍高于当前价格，显示下跌趋势仍在继续\n- **ETHUSDT**：类似BTC，RSI 37.83超卖，但趋势向下\n- **SOLUSDT**：RSI 21.93极度超卖，但MACD为负，趋势明确向下\n- **BNB、XRP**：均显示超卖但趋势向下\n- **HYPEUSDT**：相对强势，RSI 55.09，EMA接近当前价格，但4小时趋势仍向下\n\n**风险回报评估**：\n- 在弱势市场中，单一RSI超卖信号不足以作为开仓理由\n- 需要多个指标同时确认反转：趋势、动量、成交量\n- 当前没有币种满足多指标汇合条件\n- 信号持续时间不足：多数超卖信号刚刚出现，尚未稳定10+分钟\n\n**熔断机制响应**：\n- 夏普比率\u003c0，要求置信度≥85\n- 当前没有信号达到85以上置信度\n- 在弱势市场中，需要更严格的入场门槛\n\n**预执行检查清单**：\n- ✅ 熔断机制：夏普\u003c0，当前无信号达到85置信度\n- ✅ 风险回报：无法计算，因无明确入场点\n- ✅ 时间稳定性：信号不稳定，多数刚刚出现\n\n**决策**：等待更好的机会，当前市场条件不满足高置信度开仓要求。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:07:24.808736139+08:00",
+      "cycle_number": 258,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 距离上次交易已82+小时，市场环境可能已发生变化\n- 需要非常谨慎，仅选择高质量信号\n\n市场环境识别：\n- BTC和ETH价格均低于EMA20，MACD为负值，RSI处于超卖区域，显示整体弱势市场\n- 成交量普遍低于平均水平，缺乏动能\n\n**BTCUSDT分析：**\n- 价格86513低于EMA20 86591，MACD -2.478为负值，RSI 36.87显示超卖\n- 4小时级别EMA20 88265明显高于当前价格，确认下跌趋势\n- 资金费率为负，显示空头情绪\n- 信号持续时间：RSI超卖状态已持续多根K线，具备时间稳定性\n- 风险回报计算：入场86513，止损87000，止盈85000\n  - 风险：(87000-86513)/86513 = 0.56%\n  - 回报：(86513-85000)/86513 = 1.75%\n  - 风险回报比：1.75/0.56 = 3.13:1（满足硬约束≥3.0:1）\n  - 止损距离：0.56% \u003e 0.4%（满足BTC最小止损距离要求）\n  - 账户风险：0.56% × 10 = 5.6%（可接受）\n\n**ETHUSDT分析：**\n- 价格2800.40略低于EMA20 2802.94，MACD 0.780为正值但很小\n- RSI 37.83超卖，但动量较弱\n- 置信度不足85，不符合熔断机制要求\n\n**其他币种分析：**\n- SOL、BNB、XRP均显示弱势，RSI超卖但缺乏明确反转信号\n- HYPE相对强势，但市值较小，风险较高\n\n**决策**：仅BTCUSDT满足高置信度开空条件，其他币种等待更好机会。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"open_short\",\n    \"leverage\": 10,\n    \"position_size_usd\": 241,\n    \"stop_loss\": 87000,\n    \"take_profit\": 85000,\n    \"confidence\": 85,\n    \"risk_usd\": 300,\n    \"reasoning\": \"下跌趋势确认+RSI超卖+MACD负值+资金费率负值，风险回报比3.13:1满足硬约束\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": [
+        {
+          "action": "open_short",
+          "symbol": "BTCUSDT",
+          "quantity": 0.0027888676734363245,
+          "leverage": 10,
+          "price": 86414,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:07:12.192662224+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:10:06.550725451+08:00",
+      "cycle_number": 259,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 当前已有BTC空仓持仓，需要评估是否继续持有\n- 市场处于弱势环境，需要非常谨慎，仅选择高质量信号\n\n**BTCUSDT持仓评估：**\n- 入场快照显示：入场价86414，止损87000，止盈85000，风险回报比3.13:1\n- 当前价格86415，距离止损585点（0.68%），距离合理\n- 入场假设：下跌趋势确认+RSI超卖+MACD负值+资金费率负值\n- 当前RSI 28.11仍处于超卖区域，MACD -22.519保持负值\n- 4小时级别EMA 88265明显高于当前价格，下跌趋势仍然有效\n- 信号持续时间：RSI超卖状态已持续多根K线，具备时间稳定性\n- 入场假设仍然有效，继续持有\n\n**新机会扫描：**\n- **ETHUSDT**：价格2796.60接近EMA20 2801.53，MACD -0.414接近零轴，RSI 33.525显示超卖\n- 风险回报计算：入场2796.60，止损2830，止盈2700\n  - 风险：(2830-2796.60)/2796.60 = 1.19%\n  - 收益：(2796.60-2700)/2796.60 = 3.45%\n  - 风险回报比：3.45%/1.19% = 2.90:1 \u003c 3.0:1，不满足硬约束\n- **其他币种**：均显示弱势特征，但缺乏高质量信号\n\n**决策：**\n- 维持BTC空仓持仓，入场假设仍然有效\n- 其他币种无满足硬约束的机会\n- 当前持仓数1个，保证金使用率50.4%，均在限制范围内\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：下跌趋势持续+RSI超卖+MACD负值，风险回报比3.13:1仍满足硬约束\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86463,
+          "unrealized_profit": -0.13671,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:10:05.550600365+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:13:18.284845876+08:00",
+      "cycle_number": 260,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 当前持仓BTC空单已持续5分钟，需要按照持仓熔断复核流程进行评估\n\n**持仓熔断复核（BTCUSDT空单）：**\n\n**步骤1：入场假设验证**\n- 入场假设：下跌趋势确认+RSI超卖+MACD负值+资金费率负值\n- 当前验证：\n  - 价格86544仍低于EMA20 86569，下跌趋势仍在\n  - RSI 48.02已从超卖区域反弹，但仍处于弱势\n  - MACD -13.918仍为负值\n  - 资金费率仍为负值\n- 结论：入场假设核心逻辑仍然有效，继续步骤2\n\n**步骤2：止损距离检查**\n- 当前价格86544，止损87000\n- 距离：(87000-86544)/86544 = 0.53%\n- 符合BTC最小止损距离0.4%要求\n- 距离\u003e0.5%，继续持仓\n\n**步骤3：\"真正变化\"量化检查**\n- 价格仍在EMA20下方，未突破关键技术位\n- MACD仍为负值，未出现从负转正的重大变化\n- RSI从最低25.8反弹至48.0，变化幅度22.2%，但未达到25%阈值\n- 成交量53.418低于平均37.056，未出现激增\n- 入场假设未被直接否定\n- 结论：未满足\"真正变化\"条件，继续步骤4\n\n**步骤4：时间窗口验证**\n- 持仓仅5分钟，远未达到10-15分钟的最小确认时间\n- 避免过度反应，给趋势足够时间发展\n\n**新机会扫描：**\n\n**市场环境识别：**\n- 整体弱势市场：BTC和ETH价格均低于EMA20，MACD为负值\n- 成交量普遍低于平均，缺乏动能\n- 根据弱势市场规则，需要非常选择性（置信度≥85）\n\n**各币种分析：**\n\n**BTCUSDT**：现有持仓符合入场假设，继续持有\n\n**ETHUSDT**：价格2801.30略低于EMA20 2802.02，MACD接近0，RSI 48.06中性，信号不够强烈，置信度\u003c85\n\n**SOLUSDT**：RSI 25.51极度超卖，但价格126.80低于EMA20 127.18，MACD -0.125为负值\n- 风险回报计算：入场126.80，止损129.00，止盈120.00\n  - 风险：(129.00-126.80)/126.80 = 1.74%\n  - 回报：(126.80-120.00)/126.80 = 5.36%\n  - 风险回报比：5.36/1.74 = 3.08:1 ✓ 满足硬约束\n- 但信号强度中等，在弱势市场+夏普\u003c0环境下，置信度约80，未达到85阈值\n\n**BNBUSDT**：RSI 16.27极度超卖，但信号刚刚出现，不符合弱势市场要求的10-15分钟信号持续时间\n- 且成交量6.622极低，缺乏确认\n\n**XRPUSDT**：RSI 24.91极度超卖，但MACD接近0，趋势不明确\n\n**HYPEUSDT**：RSI 63.73偏高，价格30.90高于EMA20 30.75，在弱势市场中表现异常，风险较高\n\n**结论**：仅维持现有BTC空单持仓，无新开仓机会\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍然有效：价格86544低于EMA20 86569，MACD -13.92为负值，资金费率负值，止损距离0.53%符合要求，信号已持续5分钟但未达最小确认时间，继续持有\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86548,
+          "unrealized_profit": -0.37386,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:13:17.280965991+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:16:11.908373288+08:00",
+      "cycle_number": 261,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和熔断机制检查：\n- 当前夏普比率-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 当前持仓1个BTC空仓，入场8分钟，需要复核入场假设\n\n**BTCUSDT持仓复核**：\n- 入场假设：下跌趋势确认+RSI超卖+MACD负值+资金费率负值\n- 当前验证：价格86502仍低于EMA20 86565，MACD -15.635保持负值，RSI 42.927仍处于弱势区域\n- 资金费率-0.00119%仍为负值，显示空头情绪持续\n- 持仓盈亏仅-0.11%，仍在正常波动范围内\n- 止损距离检查：当前价格86502距止损87000约0.58%，符合安全范围\n- 入场假设仍然有效，选择继续持有\n\n**新机会扫描**：\n- **BTCUSDT**：价格86502低于EMA20 86565，MACD -15.635负值，RSI 42.927显示弱势\n- 风险回报计算：入场86500，止损87000，止盈85000\n  - 风险：(87000-86500)/86500 = 0.58%\n  - 回报：(86500-85000)/86500 = 1.73%\n  - 风险回报比：1.73/0.58 = 2.98:1\n  - **关键：风险回报比2.98:1 \u003c 3.0:1硬约束**，必须拒绝此交易\n- **ETHUSDT**：价格2798.50略低于EMA20 2801.70，MACD -0.247负值，RSI 40.625超卖\n  - 风险回报计算：入场2798，止损2820，止盈2750\n  - 风险：(2820-2798)/2798 = 0.79%\n  - 回报：(2798-2750)/2798 = 1.72%\n  - 风险回报比：1.72/0.79 = 2.18:1 \u003c 3.0:1硬约束，必须拒绝\n\n**其他币种分析**：\n- **SOLUSDT**：价格126.92略低于EMA20 127.15，MACD -0.117负值，RSI 37.961超卖，但风险回报比同样无法满足3:1硬约束\n\n**决策总结**：\n- 当前BTC空仓入场假设仍然有效，继续持有\n- 所有新机会都无法满足风险回报比≥3.0:1的硬约束\n- 在弱势市场环境中，需要保持耐心，等待高质量信号\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：价格86502低于EMA20 86565，MACD -15.635保持负值，RSI 42.927弱势，资金费率负值持续\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86509,
+          "unrealized_profit": -0.26505,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:16:10.908221454+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:19:05.774211189+08:00",
+      "cycle_number": 262,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 市场处于弱势环境，需要非常谨慎，仅选择高质量信号\n\n**持仓复核（BTCUSDT SHORT）：**\n1. **入场假设验证**：原入场理由为下跌趋势确认+RSI超卖+MACD负值+资金费率负值\n   - 当前价格86502 vs EMA20 86565（价格略低于EMA，但差距很小）\n   - MACD -15.635仍为负值，但有所恶化\n   - RSI 42.93已脱离超卖区域\n   - 资金费率仍为负值但接近中性\n   - 入场假设部分失效，特别是RSI已明显回升\n\n2. **止损距离检查**：当前价86502 vs 止损87000，距离0.57%，符合要求\n\n3. **真正变化检查**：\n   - 价格从入场86414小幅上涨至86502，涨幅0.1%\n   - 技术位未明显突破，但趋势强度减弱\n   - 决定继续持有，等待趋势确认\n\n**新机会评估：**\n- **BTCUSDT**：价格接近EMA20，MACD负值但RSI已回升，信号质量下降\n- **ETHUSDT**：价格2798.5 vs EMA20 2801.7，差距很小，MACD接近零轴，缺乏明确方向\n- **SOLUSDT**：价格126.92 vs EMA20 127.15，MACD负值，RSI 37.96超卖，但成交量一般\n- **BNBUSDT**：RSI 18.18极度超卖，但价格仍在下跌趋势中，单一指标不足以开仓\n- **XRPUSDT**：缺乏明确信号\n- **HYPEUSDT**：RSI 66.26接近超买，不适合开仓\n\n**市场环境**：\n- 弱势市场，需要更高置信度（≥85）\n- 当前没有满足硬约束的高质量新机会\n\n**决策**：继续持有BTC空仓，等待趋势进一步发展\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设部分失效但未完全否定，价格仍在EMA20下方，MACD保持负值，止损距离0.57%安全，继续观察趋势发展\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86490,
+          "unrealized_profit": -0.21204,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:19:04.773706634+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:22:19.133497794+08:00",
+      "cycle_number": 263,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 账户处于亏损状态（-51.74%），需要非常谨慎，仅选择高质量信号\n- 当前持仓1个BTC空仓，需要评估是否继续持有\n\n**市场环境识别：**\n- 整体弱势市场：BTC和ETH价格均低于EMA20，MACD为负值，RSI处于超卖区域\n- 成交量普遍低于平均水平，缺乏动能\n\n**持仓熔断复核（BTCUSDT SHORT）：**\n1. **入场假设验证**：原始入场理由为\"下跌趋势确认+RSI超卖+MACD负值+资金费率负值\"\n   - 当前价格86332仍低于EMA20 86528，MACD -40.325仍为负值，RSI 28.84仍超卖\n   - 资金费率仍为负值（-1.29e-05）\n   - 入场假设核心逻辑仍然有效\n\n2. **止损距离检查**：当前止损87000，距离约0.77%，符合要求\n\n3. **真正变化检查**：未满足所有条件，视为正常波动\n\n**新机会评估：**\n- **BTCUSDT**：当前持有空仓，价格小幅下跌，信号持续有效，继续持有\n\n- **ETHUSDT**：价格2788.80低于EMA20 2799.66，MACD -1.749负值，RSI 24.51严重超卖\n  - 风险回报计算：假设入场2788，止损2830，止盈2700\n  - 风险：(2830-2788)/2788 = 1.51%\n  - 回报：(2788-2700)/2788 = 3.16%\n  - 风险回报比：3.16/1.51 = 2.09:1 \u003c 3.0:1 → 不满足硬约束\n\n- **SOLUSDT**：RSI 19.84极度超卖，但风险回报计算：\n  - 入场126.35，止损128，止盈122\n  - 风险：(128-126.35)/126.35 = 1.31%\n  - 回报：(126.35-122)/126.35 = 3.44%\n  - 风险回报比：3.44/1.31 = 2.63:1 \u003c 3.0:1 → 不满足硬约束\n\n- **BNBUSDT**：RSI 11.80极度超卖，但价格821.83，止损835，止盈800\n  - 风险：(835-821.83)/821.83 = 1.60%\n  - 回报：(821.83-800)/821.83 = 2.66%\n  - 风险回报比：2.66/1.60 = 1.66:1 \u003c 3.0:1 → 不满足硬约束\n\n- **XRPUSDT**：信号相对较弱，RSI 23.00，风险回报难以达到3:1\n\n- **HYPEUSDT**：唯一上涨币种，但RSI 61.61已接近超买，且风险回报计算不满足要求\n\n**预执行检查清单验证：**\n- ✅ 风险回报比：候选币种均\u003c3.0:1 → 拒绝开仓\n- ✅ 持仓数：当前1个，未超限\n- ✅ 保证金使用率：49.9% \u003c 90%\n\n**决策**：继续持有BTC空仓，无新开仓位\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"下跌趋势持续有效：价格86332低于EMA20 86528，MACD -40.325负值，RSI 28.84超卖，资金费率负值，入场假设仍成立\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86327,
+          "unrealized_profit": 0.24273,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:22:18.133369485+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:25:11.171152117+08:00",
+      "cycle_number": 264,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 当前持仓为BTC空仓，已持仓17分钟，需要评估是否继续持有\n\n**BTCUSDT持仓评估（引用入场快照#258）：**\n- 入场假设：下跌趋势确认+RSI超卖+MACD负值+资金费率负值\n- 当前验证：价格86263仍低于EMA20 86497，MACD -60.645为负值，RSI 25.72仍处超卖区域\n- 资金费率仍为负值，显示空头情绪持续\n- 信号持续时间：RSI超卖状态已持续多根K线，具备时间稳定性\n- 入场假设仍然有效，没有触发熔断条件\n\n**市场环境识别：**\n- 整体弱势市场：BTC和ETH价格均低于EMA20，MACD为负值\n- 成交量普遍低于平均水平，缺乏动能\n- 根据弱势市场规则，需要非常谨慎，提高入场门槛\n\n**新机会扫描：**\n- **BTCUSDT**：RSI 25.72极度超卖，但趋势仍向下，单一指标不足以作为反转信号\n- **ETHUSDT**：RSI 24.51极度超卖，但价格低于EMA20，MACD负值\n- **SOLUSDT**：RSI 19.84极度超卖，但价格低于EMA20，MACD负值\n- **BNBUSDT**：RSI 11.80极度超卖，但价格低于EMA20，MACD负值\n- **XRPUSDT**：RSI 23.00超卖，但MACD接近零轴，信号不明确\n- **HYPEUSDT**：RSI 61.61处于中性偏强区域，但缺乏明确趋势信号\n- **所有候选币种**：在弱势市场中，单一RSI超卖指标通常不足以作为开多理由\n- **风险回报检查**：没有发现满足3:1风险回报比的高质量机会\n\n**预执行检查清单验证：**\n- 当前持仓：入场假设有效，无止损距离警告（当前价86263距止损87000约0.85%）\n- 没有新机会满足硬约束要求（风险回报比≥3:1且置信度≥85）\n\n**决策：** 继续持有BTC空仓，等待更好的机会\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍然有效：价格低于EMA20，MACD负值，RSI仍处超卖但趋势向下持续，无新高质量机会满足硬约束\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86264,
+          "unrealized_profit": 0.4185,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:25:10.171057545+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:28:16.453705251+08:00",
+      "cycle_number": 265,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 当前持仓仅1个，未达上限\n- 市场处于弱势环境，需要更加谨慎和选择性\n\n**当前持仓BTCUSDT空单分析（引用入场快照#258）：**\n- 入场假设：下跌趋势确认+RSI超卖+MACD负值+资金费率负值\n- 当前验证：价格86281 \u003c EMA20 86477，MACD -69.15为负值，RSI 28.61显示超卖\n- 持仓盈利+0.14%，当前止损87000，距离当前价格约0.83%，满足止损距离要求\n- 入场假设仍然有效：趋势向下，MACD持续负值加深，RSI保持超卖\n- 无\"真正变化\"信号：技术位未被破坏，成交量未激增\n- 决策：继续持有，使用`hold`动作\n\n**新机会扫描：**\n- **BTCUSDT**：当前持仓中，不重复开仓\n- **ETHUSDT**：价格2787.70 \u003c EMA20 2797.33，MACD -3.09为负值，RSI 25.95极度超卖\n- 信号持续时间：RSI超卖已持续多根K线，具备时间稳定性\n- 风险回报计算：入场2787.70，止损2820（+1.16%），止盈2700（-3.15%）\n  - 风险：(2820-2787.70)/2787.70 = 1.16%\n  - 利润：(2787.70-2700)/2787.70 = 3.15%\n  - 风险回报比：3.15/1.16 = 2.72:1 \u003c 3.0:1 → **违反硬约束，拒绝交易**\n- **SOLUSDT**：价格126.11 \u003c EMA20 126.83，MACD -0.282为负值，RSI 18.08极度超卖\n  - 风险回报计算：入场126.11，止损127.2（+0.86%），止盈122（-3.26%）\n  - 风险回报比：3.26/0.86 = 3.79:1 \u003e 3.0:1\n  - 但RSI 18.08已极度超卖，可能存在反弹风险\n  - 在弱势市场中，单一指标信号不足，需要多指标确认\n  - 当前信号质量不足，置信度\u003c85 → **拒绝交易**\n\n**其他币种**：信号质量不足或风险回报比不满足硬约束\n\n**最终决策**：维持当前BTC空单持仓，无新开仓机会\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：下跌趋势持续（价格\\u003cEMA20，MACD负值加深），RSI保持超卖，趋势向下确认\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86289,
+          "unrealized_profit": 0.34875,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:28:15.453591505+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:31:41.855181401+08:00",
+      "cycle_number": 266,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 当前持仓1个（BTC空仓），符合最多3个持仓的硬约束\n- 账户保证金使用率49.8%，远低于90%限制\n\n**持仓熔断复核（Sharpe \u003c 0）：**\n\n**步骤1：入场假设验证**\n- 引用入场快照：入场假设为\"下跌趋势确认+RSI超卖+MACD负值+资金费率负值\"\n- 当前验证：\n  - 价格86281仍低于EMA20 86477，下跌趋势持续\n  - MACD -69.150仍为负值且进一步恶化\n  - RSI 28.614仍处于超卖区域\n  - 资金费率仍为负值\n  - 入场假设核心逻辑仍然有效\n\n**步骤2：止损距离检查**\n- 当前止损87000，当前价格86281\n- 止损距离：(87000-86281)/86281 = 0.83%，符合BTC最小0.4%硬约束\n- 距离\u003e0.5%，继续持仓\n\n**步骤3：\"真正变化\"量化检查**\n- 价格仍低于EMA20，但未突破关键技术位\n- MACD持续为负，RSI持续超卖\n- 入场假设未被否定，继续持仓\n\n**市场环境识别：**\n- 整体弱势市场：BTC、ETH、SOL、BNB、XRP均低于各自EMA20，MACD为负值\n- 成交量普遍低于平均水平，缺乏动能\n- 需要非常选择性，仅考虑高质量信号\n\n**现有持仓分析：**\n- BTC空仓当前盈利0.15%，持仓23分钟\n- 信号持续有效：下跌趋势+超卖状态+MACD负值\n- 风险回报比仍符合3:1要求\n\n**新机会扫描：**\n- **BTCUSDT**：当前已持仓，无新开仓信号\n- **ETHUSDT**：价格2787.70低于EMA20 2797.33，MACD -3.090负值，RSI 25.945超卖\n  - 但信号强度不足以达到熔断机制要求的85置信度\n- **SOLUSDT**：RSI 18.079极度超卖，但趋势向下，单一指标不足以开仓\n- **BNBUSDT**：类似弱势，RSI 19.751超卖\n- **XRPUSDT**：RSI 15.862极度超卖\n- **HYPEUSDT**：相对强势，价格接近EMA20，但缺乏明确的突破信号\n- 所有币种均缺乏多指标确认的高质量信号\n\n**决策：**\n- 维持现有BTC空仓（使用`hold`）\n- 无新开仓机会（信号质量不足且置信度\u003c85）\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设持续有效：下跌趋势+超卖状态+MACD负值+资金费率负值，风险回报比仍符合3:1硬约束\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86288,
+          "unrealized_profit": 0.35154,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:31:40.854264113+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:34:34.331924065+08:00",
+      "cycle_number": 267,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 当前持仓1个，符合最大持仓限制\n- 市场环境为弱势市场，需要更谨慎的入场标准和更宽的止损\n\n**持仓熔断复核（BTCUSDT SHORT）：**\n1. **入场假设验证**：入场理由为\"下跌趋势确认+RSI超卖+MACD负值+资金费率负值\"\n   - 当前价格86175仍低于EMA20 86427，MACD -91.636为负值，RSI 23.318显示严重超卖\n   - 资金费率仍为负值，空头情绪持续\n   - **入场假设仍然有效**，继续持仓\n\n2. **止损距离检查**：当前价格86175，止损87000，距离 = (87000-86175)/86175 = 0.96%，符合BTC最小止损距离0.4%要求\n   - 距离\u003e0.5%，继续监控\n\n3. **\"真正变化\"量化检查**：\n   - 价格未突破关键技术位（仍低于EMA20）\n   - RSI从入场时的36.87降至23.32，但未出现\u003e25%的快速变化\n   - 成交量3854.820低于平均6977.048，缺乏确认\n   - **不满足\"真正变化\"条件**\n\n4. **时间窗口验证**：持仓仅26分钟，技术位未被破坏，应继续持仓给信号发展时间\n\n**新机会评估：**\n- **BTCUSDT**：当前持仓中，无新开仓需求\n- **ETHUSDT**：价格2785.80低于EMA20 2795.357，MACD -3.886为负值，RSI 28.160显示超卖\n  - 但资金费率为正，与入场假设冲突\n  - 置信度不足以达到85（熔断要求），选择等待\n\n- **SOLUSDT**：价格126.08低于EMA20 126.706，MACD -0.315为负值，RSI 20.457显示严重超卖\n  - 风险回报计算：入场126.08，止损127.50（0.6%最小距离），止盈120.00\n  - 风险：(127.50-126.08)/126.08 = 1.13%，账户风险=1.13%×10=11.3%（略高）\n  - 但置信度约80，未达到熔断要求的85，选择等待\n\n- **其他山寨币**：均处于弱势，但未达到熔断机制的高置信度要求\n\n**最终决策**：继续持有BTC空仓，等待更高质量信号\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：价格\\u003cEMA20，MACD负值，RSI严重超卖，持仓仅26分钟需给信号发展时间\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86175,
+          "unrealized_profit": 0.66681,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:34:33.331761654+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:37:14.590051902+08:00",
+      "cycle_number": 268,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 当前持仓BTC空仓已29分钟，需要复核入场假设\n\n**持仓熔断复核（Sharpe \u003c 0）：**\n\n**步骤1：入场假设验证**\n- 入场快照：下跌趋势确认+RSI超卖+MACD负值+资金费率负值\n- 当前验证：价格86175 \u003c EMA20 86427，MACD -91.636为负值，RSI 23.318显示极度超卖\n- 入场假设仍有效：趋势向下、MACD负值、RSI超卖状态持续\n- 继续持有，进入步骤2\n\n**步骤2：止损距离检查**\n- 当前价格86175，止损87000，距离=(87000-86175)/86175=0.96%，远高于0.3%阈值\n- 无高风险警告，继续步骤3\n\n**步骤3：\"真正变化\"量化检查**\n- 价格未突破关键位（仍在EMA20下方）\n- MACD持续为负且进一步恶化\n- 成交量相对较低但稳定\n- 未满足\"真正变化\"的所有条件，视为正常波动\n\n**步骤4：时间窗口验证**\n- 持仓仅29分钟，远未达到10-15分钟确认窗口\n- 避免过度反应，继续持有\n\n**新机会评估：**\n\n**BTCUSDT**：当前持有空仓，信号持续有效，无需调整\n\n**ETHUSDT**：价格2785.8 \u003c EMA20 2795.357，MACD -3.886为负值，RSI 28.16显示超卖\n- 但资金费率为正，与入场假设冲突\n- 置信度不足以满足≥85要求\n\n**SOLUSDT**：价格126.08 \u003c EMA20 126.706，MACD -0.315为负值，RSI 20.457显示极度超卖\n- 但信号强度较弱，且当前持仓已达上限\n\n**其他币种**：均显示弱势，但无足够强信号开新仓\n\n**预执行检查清单验证**：\n- ✅ 持仓存在且假设有效\n- ✅ 无需开新仓\n- ✅ 持仓数未超限\n\n**决策**：继续持有BTC空仓，等待趋势进一步发展\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"下跌趋势持续+RSI极度超卖23.32+MACD负值-91.636，入场假设仍有效，止损距离0.96%安全\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86270,
+          "unrealized_profit": 0.40176,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:37:13.588958918+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:40:32.530812425+08:00",
+      "cycle_number": 269,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 距离上次交易已32分钟，当前持仓BTC空仓盈利0.09%\n- 需要非常谨慎，仅选择高质量信号\n\n市场环境识别：\n- 弱势市场：BTC、ETH、XRP价格均低于EMA20，MACD多为负值\n- 成交量普遍低于平均水平，缺乏动能\n- 波动性中等，ATR显示正常市场噪音水平\n\n**持仓熔断复核（BTC空仓）：**\n1. **入场假设验证**：原始入场理由是下跌趋势确认+RSI超卖+MACD负值+资金费率负值\n   - 当前价格86309低于EMA20 86413，MACD -81.164为负值，RSI 42.019显示中性偏弱\n   - 4小时级别EMA20 88246明显高于当前价格，确认下跌趋势仍然有效\n   - 资金费率仍为负值，空头情绪持续\n   - 入场假设仍有效 → 继续持有\n\n2. **止损距离检查**：当前止损87000，距离=(87000-86309)/86309=0.80%，满足BTC最小0.4%要求\n\n3. **\"真正变化\"量化检查**：\n   - 价格仍在EMA20下方，技术位未被破坏\n   - 信号持续稳定，无需立即平仓\n\n**新机会评估：**\n- BTC：当前持仓中，无新开仓理由\n- ETH：价格2791.60低于EMA20 2794.95，MACD -3.305为负值，RSI 45.799中性\n   - 4小时级别EMA20 2897明显高于当前价格\n   - 但信号强度不足，RSI未显示明显超卖，置信度\u003c85\n- SOL：价格126.60接近EMA20 126.70，MACD -0.248轻微负值，RSI 52.364中性\n   - 缺乏明确的入场信号\n\n**预执行检查清单验证：**\n- 风险回报比：当前持仓满足要求\n- 止损距离：满足BTC最小0.4%要求\n- 杠杆：10x在系统限制内\n- 置信度：当前持仓符合熔断机制要求\n- 时间稳定性：信号持续稳定，适合继续持有\n\n**决策：** 继续持有BTC空仓，无新开仓机会\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：价格低于EMA20，MACD负值，资金费率负值，下跌趋势确认。止损距离0.80%满足硬约束，风险回报比保持3.13:1\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86334,
+          "unrealized_profit": 0.2232,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:40:31.530115324+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:43:10.759109678+08:00",
+      "cycle_number": 270,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 当前持仓1个BTC空仓，入场35分钟，需要评估是否继续持有\n\n**现有持仓评估（BTCUSDT SHORT）：**\n- 入场快照：入场价86414，止损87000，止盈85000，置信度85\n- 当前价格86309，距离入场价86414，浮亏0.23%\n- 入场假设验证：入场假设为\"下跌趋势确认+RSI超卖+MACD负值+资金费率负值\"\n  - 当前EMA20 86413.708仍高于价格86309，MACD -81.164保持负值，RSI 42.019仍显示超卖\n  - 资金费率-1.28e-05保持负值\n  - 入场假设仍然有效，未出现失效信号\n\n**止损距离检查：**\n- 当前止损87000，距离当前价格86309：1.01%，符合硬约束要求\n- 当前价格距止损\u003e0.5%，无需提前退出\n\n**市场环境识别：**\n- 整体弱势市场：BTC和ETH价格均低于EMA20，MACD为负值\n- 需要非常谨慎，仅选择高质量信号\n\n**新机会评估：**\n- BTCUSDT：当前价格86309低于EMA20 86413，MACD -81.164负值，RSI 42.019超卖\n- 信号已持续多根K线，具备时间稳定性\n- 但夏普\u003c0且已有一个BTC空仓，避免过度集中风险\n\n**其他币种分析：**\n- ETHUSDT：价格2791.60略低于EMA20 2794.945，MACD -3.305负值，RSI 45.799\n- 信号强度中等，不符合≥85置信度要求\n\n**预执行检查：**\n- 夏普\u003c0，新开仓需要置信度≥85，当前无符合条件的高质量信号\n\n**决策：**\n- 维持现有BTC空仓，入场假设仍然有效\n- 无符合条件的新开仓机会\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍然有效：下跌趋势持续（价格86309\\u003cEMA20 86413），MACD负值-81.164，RSI超卖42.019，资金费率负值-1.28e-05，止损距离1.01%符合要求，无失效信号\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86611,
+          "unrealized_profit": -0.54963,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:43:09.755488493+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:46:14.259608777+08:00",
+      "cycle_number": 271,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前夏普比率为-0.05，根据熔断机制要求，开仓需要置信度≥85\n- 当前持仓BTC空单已亏损0.53%，需要严格复核入场假设是否仍然有效\n\n**持仓熔断复核（Sharpe \u003c 0）：**\n\n**步骤1：入场假设验证**\n- 入场假设（Cycle #258）：下跌趋势确认+RSI超卖+MACD负值+资金费率负值\n- 当前验证：\n  - 价格86870已高于入场价86414，且高于EMA20 86510\n- MACD已从负值转为正值11.002，与入场假设冲突\n- RSI从超卖36.011转为超买76.825，完全反转\n- 入场假设的核心逻辑已失效（趋势方向改变，指标全面逆转）\n\n**决策**：入场假设失效 → **必须使用 `close_short` 平仓**（保本退出）\n\n**新机会扫描**：\n- 当前市场环境：整体仍偏弱势，但BTC已出现明显反弹\n- 所有候选币种中，ETHUSDT显示：\n  - 价格2805.50略高于EMA20 2797.526\n  - MACD -0.591仍为负值，但接近零轴\n  - RSI 65.414处于中性偏强区域\n  - 但信号强度不足，且夏普\u003c0需要置信度≥85，当前信号未达到此标准\n- 其他币种均无明显高质量信号\n\n**预执行检查清单**：\n- ✅ 持仓入场假设失效 → 必须平仓\n- ❌ 无新开仓机会（信号强度不足或风险回报不达标）\n\n**最终决策**：平掉BTC空单，无新开仓\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"close_short\",\n    \"reasoning\": \"入场假设失效：MACD从负转正，RSI从超卖转为超买，趋势方向已反转\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "short",
+          "position_amt": 0.00279,
+          "entry_price": 86414,
+          "mark_price": 86869,
+          "unrealized_profit": -1.26945,
+          "leverage": 10,
+          "liquidation_price": 93844.5570157972
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "close_short",
+          "symbol": "BTCUSDT",
+          "quantity": 0.00279,
+          "leverage": 10,
+          "price": 86865,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:46:08.121115981+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:49:24.075405332+08:00",
+      "cycle_number": 272,
+      "cot_trace": "**思维链分析：**\n\n首先进行市场环境识别和风险检查：\n- 当前市场环境：BTC处于上涨趋势（价格86870 \u003e EMA20 86510，MACD正值11.002），RSI 76.83显示超买状态\n- 熔断机制：夏普比率-0.05 \u003c 0，需要置信度≥85才能开仓\n- 账户回撤-53.35%，需要保守操作\n\n**BTC分析：**\n- 趋势：明确上涨（价格\u003eEMA20，MACD\u003e0）\n- 动量：MACD从-23.393快速转正至11.002，显示强劲上涨动能\n- RSI：76.83超买，但在强势趋势中可能持续\n- 成交量：当前4141.895低于平均6979.918，缺乏确认\n- 4小时框架：EMA20 88246 \u003e 价格86870，显示短期回调压力\n- 资金费率：-0.00124%轻微负值，无明显挤压\n\n**硬约束检查：**\n- 风险回报比：入场86870，止损86000（0.8%距离），止盈89000（2.45%距离），风险回报=2.45/0.8=3.06:1 ✓ 满足\n- 止损距离：0.8% \u003e BTC最小值0.4% ✓ 满足\n- 杠杆：10x ≤ 系统限制 ✓ 满足\n- 置信度：85 ≥ 熔断阈值 ✓ 满足\n\n**时间稳定性验证：**\n- 上涨趋势已持续多个K线，MACD转正信号稳定\n- 信号持续时间：从MACD转正到现在已持续约15分钟，满足稳定性要求\n\n**其他币种评估：**\n- ETH：趋势中性，MACD轻微负值，缺乏明确方向\n- 其他山寨币：信号较弱或超买，不符合高置信度要求\n\n**决策：** 仅BTC满足所有硬约束和熔断要求，可谨慎开多。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"open_long\",\n    \"leverage\": 10,\n    \"position_size_usd\": 233,\n    \"stop_loss\": 86000,\n    \"take_profit\": 89000,\n    \"confidence\": 85,\n    \"risk_usd\": 300,\n    \"reasoning\": \"上涨趋势确认+MACD转正+RSI超买但趋势强劲，风险回报3.06:1满足要求\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": [
+        {
+          "action": "open_long",
+          "symbol": "BTCUSDT",
+          "quantity": 0.0026853836756333127,
+          "leverage": 10,
+          "price": 86766,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:49:12.297180727+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:52:09.424528372+08:00",
+      "cycle_number": 273,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 上一周期（#272）在BTC开多仓，入场价86766，当前价格86786，持仓仅2分钟\n- 需要评估当前持仓状态，引用入场快照进行对比分析\n\n**BTC持仓熔断复核：**\n1. **入场假设验证**：入场理由为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"\n   - 当前趋势：价格86766 \u003e EMA20 86526，MACD 23.639 \u003e 0，RSI 67.51（已从超买回落）\n   - MACD持续转强（从-23.365升至23.639），RSI从78.89回落至67.51但仍偏强\n   - 入场假设核心逻辑（上涨趋势+MACD转正）仍然有效\n\n2. **止损距离检查**：当前价格86786，止损86000，距离0.91% \u003e 0.4%最小值，无高风险警告\n\n3. **\"真正变化\"量化检查**：\n   - 价格变化：从入场价86766到当前86786，仅+0.02%，未突破关键技术位\n   - 指标变化：RSI从78.89回落至67.51（变化14%），MACD持续正值\n   - 成交量：当前4513低于平均6983，未出现激增\n   - 入场假设未被否定，继续持有\n\n**市场环境识别：**\n- 当前为上涨趋势环境（BTC价格\u003eEMA20，MACD\u003e0）\n- 熔断机制：夏普比率-0.06 \u003c 0，当前持仓置信度85满足要求\n\n**新机会扫描：**\n- 检查所有候选币种，未发现满足硬约束的新机会\n- 风险回报比要求≥3:1，当前信号质量不足\n- 信号稳定性：多数币种处于横盘整理，缺乏明确方向性突破\n\n**硬约束检查：**\n- 现有持仓：1个（满足≤3个限制）\n- 保证金使用率：50.1%（满足≤90%限制）\n\n**决策：** 继续持有BTC多仓，无新开仓机会\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍然有效：上涨趋势持续（价格\\u003eEMA20，MACD\\u003e0），RSI从超买合理回落，趋势动能保持，继续持有等待止盈目标89000\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86786,
+          "unrealized_profit": 0.0538,
+          "leverage": 10,
+          "liquidation_price": 79117.4122629523
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:52:08.424168759+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:55:24.069755575+08:00",
+      "cycle_number": 274,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前持仓BTC多仓已持有5分钟，入场假设为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"。当前价格86837与入场价86766基本持平，MACD持续上升至56.82，RSI从76.83回落至71.03但仍偏高，整体上涨趋势未变。\n- 熔断机制：夏普比率-0.06 \u003c 0，需要置信度≥85才能开仓。\n- 账户回撤-53.29%，需要保守操作。\n\n**持仓熔断复核：**\n1. **入场假设验证**：原始假设（上涨趋势+MACD转正）仍然有效，价格在EMA20上方，MACD持续正值。\n2. **止损距离检查**：当前价格86837距止损86000约0.96%，远高于0.3%的警告阈值，继续持有。\n\n**市场环境识别：**\n- BTC处于上涨趋势（价格\u003eEMA20，MACD\u003e0），但RSI偏高显示短期超买。\n- 4小时框架显示回调压力（EMA20 88292 \u003e 当前价格86837）。\n\n**新机会评估：**\n- **BTC**：当前持仓中，趋势仍向上但RSI偏高，没有新的开仓信号。\n- **ETH**：价格2804.50接近EMA20 2798.64，MACD微弱正值0.419，RSI 62.78中性，缺乏强劲信号。\n- **SOL**：价格127.22与EMA20 126.91基本持平，MACD接近零轴-0.011，RSI 64.98中性，成交量一般，没有明确方向。\n- **BNB**：类似情况，价格与EMA接近，MACD负值，缺乏做多信号。\n- **XRP**和**HYPE**：均缺乏强劲趋势和动量确认。\n\n**硬约束检查：**\n- 没有发现满足风险回报≥3:1且置信度≥85的机会。\n\n**决策**：继续持有BTC多仓，等待趋势发展，没有新的开仓机会。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"上涨趋势持续，MACD保持正值，入场假设仍然有效，止损距离0.96%安全\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86830,
+          "unrealized_profit": 0.17216,
+          "leverage": 10,
+          "liquidation_price": 79117.4122629523
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:55:23.069035796+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T11:58:18.149084594+08:00",
+      "cycle_number": 275,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和熔断机制检查：\n- 夏普比率-0.06 \u003c 0，需要置信度≥85才能开新仓\n- 账户回撤-52.90%，需要保守操作\n- 当前持仓1个，未达上限\n\n**现有持仓评估（BTCUSDT LONG）：**\n- 入场快照：入场86766，止损86000，止盈89000，置信度85\n- 当前价格86837，盈利+0.24%\n- **入场假设验证**：原始逻辑\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"：\n  - 趋势：价格86837 \u003e EMA20 86576（仍然有效）\n  - MACD：56.820 \u003e 0（仍然有效）\n  - RSI：71.03（从76.83回落，但仍超买）\n  - 当前持仓8分钟，价格仍在入场价之上\n\n**止损距离检查**：\n- 当前价格86837，止损86000，距离0.96%（\u003e0.5%），无高风险警告\n\n**\"真正变化\"量化检查**：\n- 价格未突破关键技术位（仍在EMA20之上）\n- 多个指标：RSI从76.83回落至71.03（变化7.5% \u003c 25%阈值）\n- MACD持续正值且增长（从39.403到56.820）\n- 成交量：当前7.402远低于平均75.156，缺乏确认\n- 入场假设未被否定\n\n**新机会扫描**：\n- **BTCUSDT**：RSI 71.03仍超买，MACD正值但增长放缓，成交量低迷\n- **ETHUSDT**：价格2805.50 \u003e EMA20 2800.053，MACD 1.380正值但微弱，RSI 61.595中性，无强烈信号\n- **SOLUSDT**：RSI 70.302超买，MACD 0.066接近零线，缺乏明确方向\n- **其他币种**：均无明显高置信度信号\n\n**预执行检查清单**：\n- 风险回报比：无新开仓，不适用\n- 止损距离最小值：持仓有效，止损86000距离0.96% \u003e 0.4%最小值\n- 熔断机制：夏普\u003c0，需要置信度≥85，目前无满足条件的信号\n\n**决策**：维持现有BTC多仓，无新开仓信号\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：上涨趋势持续（价格\\u003eEMA20），MACD保持正值，RSI虽回落但仍超买符合强势特征。当前盈利+0.24%，止损距离0.96%安全，无入场假设失效信号\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86973,
+          "unrealized_profit": 0.55683,
+          "leverage": 10,
+          "liquidation_price": 79117.4122629523
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T11:58:17.148955493+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:01:12.255643017+08:00",
+      "cycle_number": 276,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前持仓BTC多仓入场11分钟，需进行持仓熔断复核\n- 夏普比率-0.06 \u003c 0，需要置信度≥85才能开新仓\n\n**持仓熔断复核（BTC多仓）：**\n1. **入场假设验证**：入场理由为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"，当前：\n   - 趋势：价格87007 \u003e EMA20 86658（维持上涨）\n   - 动量：MACD 104.556 \u003e 0（强劲上涨动能）\n   - RSI：74.85（从超买76.83回落但仍偏高）\n   - 成交量：当前4513.634低于平均6983.636，缺乏确认\n   - 入场假设核心逻辑仍然有效\n\n2. **止损距离检查**：当前价87007，止损86000，距离1.16% \u003e 0.3%，安全\n\n3. **\"真正变化\"检查**：\n   - 关键技术位：价格仍在EMA20之上\n   - 指标变化：RSI从76.83回落至74.85（变化\u003c25%）\n   - 成交量：无明显放大\n   - 入场假设未被否定 → 继续持有\n\n**新机会评估：**\n- **BTC**：RSI 74.85仍偏高，缺乏成交量确认，无新开仓位信号\n\n- **ETH**：价格2805.50与EMA20 2800.05基本持平，MACD 1.380微弱正值，RSI 61.595中性，无明显方向性信号\n\n- **SOL**：价格127.48与EMA20 127.01持平，MACD 0.066接近零轴，RSI 70.302偏高但未超买，信号不明确\n\n- **BNB**：价格828.44 \u003e EMA20 826.39，MACD 0.223正值，RSI 66.336中性偏高，但成交量57.304低于平均，缺乏确认\n\n- **XRP**：价格2.02与EMA20 2.018基本持平，无明显交易机会\n\n- **HYPE**：RSI 68.545偏高，信号质量一般\n\n**硬约束检查**：\n- 所有候选币种均未达到置信度≥85（夏普\u003c0要求）且风险回报≥3:1的要求\n\n**决策**：维持当前BTC多仓，无新开仓位\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：上涨趋势维持（价格\\u003eEMA20），MACD强劲正值104.556显示强劲上涨动能，RSI从超买回落但仍偏高但趋势强劲，止损距离1.16%安全，无真正变化信号\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 87012.99999999999,
+          "unrealized_profit": 0.66443,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:01:11.255534192+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:04:17.780412606+08:00",
+      "cycle_number": 277,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前持仓BTC多仓已持有14分钟，入场假设为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"。当前价格87071 vs 入场86766，盈利0.35%。\n- 从入场快照看，原始假设基于趋势确认和动量转正，目前这些条件仍然有效。\n- 当前RSI 74.53显示超买但未极端，MACD 129.38保持强劲正值，EMA20 86705仍低于当前价格，上涨趋势未破坏。\n- 没有发现需要纠正的错误模式。\n\n**持仓熔断复核：**\n1. **入场假设验证**：趋势确认和动量转正的核心逻辑仍然有效，价格仍在EMA20之上，MACD持续为正。\n\n**市场环境识别：**\n- BTC处于上涨趋势（价格\u003eEMA20，MACD\u003e0）\n- 波动率正常（ATR 138.859，约0.16%）\n- 夏普比率-0.06 \u003c 0，需要置信度≥85才能开仓\n\n**BTC持仓分析：**\n- 趋势：价格87071 \u003e EMA20 86705，上涨趋势保持\n- 动量：MACD 129.38强劲正值，上涨动能持续\n- RSI：74.53超买但未极端，在强势趋势中可能持续\n- 成交量：当前41.235低于平均101.767，缺乏确认但非反转信号\n- 4小时框架：EMA20 88187 \u003e 价格87071，显示上方仍有阻力\n- 资金费率：-0.0005%轻微负值，无明显挤压\n\n**硬约束检查（持仓）：**\n- 止损距离：入场86766 vs 止损86000 = 0.88% \u003e 0.4%最小值，符合要求\n- 当前价格到止损距离：(87071-86000)/87071 = 1.23%，安全边际充足\n- 入场假设未失效，继续持有\n\n**新机会扫描：**\n- ETH：价格2806.20 vs EMA20 2801.27，轻微上涨，MACD 1.982正值但较弱，RSI 58.13中性，无明显信号\n- SOL：价格127.68 vs EMA20 127.12，横盘震荡，MACD 0.134接近零线，缺乏明确方向\n- BNB：价格829.27 vs EMA20 826.77，轻微上涨但信号不强\n- 其他币种均无明显高置信度信号\n\n**决策：** 继续持有BTC多仓，无新开仓机会。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"上涨趋势持续+MACD强劲正值+RSI超买但未极端+入场假设有效+止损距离充足\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 87083.99999999999,
+          "unrealized_profit": 0.85542,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:04:16.780318472+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:07:33.418401902+08:00",
+      "cycle_number": 278,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前持仓BTC多仓已持有17分钟，入场价86766，当前价87071，盈利0.35%。需要对照入场快照复核原始假设。\n- 入场假设：上涨趋势确认+MACD转正+RSI超买但趋势强劲\n- 当前验证：\n  - 趋势：价格87071 \u003e EMA20 86706，MACD 129.38保持强劲正值 → **假设仍有效**\n- 止损距离检查：当前价格87071，止损86000，距离0.82% \u003e 0.3% → 无高风险警告\n- 真正变化检查：无价格突破关键技术位（EMA20仍被守住），指标变化温和，成交量未激增 → 无真正变化信号\n- 时间窗口：持仓仅17分钟，趋势变化需要更长时间确认\n\n**市场环境识别**：BTC处于上涨趋势（价格\u003eEMA20，MACD强劲正值），RSI 74.53显示超买但趋势强劲，4小时框架显示短期回调压力。\n\n**持仓熔断复核**：\n- 入场假设仍有效：趋势、动量、结构均未发生根本变化\n- 止损距离充足：0.82% \u003e 0.3%阈值\n- 无真正变化信号：价格/EMA关系稳定，指标变化温和\n\n**新机会评估**：\n- BTC：RSI超买但趋势强劲，无明确反转信号\n- ETH：横盘震荡，MACD接近零轴，RSI中性，缺乏明确方向\n- SOL/BNB：类似横盘格局，动量微弱\n- XRP/HYPE：无明显交易机会\n\n**预执行检查清单**：\n- 风险回报比：持仓的(89000-86766)/(86766-86000) = 2234/766 = 2.92:1 \u003c 3.0:1 → **硬约束未满足**\n- 但这是已持仓位，需要基于当前情况评估是否平仓\n\n**决策**：当前持仓假设仍有效，趋势保持向上，无明确平仓信号。继续持有，等待趋势进一步发展。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：上涨趋势持续，价格\\u003eEMA20，MACD保持强劲正值。止损距离0.82%充足，无真正变化信号。趋势变化需要更长时间确认。\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86964.99999999999,
+          "unrealized_profit": 0.53531,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:07:32.418272609+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:10:23.466884893+08:00",
+      "cycle_number": 279,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 上一周期在BTC开多仓，入场假设基于\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"。当前价格87007仍在入场价86766之上，但需要复核入场假设有效性。\n\n**持仓熔断复核（Sharpe \u003c 0 时强制执行）：**\n\n**步骤1：入场假设验证**：\n- 原始入场假设：上涨趋势确认+MACD转正+RSI超买但趋势强劲\n- 当前验证：\n  - 趋势：价格87007 \u003e EMA20 86756，仍保持上涨\n  - MACD：138.426保持强劲正值，动量持续\n  - RSI：从入场时76.83降至当前64.75，从超买回归中性，属于健康回调\n  - 成交量：当前265.097低于平均6963.120，显示动能有所减弱但未完全失效\n- **结论**：入场假设核心逻辑仍有效，继续步骤2\n\n**步骤2：止损距离检查**：\n- 当前价格87007，止损86000，距离 = (87007-86000)/87007 = 1.16%，远高于0.3%阈值\n- **结论**：止损距离安全，无高风险警告\n\n**步骤3：\"真正变化\"检查**：\n- 价格未突破关键技术位，EMA关系保持稳定\n- MACD持续正值，动量未反转\n- 入场假设未被否定\n\n**步骤4：时间窗口验证**：\n- 持仓20分钟，信号稳定性验证：趋势、动量指标持续保持看涨方向\n- **结论**：继续持仓，无需过度反应\n\n**市场环境识别**：\n- 当前市场：BTC处于温和上涨趋势，价格\u003eEMA20，MACD强劲正值\n- 波动率：ATR 139.061约0.16%，属正常范围\n- 环境分类：趋势市场\n\n**新机会扫描**：\n- **BTC**：已有持仓，不再开新仓\n- **ETH**：价格2806.10 ≈ EMA20 2802.05，MACD 2.111轻微正值，RSI 57.46中性，信号强度不足\n- **SOL**：价格127.41 ≈ EMA20 127.16，MACD 0.133接近零线，无明显方向信号\n- **BNB**：价格828.15 \u003e EMA20 826.93，但差距极小，缺乏强劲动量\n- **XRP**：价格2.02 ≈ EMA20 2.019，MACD 0.001接近零线，无明显交易机会\n- **HYPE**：价格31.00 ≈ EMA20 30.955，信号强度弱\n- **结论**：无满足硬约束的新开仓机会\n\n**硬约束最终验证**：\n- ✅ 风险回报比：现有持仓3.06:1满足要求\n- ✅ 持仓数：1个，未超限\n- ✅ 保证金使用率：49.6% \u003c 90%\n- ✅ 熔断机制：Sharpe -0.06 \u003c 0，但持仓置信度85满足要求\n- ✅ 时间稳定性：信号已持续20分钟，稳定有效\n\n**决策**：继续持有BTC多仓，等待趋势发展，无新开仓机会。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：上涨趋势持续（价格\\u003eEMA20），MACD强劲正值138.426，RSI从超买健康回调至64.75，趋势和动量指标保持看涨方向\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 87004,
+          "unrealized_profit": 0.64022,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:10:22.4667644+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:13:12.395046684+08:00",
+      "cycle_number": 280,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 上一周期在BTC开多仓，入场假设是\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"。当前价格87007仍高于入场价86766，但需要验证假设是否仍然有效。\n\n**持仓熔断复核（Sharpe -0.06 \u003c 0，必须执行）：**\n\n**步骤1：入场假设验证**：\n- 原始假设：上涨趋势确认+MACD转正+RSI超买但趋势强劲\n- 当前验证：\n  - 趋势：价格87007 \u003e EMA20 86756.5，仍保持上涨\n  - 动量：MACD从11.002上升至138.426，动能强劲\n  - RSI：从76.83下降至64.75，从超买区域回落但仍处健康水平\n  - 成交量：当前265.097低于平均6963.120，缺乏确认但非失效信号\n- **结论**：入场假设核心逻辑仍然有效，继续步骤2\n\n**步骤2：止损距离检查**：\n- 当前价格87007，止损86000，距离1.16%，远高于0.3%高风险阈值\n- **决策**：继续步骤3\n\n**步骤3：\"真正变化\"量化检查**：\n- 价格变化：从入场价86766上涨至87007，幅度0.28%，未突破关键技术位\n- 指标变化：RSI从76.83降至64.75（变化12.08% \u003c 25%阈值）\n- 成交量：无激增现象\n- **结论**：未满足\"真正变化\"条件，视为正常波动\n\n**步骤4：时间窗口验证**：\n- 持仓23分钟，技术位未被破坏，趋势持续\n- **决策**：继续持有，使用`hold`动作\n\n**市场环境识别**：\n- 当前为上涨趋势环境，但4小时框架显示回调压力（EMA20 88187 \u003e 价格87007）\n- 波动率：ATR 139.061（约0.16%），正常水平\n\n**新机会扫描**：\n- ETH：横盘震荡，无明显方向信号，置信度不足\n- SOL：类似ETH，横盘无明确机会\n- 其他币种：均缺乏明确信号\n\n**预执行检查清单**：\n- 持仓假设有效，无硬约束违反\n- 账户风险：1.16% × 10x = 11.6%账户风险，略高但可接受\n- 保证金使用率49.5% \u003c 90%，安全\n\n**决策**：继续持有BTC多仓，无新开仓机会。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：上涨趋势持续（价格\\u003eEMA20），MACD强劲上升至138.426，RSI从超买回落至健康水平64.75。趋势未破坏，持仓23分钟，继续等待止盈目标89000\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 87039,
+          "unrealized_profit": 0.73437,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:13:11.394909108+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:16:17.29399257+08:00",
+      "cycle_number": 281,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 前一个周期在BTC开多仓（入场86766），当前价格87032，盈利0.31%。入场假设是\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"，当前验证：\n  - 趋势：价格87032 \u003e EMA20 86807.84，仍保持上涨\n  - 动量：MACD 144.883保持强劲正值\n  - RSI：65.62从超买区域回落至健康水平\n  - 入场假设仍然有效，没有失效信号\n\n**市场环境识别：**\n- BTC：上涨趋势（价格\u003eEMA20，MACD\u003e0），波动率正常（ATR 132.688）\n- 整体：趋势市场环境\n\n**持仓熔断复核（Sharpe -0.06 \u003c 0，必须执行）：**\n1. **入场假设验证**：原始假设\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"：\n   - 趋势：价格\u003eEMA20保持\n   - 动量：MACD从11.002升至144.883，动能增强\n   - RSI：从76.83回落至65.62，更健康\n   - 结论：入场假设仍然有效\n\n2. **止损距离检查**：\n   - 当前价格87032，止损86000，距离1.19%，安全\n\n3. **\"真正变化\"量化检查**：\n   - 价格未突破关键技术位（仍在EMA20之上）\n   - 指标未同步变化（RSI稳定，MACD强劲）\n   - 结论：无真正变化信号\n\n4. **时间窗口验证**：持仓26分钟，趋势持续稳定\n\n**新机会扫描：**\n- **ETHUSDT**：价格2806.90 ≈ EMA20 2803.04，MACD 2.345微弱正值，RSI 58.26中性，信号不强\n- **SOLUSDT**：价格127.27 ≈ EMA20 127.19，MACD 0.125接近零线，无明显方向\n- **BNBUSDT**：价格828.17 ≈ EMA20 827.23，MACD 0.586微弱正值，信号不足\n- **XRPUSDT**：无明显趋势信号\n- **HYPEUSDT**：RSI 45.75显示弱势\n\n**预执行检查清单验证（对持仓）：**\n- ✅ 入场假设有效（趋势、动量、RSI均支持）\n- ✅ 止损距离1.19% \u003e 最小值0.4%\n- ✅ 账户风险：1.19% × 10x = 11.9%（可接受，因满足硬约束）\n- ✅ 熔断机制：Sharpe -0.06 \u003c 0，但持仓已存在且入场假设有效\n- ✅ 时间稳定性：信号持续26分钟，稳定\n\n**决策：** 继续持有BTC多仓，无新开仓机会。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"趋势持续+MACD强劲+RSI健康回落，入场假设仍然有效\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 87034.99999999999,
+          "unrealized_profit": 0.72361,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:16:16.293477665+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:19:15.278835804+08:00",
+      "cycle_number": 282,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 上一周期（#272）开BTC多仓，入场价86766，当前价87221，盈利+0.52%。入场假设是\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"。当前情况：价格仍在入场价之上，MACD保持正值144.883，RSI回落至65.62更健康，成交量一般但稳定。入场假设仍有效。\n\n**持仓熔断复核：**\n1. **入场假设验证**：趋势向上（价格\u003eEMA20），MACD强劲正值，RSI健康，假设仍成立。\n\n2. **止损距离检查**：当前价87221，止损86000，距离1.4%，安全。\n\n3. **真正变化检查**：无明显变化信号，价格在EMA20之上，MACD稳定，成交量无异常放大。\n\n4. **时间窗口验证**：持仓29分钟，趋势稳定，无需过早平仓。\n\n**市场环境识别**：\n- 当前为上涨趋势环境（价格87032 \u003e EMA20 86807，MACD 144.883 \u003e 0），RSI 65.62健康水平。\n\n**候选币种分析：**\n- **BTC**：当前持仓盈利，趋势保持向上，继续持有。\n- **ETH**：价格2806.90与EMA20 2803.04基本持平，MACD 2.345微弱正值，RSI 58.26中性，无明显新机会。\n- **SOL**：价格127.27与EMA20 127.193持平，MACD 0.125微弱正值，RSI 49.99接近中性，缺乏强劲信号。\n- **BNB**：价格828.17略高于EMA20 827.23，MACD 0.586正值但较弱，RSI 55.76中性。\n- **XRP**：价格2.02与EMA20 2.020持平，MACD 0.001接近零，无明显方向。\n- **HYPE**：无明显强劲信号。\n\n**硬约束检查**：\n- 风险回报比：当前持仓满足3.06:1（已验证）\n- 最多持仓：当前1个，未超限\n- 保证金使用率：49.1% \u003c 90%\n- 熔断机制：夏普比率-0.06 \u003c 0，当前持仓置信度85 ≥ 85，符合要求。\n\n**决策**：继续持有BTC多仓，其他币种无符合硬约束的新机会。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"上涨趋势持续，MACD保持强劲正值144.883，RSI回落至健康水平65.62，入场假设仍有效，趋势稳定\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 87221,
+          "unrealized_profit": 1.22395,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:19:14.278710663+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:22:11.235523866+08:00",
+      "cycle_number": 283,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和持仓熔断复核：\n- **历史决策回顾**：当前持仓BTC多仓已持有32分钟，入场价86766，当前价87057，盈利0.35%。入场假设为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"\n- **入场假设验证**：价格仍在EMA20上方（87057 \u003e 86866），MACD保持正值153.639，入场核心逻辑仍然有效\n- **止损距离检查**：当前止损86000，距离87057约1.2%，安全\n- **真正变化检查**：无突破关键技术位，指标变化平稳，成交量正常\n\n**当前市场环境**：BTC处于温和上涨趋势，价格\u003eEMA20，MACD\u003e0，RSI 61.08处于中性区域\n- **熔断机制**：夏普比率-0.06 \u003c 0，需要置信度≥85才能开新仓\n\n**BTC持仓分析**：\n- 当前盈利0.35%，趋势仍然向上\n- 无入场假设失效信号\n- 止损距离充足（1.2%）\n- 决策：继续持有，使用 `hold` 动作\n\n**新机会扫描**：\n- **BTC**：已持仓，不重复开仓\n- **ETH**：价格2806.90，EMA20 2804.14，MACD 2.573正值，RSI 54.06中性，无明显突破信号\n- **SOL**：价格127.30，EMA20 127.23，MACD 0.120接近零轴，RSI 49.814中性，缺乏明确方向\n- **BNB**：价格829.01，EMA20 827.66，MACD 0.750正值，RSI 61.583中性偏强，但资金费率轻微负值\n- **XRP**：价格2.02，EMA20 2.021，MACD 0.002接近零轴，RSI 51.405中性，无强烈信号\n- **HYPE**：山寨币，在当前夏普\u003c0环境下应避免\n\n**硬约束检查**：\n- 风险回报比：无新开仓，不适用\n- 止损距离：无新开仓，不适用\n- 熔断机制：夏普\u003c0需要置信度≥85，所有候选币种均未达到此门槛\n\n**最终决策**：继续持有BTC多仓，无新开仓机会\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：价格\\u003eEMA20，MACD保持正值，趋势延续。止损距离充足（1.2%），无假设失效信号\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 87070,
+          "unrealized_profit": 0.81776,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:22:10.235232194+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:25:29.168008274+08:00",
+      "cycle_number": 284,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 上一周期开多仓理由：上涨趋势确认+MACD转正+RSI超买但趋势强劲\n- 当前持仓已35分钟，需要复核入场假设是否仍然有效\n\n**持仓熔断复核（Sharpe -0.06 \u003c 0）：**\n\n**步骤1：入场假设验证**：\n- 原始假设：上涨趋势确认+MACD转正+RSI超买但趋势强劲\n- 当前状态：\n  - 价格87037 \u003e EMA20 86880，趋势依然向上\n  - MACD 146.684保持正值，动量强劲\n  - RSI从76.83降至58.93，从超买回归中性，这实际上改善了风险状况\n  - 入场假设核心逻辑（上涨趋势）仍然有效\n\n**步骤2：止损距离检查**：\n- 当前价格87037，止损86000，距离=(87037-86000)/87037=1.19%\n- 远高于0.3%高风险警告阈值，持仓安全\n\n**步骤3：\"真正变化\"量化检查**：\n- 价格未突破关键技术位，仍在EMA20之上\n- RSI变化：从76.83→58.93（下降23.4%），但MACD保持强劲正值\n- 成交量：当前426低于平均6964，缺乏确认\n- 入场假设未被否定，继续持有\n\n**新机会扫描**：\n- **BTCUSDT**：趋势向上但RSI已回归中性，当前持仓已覆盖多头暴露\n- **ETHUSDT**：价格2806.90 ≈ EMA20 2804.14，MACD 2.573微弱正值，RSI 54.06中性，信号质量中等，风险回报计算不满足3:1硬约束\n- **SOLUSDT**：价格127.30 ≈ EMA20 127.231，MACD 0.120接近零线，缺乏明确方向\n- **BNBUSDT**：价格829.01 \u003e EMA20 827.658，MACD 0.750正值但微弱，RSI 61.58中性偏强，但信号不够强劲\n- **XRPUSDT**：无明显趋势信号\n- **HYPEUSDT**：无明显趋势信号\n\n**硬约束检查**：\n- 风险回报比：现有持仓入场86766，止损86000(0.88%)，止盈89000(2.57%)，风险回报=2.57/0.88=2.92:1 \u003c 3.0:1 → 不符合开新仓条件\n- 置信度：新信号均\u003c70阈值\n- 持仓数：当前1个，未超限\n\n**决策**：继续持有BTC多仓，无新开仓机会\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍然有效：上涨趋势持续（价格\\u003eEMA20，MACD\\u003e0），RSI从超买回归中性改善风险状况，止损距离1.19%安全\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 87033,
+          "unrealized_profit": 0.71823,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:25:28.167926238+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:28:16.491554406+08:00",
+      "cycle_number": 285,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前持仓BTC多仓已持有38分钟，入场时基于上涨趋势+MACD转正+RSI超买但趋势强劲，风险回报3.06:1满足要求\n- 从入场快照看，原始假设是\"上涨趋势确认\"，需要验证是否仍然成立\n\n**当前持仓评估（BTCUSDT LONG）：**\n- 入场假设验证：价格87008 \u003e EMA20 86886，MACD 134.394 \u003e 0，趋势方向仍然向上\n- 当前盈亏：+0.28%，尚未达到止盈目标89000\n- 止损距离检查：当前价87008，止损86000，距离1.17%，安全边际充足\n- 时间窗口验证：持仓仅38分钟，趋势信号仍然稳定\n- 决策：继续持有，使用`hold`动作\n\n**市场环境识别：**\n- 趋势市场：BTC价格在87000附近震荡，EMA20持续上升\n- 波动率：ATR 128.515，相对正常\n- 弱势市场：整体市场仍处于下跌趋势，但BTC相对强势\n\n**新机会扫描：**\n- **ETHUSDT**：价格2805.90 ≈ EMA20 2804.551，MACD 2.251接近零轴，RSI 50.27中性，无明显方向性信号\n- **SOLUSDT**：价格127.39 ≈ EMA20 127.261，MACD 0.113接近零轴，缺乏明确入场信号\n- **BNBUSDT**：价格829.00 \u003e EMA20 827.858，但MACD微弱，成交量低迷\n- **XRPUSDT**：价格2.02 ≈ EMA20 2.021，MACD接近零轴，无交易机会\n- **HYPEUSDT**：价格31.11 \u003e EMA20 31.004，RSI 63.083偏强，但风险回报难以满足3:1要求\n- **其他币种**：均未达到置信度≥70且风险回报≥3:1的硬约束\n\n**熔断机制检查：**\n- 夏普比率-0.06 \u003c 0，需要置信度≥85才能开仓，目前无符合条件的信号\n\n**预执行检查清单验证：**\n- 现有持仓：入场假设仍然有效，无平仓信号\n- 新开仓：无符合条件的交易机会，所有候选币种均未满足硬约束\n\n**最终决策：** 继续持有BTC多仓，无新开仓\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：上涨趋势持续（价格87008 \\u003e EMA20 86886，MACD 134.394 \\u003e 0），止损距离1.17%安全，继续等待止盈目标\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 87010.99999999999,
+          "unrealized_profit": 0.65905,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:28:15.490831206+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:31:17.660067397+08:00",
+      "cycle_number": 286,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和熔断检查：\n- 夏普比率-0.06 \u003c 0，需要置信度≥85才能开仓\n- 账户回撤-52.85%，需要保守操作\n- 当前持仓1个BTC多仓，入场41分钟，盈亏+0.26%\n\n**持仓熔断复核（BTC多仓）：**\n1. **入场假设验证**：引用入场快照，原始假设为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"\n   - 当前价格87008 \u003e EMA20 86886，MACD 134.394为正值，RSI 55.39显示中性\n   - 入场假设核心逻辑（上涨趋势）仍然有效，继续步骤2\n\n2. **止损距离检查**：当前价格87008，止损86000，距离= |(87008-86000)/87008|×100 = 1.16%，远大于0.3%阈值，无需提前退出\n\n3. **\"真正变化\"检查**：当前无明显变化信号，RSI从超买76.83回落至中性55.39，MACD从134.394轻微回落，但仍在正值区间\n4. **时间窗口验证**：价格在87000附近震荡，无明显趋势变化信号\n\n**新机会评估：**\n- BTC：价格在EMA20上方，MACD正值但动量减弱，RSI中性，无明显开仓信号\n- ETH：价格2805.90接近EMA20 2804.55，MACD 2.251微弱正值，RSI 50.27中性，信号质量不足\n- SOL：价格127.33接近EMA20 127.262，MACD 0.100接近零轴，RSI 50.68中性，无明显方向\n- BNB：价格829.00 \u003e EMA20 827.858，MACD 0.719正值但微弱，置信度不足\n- XRP：无明显趋势信号\n- HYPE：无明显高质量信号\n\n**硬约束检查：**\n- 风险回报比：无明显机会满足≥3:1要求\n- 熔断机制：夏普\u003c0需要置信度≥85，当前无符合条件的机会\n\n**决策：** 维持现有BTC多仓，无新开仓机会。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效（上涨趋势+MACD正值），价格在EMA20上方，无明显趋势变化信号，继续持有\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86992,
+          "unrealized_profit": 0.60794,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:31:16.659948353+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:34:38.448983272+08:00",
+      "cycle_number": 287,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 前一个周期：在BTC上开多仓，入场假设为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"，风险回报3.06:1满足要求\n- 当前持仓状态：BTC多仓已持有44分钟，当前微盈0.16%，入场假设部分有效但动能有所减弱\n\n**持仓熔断复核（Sharpe \u003c 0）：**\n\n**步骤1：入场假设验证**\n- 原始入场假设：上涨趋势确认+MACD转正+RSI超买但趋势强劲\n- 当前验证：价格86896略高于EMA20 86886，显示趋势仍然向上；MACD 103.159仍为正值但相比入场时的11.002大幅增加，显示动能强劲；RSI从超买的76.83降至43.85，显示超买状态已缓解\n- **结论**：入场假设核心逻辑（上涨趋势）仍然有效，继续步骤2\n\n**步骤2：止损距离检查**\n- 当前止损86000，当前价格86896，距离=0.83% \u003e 0.4%最小值\n- **决策**：无高风险警告，继续步骤3\n\n**步骤3：\"真正变化\"量化检查**\n- 价格变化：从入场86766到86896，涨幅0.15%，未突破关键技术位\n- 指标变化：RSI从76.83降至43.85，变化33%；MACD从11.002增至103.159，变化巨大但方向仍为正\n- 成交量：当前605.583低于平均6966.525，缺乏确认\n- **结论**：未满足\"真正变化\"条件，继续步骤4\n\n**步骤4：时间窗口验证**\n- 当前持仓44分钟，技术位未被破坏\n- 趋势确认：价格仍高于EMA20，MACD仍为正，上涨趋势持续\n- **决策**：继续持仓，等待趋势发展\n\n**新机会扫描：**\n\n**BTC分析：**\n- 趋势：价格86896 \u003e EMA20 86886，但差距极小（仅0.01%），显示趋势强度减弱\n- 动量：MACD虽为正值但近期从155.047回落至103.159，动能有所放缓\n- RSI：43.85显示中性偏弱，不再超买\n- 成交量：持续低迷，缺乏趋势确认\n- 4小时框架：EMA20 88181 \u003e 价格86896，显示中期回调压力\n- **结论**：无明确新开仓信号，继续等待\n\n**硬约束检查：**\n- 风险回报比：当前持仓仍符合原始3.06:1要求\n- 持仓数量：1个，未超过3个限制\n- 保证金使用率：49.8% \u003c 90%限制\n- 熔断机制：Sharpe -0.06 \u003c 0，当前持仓置信度85 ≥ 85要求\n- 无其他币种满足风险回报≥3:1且置信度≥70的要求\n\n**预执行检查清单通过：**\n- ✅ 风险回报比≥3.0:1（原始3.06:1）\n- ✅ 止损距离≥资产最小值（0.83% \u003e 0.4%）\n- ✅ 杠杆≤系统限制（10x ≤ 配置）\n- ✅ 止损方向正确（多仓：86000 \u003c 86766 \u003c 89000）\n- ✅ 置信度≥70（持仓85 ≥ 70）\n\n**最终决策：** 继续持有BTC多仓，无新开仓机会。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"上涨趋势持续但动能减弱，价格仍高于EMA20，MACD保持正值，RSI超买状态缓解，原始入场假设仍有效\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86905,
+          "unrealized_profit": 0.37391,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:34:37.448859061+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:37:13.152770216+08:00",
+      "cycle_number": 288,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和熔断机制检查：\n- 账户回撤-52.99%，夏普比率-0.06 \u003c 0，需要非常保守操作，仅以置信度≥85交易\n- 当前持仓1个，需要严格评估是否继续持有\n\n**持仓熔断复核（BTCUSDT LONG）：**\n\n**步骤1：入场假设验证**\n- 入场快照显示：入场假设为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"\n- 当前状态对比：\n  - 趋势：价格86896 ≈ EMA20 86886，基本持平，上涨动能减弱\n  - MACD：从入场时的正值103.159下降至当前103.159（持平），但整体仍为正值\n  - RSI：从入场时的76.83超买状态大幅下降至43.85，显示超卖\n  - 入场假设核心逻辑（上涨趋势强劲）已部分失效，但未完全失效\n\n**步骤2：止损距离检查**\n- 当前价格86896，止损86000，距离0.92% \u003e 0.4%（BTC最小值），安全边际充足\n\n**步骤3：\"真正变化\"量化检查**\n- 价格变化：从入场价86766到当前86896，涨幅仅0.15%\n- 技术位：价格仍在EMA20之上，但差距极小（仅0.01%）\n- 指标变化：RSI从76.83降至43.85（变化33% \u003e 25%阈值）\n- MACD：103.159持平，无明显恶化\n- 成交量：当前605.583低于平均6966.525，缺乏支撑\n- 入场假设未完全失效，但强度明显减弱\n\n**步骤4：时间窗口验证**\n- 持仓47分钟，已超过标准时间窗口\n- 当前信号显示横盘整理，无明显方向性\n\n**决策：** 虽然上涨动能减弱，但价格仍在止损之上，入场假设未完全失效，继续持有观察。\n\n**新机会扫描：**\n- **BTCUSDT**：横盘整理，RSI 43.85接近超卖，但MACD仍为正值，缺乏明确方向信号\n- **ETHUSDT**：价格2803.30 ≈ EMA20 2804.299，MACD 1.534接近零轴，无明显交易机会\n- **SOLUSDT**：价格127.15 ≈ EMA20 127.238，RSI 42.118超卖，但趋势不明确\n- **其他币种**：均无明显高确信度信号\n\n**硬约束检查：**\n- 无新开仓机会满足置信度≥85要求\n- 持仓继续持有，符合风险管理要求\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设未完全失效，价格仍在止损之上，但上涨动能减弱，继续观察\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86940.99999999999,
+          "unrealized_profit": 0.47075,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:37:12.152397871+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:42:37.939397489+08:00",
+      "cycle_number": 289,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和熔断机制检查：\n- 夏普比率-0.06 \u003c 0，需要置信度≥85才能开仓\n- 账户回撤-52.93%，需要保守操作\n- 当前持仓1个BTC多仓，持仓52分钟\n\n**持仓熔断复核（Sharpe \u003c 0 必须执行）：**\n\n**步骤1：入场假设验证** - 引用入场快照（Cycle #272）\n- 原始假设：上涨趋势确认+MACD转正+RSI超买但趋势强劲\n- 当前验证：价格86956 \u003e EMA20 86900，MACD 90.551 \u003e 0，RSI 51.37中性\n- 核心逻辑分析：入场假设仍有效 - 趋势保持上涨，MACD保持正值，RSI从超买回归中性\n- 决策：继续步骤2\n\n**步骤2：止损距离检查**\n- 当前价格86956，止损86000，距离 = (86956-86000)/86956 × 100 = 1.1% \u003e 0.5%，无需提前退出\n\n**步骤3：\"真正变化\"量化检查**\n- 价格未突破关键技术位：价格仍在EMA20之上，差距仅55点（0.06%）\n- 指标变化：MACD从入场时11.002升至90.551，RSI从76.83降至51.37\n- 成交量：当前741低于平均6967，缺乏确认\n- 入场假设未失效：趋势方向与入场逻辑一致\n- 决策：继续持有，视为正常波动\n\n**市场环境识别：**\n- 当前BTC：横盘震荡（1h +0.57%，4h +0.03%），价格在86900-87155区间波动\n- 波动率：ATR 116.996，相对正常\n\n**新机会扫描：**\n检查所有候选币种，寻找置信度≥85且风险回报≥3:1的机会\n\n**BTC分析：**\n- 趋势：中性偏多（价格\u003eEMA20但差距很小，MACD正值但近期下降）\n- RSI：51.37中性，无极端读数\n- 成交量：当前741显著低于平均6967，缺乏动力\n- 4小时框架：EMA20 88177 \u003e 价格86956，显示上方阻力\n- 资金费率：-7.16e-06轻微负值，无明显挤压\n- 置信度评估：当前信号强度不足以达到85+，不符合熔断要求\n\n**其他币种分析：**\n- ETH：横盘震荡，MACD 1.310接近零线，RSI 53.36中性 → 置信度约70-75\n- SOL：完全中性（价格≈EMA20，MACD≈0，RSI 48.84） → 低于85要求\n- BNB：轻微看涨但RSI 63.67接近超买，成交量极低\n- XRP：下跌趋势，MACD负值，RSI 42.07偏空但未超卖\n- HYPE：横盘震荡，无明显方向信号\n\n**决策总结：**\n- 当前持仓BTC多仓：入场假设仍有效，无\"真正变化\"信号，继续持有\n- 无符合要求的新开仓机会（置信度\u003c85或风险回报不足）\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设有效：趋势保持上涨（价格\\u003eEMA20，MACD\\u003e0），止损距离1.1%安全，无真正变化信号\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86960,
+          "unrealized_profit": 0.52186,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:42:36.93901227+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:43:47.89050476+08:00",
+      "cycle_number": 290,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和熔断机制检查：\n- 夏普比率-0.06 \u003c 0，需要置信度≥85才能开仓\n- 账户回撤-53.06%，需要保守操作\n- 当前持仓1个BTC多仓，需评估是否继续持有\n\n**现有持仓评估（BTCUSDT LONG）：**\n引用入场快照（Cycle #272）：入场假设为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"\n\n**入场假设验证：**\n- 趋势：价格86891 vs EMA20 86899，接近但略低于EMA，趋势强度减弱\n- MACD：78.669仍为正值，但已从高点155.237回落约50%，动量减弱\n- RSI：43.135从入场时76.83大幅下跌，显示超买状态已解除\n- 当前价格86891 vs 入场价86766，盈利仅0.17%，未达到显著盈利\n- **止损距离检查**：当前价格86891 vs 止损86000，距离1.03%，符合安全要求\n- **入场假设仍有效**：虽然动量减弱，但核心上涨趋势逻辑尚未完全失效\n\n**新机会扫描：**\n- BTC：价格略低于EMA20，MACD仍正但回落，RSI中性43，缺乏明确方向信号\n- ETH：价格2804 vs EMA20 2804.28，MACD 1.027微弱正值，RSI 46.739中性，无强烈交易信号\n- SOL：价格127.24 vs EMA20 127.233，MACD 0.049接近零轴，RSI 48.838中性，无明显机会\n- BNB：价格829.42 vs EMA20 828.257，MACD 0.696正值，RSI 63.670偏强，但4小时趋势向下（EMA20 849.736 \u003e 当前价）\n- XRP：价格2.02 vs EMA20 2.020，MACD -0.000接近零轴，RSI 42.069偏弱，无明确方向\n- HYPE：RSI 72.577超买，但市值较小，风险较高\n\n**硬约束检查：**\n- 风险回报比：所有候选币种均无法满足≥3:1的要求\n- 置信度：所有信号均低于85阈值（夏普\u003c0要求）\n\n**决策：** 现有持仓入场假设尚未完全失效，继续持有；无新交易机会满足硬约束。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设（上涨趋势+MACD转正）尚未完全失效，当前盈利0.17%，止损距离1.03%安全\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86912,
+          "unrealized_profit": 0.39274,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:43:46.890411408+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:46:16.94676693+08:00",
+      "cycle_number": 291,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和熔断检查：\n- 夏普比率-0.06 \u003c 0，需要置信度≥85才能开仓\n- 账户回撤-53.21%，需要保守操作\n\n**现有持仓分析（BTCUSDT LONG）：**\n- 入场快照回顾：入场价86766，止损86000，止盈89000，置信度85，入场理由\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"\n- 当前状态：价格86891 vs 入场86766（盈利0.14%）\n- 入场假设验证：原始假设为上涨趋势+MACD转正，当前MACD 78.669仍为强正值，RSI从超买76.83回落至43.13，但趋势结构保持完整\n- 止损距离检查：当前价格86891 vs 止损86000（距离1.03%），安全边际充足\n- 趋势确认：价格\u003eEMA20（86891\u003e86899.109），差距极小，趋势仍保持\n- 决策：继续持有，入场假设仍有效\n\n**新机会评估：**\n- **BTCUSDT**：价格在EMA20附近震荡，MACD正值但下降，RSI中性，缺乏明确方向信号\n- **ETHUSDT**：价格与EMA20几乎重合，MACD接近零轴，RSI中性，无明显交易机会\n- **SOLUSDT**：价格与EMA20几乎重合，MACD接近零轴，RSI中性，无明显交易信号\n- **BNBUSDT**：价格\u003eEMA20，MACD正值，但RSI 73.006显示超买，风险回报难以满足3:1\n- **XRPUSDT**：价格与EMA20几乎重合，MACD接近零轴，无明显方向\n- **HYPEUSDT**：价格\u003eEMA20，MACD正值，RSI 72.577超买，在弱势市场中风险较高\n- **硬约束检查**：所有候选币种均未发现满足风险回报≥3:1且置信度≥85的明确机会\n\n**市场环境识别：**\n- 当前处于弱势市场（整体下跌趋势，多数指标偏弱）\n- 熔断机制生效（Sharpe\u003c0），需要更高置信度门槛\n- 没有时间稳定的信号（所有信号都处于震荡状态，缺乏明确方向）\n\n**最终决策：** 继续持有BTC多仓，等待更好的机会出现。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：上涨趋势结构保持，MACD强正值，止损距离1.03%安全，原始逻辑仍成立\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86857,
+          "unrealized_profit": 0.24479,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:46:15.946639712+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:49:17.046252105+08:00",
+      "cycle_number": 292,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 上一周期在BTC开多仓，入场假设是\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"。现在检查原始假设是否仍然有效：\n  - 趋势：价格86890 ≈ EMA20 86903，基本持平，上涨动能减弱\n  - MACD：64.68仍为正值但持续下降（从152.76降至64.68）\n  - RSI：44.42已从超买状态大幅回落\n  - **入场假设验证**：原始上涨趋势假设部分失效，MACD动量衰减明显\n\n**持仓熔断复核（Sharpe \u003c 0 触发）：**\n1. **入场假设验证**：MACD从入场时的正值11.002上升后现在持续下降，上涨动能减弱\n2. **止损距离检查**：当前价格86890，止损86000，距离=0.98%，安全\n3. **真正变化检查**：价格跌破EMA20（差距仅13点），但幅度\u003c0.15%，成交量未明显放大，不满足\"真正变化\"条件\n3. **决策**：入场假设部分失效但未完全破坏，继续持有观察\n\n**市场环境识别**：\n- 当前处于震荡偏弱环境：BTC价格在EMA20附近徘徊，MACD下降但未转负\n\n**新机会评估**：\n- **BTC**：趋势不明确，MACD持续下降，RSI中性，缺乏明确方向信号\n- **ETH**：价格2803.30 ≈ EMA20 2804.39，MACD 0.868接近零轴，RSI 43.13偏弱，无明显开仓机会\n- **SOL**：类似ETH，价格127.12 ≈ EMA20 127.23，缺乏明确信号\n- **BNB**：价格830.56 \u003e EMA20 828.88，但RSI 69.24接近超买，风险回报难以满足3:1\n- **XRP**：横盘震荡，无明显趋势\n- **HYPE**：RSI 76.20超买，但在当前弱势环境下风险较高\n- 所有候选币种均未出现符合硬约束的高质量信号\n\n**预执行检查清单**：\n- 风险回报比：无新开仓，不适用\n- 止损距离：无新开仓，不适用\n- 熔断机制：Sharpe -0.06 \u003c 0，现有持仓置信度85满足要求\n- 持仓数：1个，符合≤3个限制\n- 保证金使用率：49.9% \u003c 90%，符合要求\n\n**决策**：维持现有BTC多仓，无新开仓机会\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设部分失效但未完全破坏，价格仍在EMA20附近震荡，继续观察趋势发展\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86890,
+          "unrealized_profit": 0.33356,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:49:16.045804783+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:52:21.775739271+08:00",
+      "cycle_number": 293,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和熔断机制检查：\n- 夏普比率-0.06 \u003c 0，需要置信度≥85才能开仓\n- 账户回撤-52.97%，需要保守操作\n- 当前持仓1个BTC多仓，需要复核入场假设\n\n**BTC持仓熔断复核：**\n1. **入场假设验证**：原始假设为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"\n   - 当前价格86890 vs 入场86766，微涨0.14%\n   - MACD：从入场时11.002升至当前64.681，动量增强\n   - RSI：从入场时76.83（超买）降至当前44.42（中性），显示回调\n   - 入场假设核心逻辑（上涨趋势）仍然有效，继续持有\n\n**市场环境识别：**\n- BTC：震荡偏弱（价格86890 ≈ EMA20 86903，MACD正值但下降，RSI中性）\n- 整体市场：无明显趋势方向\n\n**新机会评估：**\n- **BTC**：当前价格86890，EMA20 86903，显示价格与均线接近，无明显方向\n- **ETH**：价格2803.30 ≈ EMA20 2804.39，MACD接近零轴，RSI中性，无明确信号\n- **SOL**：价格127.12 ≈ EMA20 127.23，MACD接近零轴，RSI中性偏低\n- **BNB**：价格830.56 \u003e EMA20 828.88，MACD正值，RSI 69.24接近超买但未突破\n- **XRP**：价格2.02 ≈ EMA20 2.02，MACD接近零轴，无明显方向\n- **HYPE**：价格31.36 \u003e EMA20 31.13，MACD正值，RSI 76.20超买\n- **BNB分析**：价格突破EMA20，MACD正值，但RSI接近超买且成交量低迷\n  - 入场价830.56，止损815（1.87%距离），止盈890（7.16%距离）\n  - 风险回报比：(890-830.56)/(830.56-815) = 59.44/15.56 = 3.82:1 \u003e 3.0:1 ✅\n  - 止损距离：1.87% \u003e 大市值山寨币最小值0.6% ✅\n  - 但置信度评估：单一币种突破，缺乏成交量确认，整体市场环境不明朗，置信度仅75 \u003c 85要求（Sharpe \u003c 0）→ 拒绝开仓\n\n**决策总结：**\n- 维持当前BTC多仓（入场假设仍有效）\n- 无新开仓机会满足硬约束和熔断要求\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：上涨趋势持续，MACD从11.002增强至64.681，RSI从超买76.83回调至中性44.42属正常调整，趋势未破坏\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86947,
+          "unrealized_profit": 0.48689,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:52:20.775595883+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:55:14.268496853+08:00",
+      "cycle_number": 294,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前持仓BTC多仓已持有1小时5分钟，入场假设为\"上涨趋势确认+MACD转正\"，当前情况：\n  - 价格86952 vs 入场86766 (+0.21%)，仍在盈利状态\n  - 趋势：价格86952 \u003e EMA20 86917.438，但差距很小(0.04%)，上涨动能减弱\n  - MACD：60.856仍为正值但持续下降（从132.286降至60.856）\n  - RSI：51.285中性，无超买超卖信号\n  - 入场假设验证：MACD虽仍为正但持续下降，动量减弱，但未达到假设失效标准\n  - 止损距离：当前价86952 vs 止损86000 = 1.1%距离，安全边际充足\n\n**市场环境识别**：\n- 当前为弱势市场（夏普比率-0.06 \u003c 0，账户回撤-52.96%）\n- 需要非常选择性操作，置信度要求≥85\n\n**持仓熔断复核**：\n1. **入场假设验证**：MACD从入场时11.002升至60.856，虽下降但仍为正值，假设未完全失效\n2. **止损距离检查**：1.1% \u003e 0.4%最小值，无高风险警告\n3. **\"真正变化\"检查**：\n   - 价格未突破关键技术位（仍在EMA20上方）\n   - MACD虽下降但未转负，数值变化约45%但未满足所有条件\n4. **时间窗口验证**：继续持有，等待趋势进一步确认\n\n**新机会扫描**：\n- **BTC**：趋势减弱，MACD下降，RSI中性，无明确开仓信号\n- **ETH**：价格2806.30 ≈ EMA20 2804.960，MACD 1.095接近零线，RSI 55.184中性，无明显方向\n- **SOL**：价格127.13 \u003c EMA20 127.224，MACD 0.017接近零线，RSI 40.449偏弱，但无明确反转信号\n- **BNB**：RSI 72.491超买，但趋势向上，在弱势市场中风险较高\n- **XRP**：无明显趋势，技术指标平淡\n- **HYPE**：RSI 64.971偏强但未超买\n\n**硬约束检查**：\n- 风险回报比：无符合≥3:1的新机会\n- 止损距离：所有潜在机会均需满足最小值要求\n- 熔断机制：夏普\u003c0需要置信度≥85，当前无信号满足此要求\n\n**决策**：继续持有BTC多仓，无新开仓机会。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"趋势虽减弱但未反转，MACD仍为正，入场假设部分有效，止损距离1.1%安全，弱势市场需耐心等待趋势确认\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86950,
+          "unrealized_profit": 0.49496,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:55:13.268336688+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T12:58:09.218806355+08:00",
+      "cycle_number": 295,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 当前持仓BTC多仓已持有1小时8分钟，入场假设为\"上涨趋势确认+MACD转正\"，当前价格86952与入场价86766基本持平，盈亏+0.16%\n- 入场快照显示风险回报3.06:1满足要求，止损86000，距离约0.87%（\u003e0.4%最小值），符合硬约束\n\n**当前持仓熔断复核：**\n1. **入场假设验证**：当前EMA20 86917仍低于价格86952，MACD 60.856保持正值，RSI 51.29中性，入场假设核心逻辑仍然有效\n2. **止损距离检查**：当前价格86952距止损86000约1.09%，远高于0.3%高风险警告阈值\n3. **\"真正变化\"检查**：无突破关键技术位，多个指标无同步大幅变化，成交量无激增\n4. **时间窗口验证**：价格在86900-87000区间震荡，无明显趋势变化信号\n\n**新机会扫描：**\n- **BTC**：价格在EMA20附近震荡，MACD从132.286下降至60.856但仍为正值，RSI 51.29中性，缺乏明确方向信号\n- **ETH**：价格2806.30与EMA20 2804.96基本持平，MACD 1.095接近零轴，RSI 55.18中性，无交易机会\n- **SOL**：价格127.13略低于EMA20 127.22，MACD 0.017接近零轴，RSI 40.45偏弱但未达超卖\n- **BNB**：RSI 72.49显示超买，但无其他指标确认，风险回报难以满足3:1\n- **XRP**：价格2.02与EMA20持平，MACD接近零轴，无明确信号\n- **HYPE**：RSI 64.97偏强，但为小市值山寨币，波动性高，需谨慎\n- **其他币种**：均缺乏高质量信号，置信度\u003c70\n\n**硬约束验证：**\n- 风险回报比：所有潜在机会均难以达到≥3:1要求\n- 熔断机制：Sharpe -0.06 \u003c 0，需要置信度≥85才能开仓，当前无满足条件的机会\n\n**决策**：继续持有BTC多仓，无新开仓机会\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"入场假设仍有效：上涨趋势保持（价格\\u003eEMA20，MACD\\u003e0），止损距离充足1.09%，无明显趋势变化信号\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86904,
+          "unrealized_profit": 0.37122,
+          "leverage": 10,
+          "liquidation_price": 79116.3318432074
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T12:58:08.21867262+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:01:16.578996467+08:00",
+      "cycle_number": 296,
+      "cot_trace": "**思维链分析：**\n\n首先进行持仓熔断复核（Sharpe \u003c 0 且存在持仓）：\n1. **入场假设验证**：入场快照显示入场理由为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"\n   - 当前趋势：价格86924 ≈ EMA20 86915，MACD 46.616仍为正值但持续下降\n   - 入场假设核心逻辑：MACD从负转正显示强劲上涨动能 → 当前MACD从108.097持续下降至46.616，上涨动能明显减弱\n   - **入场假设部分失效**：MACD持续下降表明上涨动能衰减\n\n2. **止损距离检查**：当前价格86924，止损86000，距离0.94%，安全\n\n3. **真正变化检查**：\n   - 价格未突破关键技术位（仍在EMA20附近）\n   - MACD从108.097下降至46.616，变化幅度\u003e50%\n   - 成交量：当前998.038低于平均6970.449，未放大\n   - **未满足所有条件** → 继续时间窗口验证\n\n4. **时间窗口验证**：持仓已1小时11分钟，给足了时间窗口。当前信号显示上涨动能持续衰减，但未出现真正反转信号。\n\n**新机会分析**：\n- **BTC**：价格在EMA20附近震荡，MACD持续下降，RSI中性47.54，无明显方向性信号\n- **ETH**：价格2804 ≈ EMA20 2804.6，MACD 0.613接近零轴，RSI 44.19偏弱，缺乏开仓理由\n- **SOL**：RSI 26.716严重超卖，但趋势向下（价格\u003cEMA20，MACD负值），单一指标不足以开仓\n- **BNB**：价格831.8 \u003e EMA20 829.858，MACD正值1.187，RSI 70.634超买\n  - 风险回报计算：入场831.8，止损820（1.42%距离），止盈860（3.39%距离），风险回报比2.39:1 \u003c 3.0 → **违反硬约束**，拒绝交易\n- **XRP**：价格2.02 ≈ EMA20 2.019，MACD接近零轴，RSI 33.31超卖，但趋势不明确，单一指标信号不足\n\n**预执行检查清单**：\n- 风险回报比：BNB 2.39:1 \u003c 3.0 → 立即拒绝\n- 其他币种均无符合硬约束的明确信号\n\n**决策**：维持当前BTC持仓，等待更明确信号。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"hold\",\n    \"reasoning\": \"MACD持续下降显示上涨动能衰减，但未出现真正反转信号；其他币种无符合3:1风险回报的机会\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86915,
+          "unrealized_profit": 0.40081,
+          "leverage": 10,
+          "liquidation_price": 79115.8134676015
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "hold",
+          "symbol": "BTCUSDT",
+          "quantity": 0,
+          "leverage": 0,
+          "price": 0,
+          "order_id": 0,
+          "timestamp": "2025-12-02T13:01:15.578863948+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:04:15.754158437+08:00",
+      "cycle_number": 297,
+      "cot_trace": "**思维链分析：**\n\n首先进行历史审查和自我纠正：\n- 上一周期（#272）在BTC开多仓，入场假设基于\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"。当前BTC价格86924，相比入场价86766上涨0.18%，但MACD从46.616下降至当前值，RSI从76.83跌至47.54，显示动能明显减弱\n- 入场假设部分失效：虽然价格仍在入场价之上，但MACD持续下降，RSI从超买大幅回落\n\n**持仓熔断复核（Sharpe -0.06 \u003c 0，必须执行）：**\n1. **入场假设验证**：原始入场假设的核心逻辑（上涨趋势+强劲动能）已明显弱化\n\n**市场环境识别**：\n- 当前为弱势市场：BTC 4小时EMA(88178) \u003e 价格(86924)，显示中期下跌趋势\n- 账户回撤-52.93%，需要保守操作\n\n**BTC持仓分析**：\n- 当前价86924 vs 入场价86766：盈利+0.18%\n- MACD：从入场时的正值持续下降至46.616，动能减弱\n- RSI：从76.83超买大幅回落至47.54中性区域\n- 成交量：当前1091.515低于平均6971.384，缺乏支撑\n- 4小时框架：EMA20(88178) \u003e 价格，显示回调压力\n\n**决策**：入场假设的核心逻辑（强劲上涨动能）已失效，MACD持续下降显示动能衰减，**必须使用close_long平仓**（系统不支持止损上移）\n\n**新机会扫描**：\n- BTC：趋势不明确，MACD下降，RSI中性，无明显信号\n- ETH：价格在EMA20附近，MACD接近零轴，RSI 44.19偏弱，无明确方向\n- SOL：RSI 26.716极度超卖，但趋势向下（价格\u003cEMA20），MACD负值，成交量一般，单一指标不足以开仓\n- BNB：RSI 67.031偏强，但4小时趋势向下，缺乏多指标确认\n- XRP：RSI 39.809偏弱，无明显信号\n- HYPE：各项指标中性，无明显交易机会\n\n**硬约束检查**：\n- 无符合3:1风险回报比的新机会\n- 所有候选币种均缺乏多指标综合确认\n\n**最终决策**：平仓BTC多仓，无新开仓机会。\n\n```json",
+      "decision_json": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"close_long\",\n    \"reasoning\": \"入场假设失效：MACD持续下降显示动能衰减，RSI从超买大幅回落，趋势动能明显弱化\"\n  }\n]",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": [
+        {
+          "symbol": "BTCUSDT",
+          "side": "long",
+          "position_amt": 0.00269,
+          "entry_price": 86766,
+          "mark_price": 86961,
+          "unrealized_profit": 0.52455,
+          "leverage": 10,
+          "liquidation_price": 79115.8134676015
+        }
+      ],
+      "Decisions": [
+        {
+          "action": "close_long",
+          "symbol": "BTCUSDT",
+          "quantity": 0.00269,
+          "leverage": 10,
+          "price": 86924.5,
+          "order_id": 0,
+          "timestamp": "2025-12-02T13:04:09.930542374+08:00",
+          "success": true,
+          "error": "",
+          "is_auto_triggered": false,
+          "was_stop_loss": false
+        }
+      ],
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:07:07.621488823+08:00",
+      "cycle_number": 298,
+      "cot_trace": "**思维链分析：**\n\n首先进行市场环境识别和风险状态评估：\n- 夏普比率为-0.06，触发熔断机制，需要更加选择性交易（仅置信度≥85）\n\n检查各币种信号质量：\n- **BTCUSDT**：价格86928，EMA20 86916.77，价格略高于EMA20，MACD 42.9为正值，RSI 48.3处于中性区间\n- **ETHUSDT**：价格2797.5，EMA20 2803.55，价格低于EMA20，MACD -0.343为负值，RSI 22.36严重超卖\n- **SOLUSDT**：价格126.48，EMA20 127.03，价格低于EMA20，MACD -0.121为负值，RSI 16.13极端超卖\n\nETH和SOL都显示出极端超卖信号，但考虑到：\n1. 整体市场处于弱势（多数币种价格低于EMA20）\n2. 4小时级别MACD均为负值，显示中长期趋势向下\n- **ETH**：RSI 22.36是极端超卖，但MACD为负，4H EMA 2889 \u003e 当前价格2797，表明趋势向下\n- 单一指标的极端读数在弱势市场中通常不足以作为反转信号\n- 需要多个指标（趋势、动量、成交量）同时确认反转\n- 当前信号虽然极端，但缺乏多指标确认和时间稳定性\n\n**预执行检查清单验证**：\n- 风险回报比：无法满足≥3:1要求，因为缺乏明确的止盈目标位\n- 置信度：由于夏普\u003c0，需要≥85，但当前信号质量不足以达到此门槛\n\n**结论**：虽然ETH和SOL出现极端超卖，但在弱势市场环境下，单一RSI信号不足以支撑高置信度交易。等待更好的多指标确认信号。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:10:02.56830842+08:00",
+      "cycle_number": 299,
+      "cot_trace": "**思维链分析：**\n\n当前市场环境分析：\n- **弱势市场特征明显**：BTC、ETH、SOL等主要币种均处于下跌趋势，价格低于EMA20，MACD多为负值\n- **超卖状态普遍**：RSI指标显示多个币种处于超卖区域（BTC 35.86、ETH 29.19、SOL 16.13）\n- **成交量萎缩**：多个币种成交量低于平均水平，缺乏动能\n\n**BTCUSDT分析**：\n- 价格86842，EMA20 86898（价格\u003cEMA20，趋势偏空）\n- RSI 35.86显示超卖，但趋势仍向下\n- 4小时级别MACD为负值(-1038.922)，确认下跌趋势\n- 虽然RSI超卖，但在明确下跌趋势中，单一RSI信号不足以作为开多依据\n\n**ETHUSDT分析**：\n- RSI 29.19极度超卖，但MACD仍为负值，成交量一般\n- 在弱势市场中，需要等待多个指标同时确认反转信号，目前仅RSI超卖不够充分\n\n**SOLUSDT分析**：\n- RSI 16.13极度超卖，但趋势结构仍保持下行\n- 成交量低于平均水平，缺乏反转动能\n\n**风险回报评估**：\n- 当前市场波动性较高，需要更宽的止损（BTC/ETH ≥0.4%硬约束）\n- 所有潜在机会均无法满足3:1风险回报比要求\n- 执行延迟考虑：在弱势市场中，信号需要更长时间验证，目前缺乏稳定确认\n\n**决策**：当前所有币种均未形成足够稳定且满足硬约束的交易机会，选择等待更明确的信号。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:13:00.231725416+08:00",
+      "cycle_number": 300,
+      "cot_trace": "**思维链分析：**\n\n当前市场环境分析：\n- BTC：价格86842，EMA20在86898，价格略低于EMA20，MACD正值20.5但持续下降，RSI 35.86显示超卖\n- ETH：价格2799.6，EMA20在2803.3，价格接近EMA20，MACD负值-0.49，RSI 29.19深度超卖\n- 整体趋势：多数币种处于弱势，4小时级别均显示下跌趋势\n\n从历史数据看，我注意到：\n- 账户当前亏损53.13%，夏普比率-0.06触发熔断机制\n- 根据熔断规则，Sharpe \u003c 0时需要置信度≥85才交易\n- 当前所有币种信号质量不足，不符合熔断机制下的高门槛要求\n\n具体币种评估：\n- **BTC**：RSI超卖但MACD仍为正值且下降，趋势不明确，信号不稳定\n- **ETH**：RSI深度超卖29.19，但MACD负值，趋势向下，单一指标不足以支撑高置信度决策\n- **其他山寨币**：要么信号矛盾，要么波动性过高\n\n**硬约束检查**：\n- 风险回报比：无开仓信号，不适用\n- 熔断机制：Sharpe -0.06 \u003c 0，要求置信度≥85，当前无信号满足此要求\n- 市场处于弱势，需要更高选择性\n\n**决策**：由于市场弱势、信号不稳定，且受熔断机制限制，当前没有符合高置信度要求的交易机会，选择等待。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:17:10.164480486+08:00",
+      "cycle_number": 301,
+      "cot_trace": "**思维链分析：**\n\n首先审查市场环境：当前夏普比率为-0.06，根据熔断机制，开仓需要置信度≥85。所有主要币种均处于弱势状态，BTC和ETH价格低于4小时EMA20，MACD为负值，成交量普遍低于平均水平。\n\n**BTCUSDT**: 价格86928，EMA20 86917，MACD 29.75（正值但下降趋势），RSI 49.94（中性）。4小时级别显示明显的下跌趋势，EMA20(88174) \u003e 价格，MACD持续为负。虽然当前价格略高于EMA20，但整体趋势向下，没有明确的反弹信号。\n\n**ETHUSDT**: 价格2801.10，EMA20 2803.36，MACD -0.392（负值），RSI 41.59（超卖）。但4小时级别同样显示下跌趋势，且成交量不足。单一RSI超卖在弱势市场中不足以作为开多理由。\n\n**SOLUSDT**: 价格126.76，EMA20 126.98，MACD -0.118（负值），RSI 39.81（超卖）。但需要多个指标确认反转，目前仅RSI超卖，趋势和动量指标仍偏空。\n\n**BNBUSDT**: 价格830.88，EMA20 830.31，MACD 0.900（正值），RSI 51.37（中性）。相对表现较好，但4小时级别同样显示下跌趋势。\n\n**XRPUSDT**: 价格2.01，EMA20 2.017，MACD -0.001（接近零），RSI 42.56（偏空）。没有明确的入场信号。\n\n**HYPEUSDT**: 价格31.25，EMA20 31.17，MACD 0.058（正值但微弱），RSI 55.81（中性）。缺乏强有力的趋势确认。\n\n**风险评估**：所有潜在机会都无法满足硬约束要求：\n- 风险回报比：在弱势市场中难以达到≥3:1\n- 信号稳定性：没有持续10+分钟的稳定信号\n- 熔断机制：夏普\u003c0要求置信度≥85，当前市场条件无法提供如此高的确信度\n\n**决策**：在当前弱势市场环境下，没有符合硬约束的高质量交易机会。根据交易哲学\"不确定时→持有或等待\"，选择等待。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:19:00.213827679+08:00",
+      "cycle_number": 302,
+      "cot_trace": "**思维链分析：**\n\n首先审查当前市场环境和历史表现：\n- 夏普比率为-0.06，根据熔断机制，需要更加选择性，仅以置信度≥85交易\n- 当前无持仓，距离上次交易14分钟，可以寻找新机会\n\n**BTC分析：**\n- 价格86927，EMA20 86918，价格略高于EMA20但差距极小\n- MACD 27.62为正值但正在下降（从65.2降至27.6）\n- RSI 49.67接近中性，无明显超买超卖\n- 4小时级别显示EMA20 88174 \u003e EMA50 89046，为下跌排列\n- 成交量相对较低，缺乏明确方向性确认\n\n**ETH分析：**\n- 价格2801.1，EMA20 2803.36，价格略低于EMA20\n- MACD -0.39为负值，动量偏弱\n- RSI 41.59显示偏弱但未到极端超卖\n- 4小时级别同样为下跌排列\n\n**整体市场判断：**\n- 多数币种处于弱势状态，无明显强势突破信号\n- 在夏普\u003c0的环境下需要更高置信度(≥85)\n- 当前信号缺乏多指标确认和成交量支持\n- 没有满足3:1风险回报比的明确机会\n\n**决策：** 等待更好的交易机会，当前信号质量不足以达到85置信度要求\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:21:59.240331629+08:00",
+      "cycle_number": 303,
+      "cot_trace": "**思维链分析：**\n\n从当前市场环境来看，BTC和主要山寨币都处于横盘震荡状态，缺乏明确的趋势方向。具体分析：\n\n1. **BTC**: 价格86927，EMA20 86918，价格与EMA几乎重合，MACD 27.62（正值但下降），RSI 49.67（中性），成交量低于平均水平。4小时级别显示EMA20(88174) \u003e EMA50(89046)，长期趋势略微偏空，但短期无明显动能。\n\n2. **ETH**: 类似BTC，价格2803与EMA20 2803.6基本持平，MACD -0.137（接近零轴），RSI 47.98（中性偏弱），成交量同样疲软。\n\n3. **其他山寨币**: SOL、BNB、XRP、HYPE都显示类似的横盘特征，价格在EMA20附近波动，MACD接近零轴，RSI在中性区域。\n\n**市场环境识别**: 当前为典型的震荡市场，多数指标显示中性，缺乏强烈的方向性信号。\n\n**风险控制检查**:\n- 夏普比率为-0.06，按照熔断机制要求，开仓需要置信度≥85。目前没有达到此标准的信号。\n\n**硬约束验证**:\n- 没有发现风险回报比≥3:1的明确机会\n- 信号强度不足，缺乏多指标确认\n- 成交量普遍低于平均水平，缺乏动力支撑\n\n**决策**: 由于市场缺乏明确趋势，信号强度不足，且夏普比率为负需要更高置信度，选择等待更好的机会。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:25:05.529080612+08:00",
+      "cycle_number": 304,
+      "cot_trace": "## 思维链\n\n**历史审查**：当前没有提供历史决策信息，无法进行历史错误模式识别和自我纠正。\n\n**市场环境识别**：当前市场处于震荡环境。BTC价格在86949附近，1小时和4小时变化率接近0%，EMA20与当前价格基本持平，MACD正值但较小，RSI中性。ETH、SOL等币种也呈现类似的横盘整理特征。\n\n**熔断机制检查**：夏普比率为-0.06，需要置信度≥85才能开仓。\n\n**持仓评估**：当前无持仓。\n\n**新机会扫描**：\n\n**BTCUSDT**：价格86949，EMA20 86923，价格略高于EMA，MACD 25.66正值但较前期下降，RSI 53.57中性。4小时级别显示EMA20(88174) \u003e EMA50(89046)，仍处于下跌趋势结构。当前信号质量一般，缺乏明确的突破或反转确认。\n\n**ETHUSDT**：价格2803，EMA20 2803.594，价格与EMA基本持平，MACD -0.137接近零轴，RSI 47.98偏弱。整体处于震荡区间，无强烈方向性信号。\n\n**SOLUSDT**：价格126.95，EMA20 126.997，价格与EMA基本持平，MACD -0.082负值，RSI 50中性。缺乏明确的入场信号。\n\n**BNBUSDT**：价格830.50，EMA20 830.546，价格与EMA基本持平，MACD 0.852正值但动量不足。\n\n**XRPUSDT**：价格2.02，EMA20 2.017，价格略高于EMA，MACD -0.001接近零轴。成交量波动较大但缺乏持续性。\n\n**HYPEUSDT**：价格31.27，EMA20 31.205，价格略高于EMA，MACD 0.070正值但较小。市值较小，波动性较高。\n\n**风险评估**：\n- 所有币种均处于震荡状态，缺乏明确的趋势方向\n- 需要置信度≥85，但当前信号质量均未达到此标准\n- 风险回报比难以达到3:1的硬约束要求\n- 信号不够稳定，在执行延迟后可能失效\n\n**决策**：在当前震荡市场环境下，所有币种都缺乏高质量的交易信号。夏普比率为负需要更高的置信度门槛，而当前技术指标显示横盘整理特征。选择等待更好的机会。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:28:04.085616904+08:00",
+      "cycle_number": 305,
+      "cot_trace": "**思维链分析：**\n\n当前市场环境分析：\n- BTC：价格86949，EMA20(86923)几乎与价格重合，MACD(25.66)正值但下降，RSI(53.57)中性，整体呈横盘震荡格局\n- ETH：价格2801.9，EMA20(2803.186)略高于价格，MACD(-0.392)负值，RSI(44.48)偏弱，显示下跌压力\n- 其他山寨币：SOL、BNB、XRP、HYPE均无明显趋势信号\n\n市场状态识别：\n- 当前为震荡市场，多数币种无明显方向性突破\n- 成交量普遍偏低，缺乏明确的资金驱动\n- 4小时时间框架显示多数币种仍处于下跌趋势中（EMA20 \u003c EMA50）\n\n风险控制检查：\n- 夏普比率-0.06 \u003c 0，根据熔断机制要求，开仓置信度必须≥85\n- 当前无持仓，账户风险可控\n\n机会扫描：\n- BTC：无明确趋势，MACD下降但仍在正值，缺乏高置信度信号\n- ETH：MACD负值，RSI偏弱，但信号强度不足以达到85置信度\n- 其他山寨币均缺乏多指标确认的稳定信号\n\n**预执行检查清单验证：**\n- 风险回报比：无符合≥3:1的机会\n- 时间稳定性：当前信号多为横盘震荡，缺乏持续10+分钟的有效信号\n\n决策：选择等待，观察市场进一步发展，等待更明确的趋势信号出现。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:31:08.72840928+08:00",
+      "cycle_number": 306,
+      "cot_trace": "**思维链分析：**\n\n首先检查当前市场环境和熔断机制状态：\n- 夏普比率为-0.06 \u003c 0，根据熔断机制要求，开仓置信度必须≥85\n\n**BTC分析：**\n- 价格86887略低于EMA20(86912)，显示轻微弱势\n- MACD 12.587为正值但持续下降，动量减弱\n- RSI 43.53处于中性偏弱区域，无明显超卖\n- 4小时级别显示更明显的下跌趋势（EMA20 88173 \u003c EMA50 89046）\n- 成交量低于平均水平，缺乏动力\n- 当前信号不够强烈，未达到85置信度要求\n\n**ETH分析：**\n- 价格2798.90略低于EMA20(2802.48)\n- MACD -0.894为负值，动量向下\n- RSI 36.05接近超卖但未确认反转\n- 4小时级别同样处于下跌趋势\n\n**其他币种分析：**\n- SOL、BNB、XRP、HYPE均无明显强烈信号\n- 多数处于震荡或轻微下跌状态\n\n**风险控制检查：**\n- 夏普\u003c0，需要置信度≥85才能开仓\n- 当前所有币种均未达到此高置信度门槛\n- 市场整体缺乏明确方向性突破\n\n**决策：** 当前没有满足高置信度要求的交易机会，选择等待。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:34:06.649489199+08:00",
+      "cycle_number": 307,
+      "cot_trace": "**思维链分析：**\n\n首先检查当前市场环境和熔断条件：\n- 夏普比率-0.06 \u003c 0，触发熔断机制，需要更严格的标准（置信度≥85）\n- 账户回撤-53.13%，需要保守操作\n- 当前无持仓，距离上次交易29分钟\n\n**BTC分析：**\n- 价格86887，EMA20 86912（价格略低于EMA20）\n- MACD 12.587仍为正值但持续下降\n- RSI 43.53显示中性偏弱，但未到超卖区域\n- 4小时级别显示明确下跌趋势：EMA20 88173 \u003c EMA50 89046，MACD为负值\n- 成交量偏低，缺乏方向性确认\n\n**ETH分析：**\n- 价格2798.9，EMA20 2802.5（价格略低于EMA20）\n- MACD -0.894为负值，动量向下\n- RSI 36.047接近超卖但趋势向下\n- 4小时级别同样处于下跌趋势\n\n**其他币种分析：**\n- SOL、BNB、XRP、HYPE都显示类似特征：价格低于EMA20，动量偏弱\n\n**风险评估：**\n- 市场整体处于弱势，多数指标显示下跌趋势\n- 夏普为负，需要更高置信度（≥85）\n- 当前信号强度不足：RSI未到极端超卖，成交量未放大，缺乏明确的反弹确认信号\n\n**决策：** 由于熔断机制触发且缺乏高质量信号，选择等待更好的机会。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:37:09.596606972+08:00",
+      "cycle_number": 308,
+      "cot_trace": "## 思维链分析\n\n**历史审查与自我纠正**：\n- 账户目前处于亏损状态（-53.13%），夏普比率为-0.06，触发熔断机制\n- 根据熔断规则，当Sharpe \u003c 0时，仅以置信度≥85交易，需要更加选择性\n- 当前市场环境：弱势市场（BTC、ETH、SOL等主要币种均处于下跌趋势中，价格低于EMA20，MACD多为负值）\n\n**市场环境识别**：\n- 整体市场处于弱势状态，多数币种呈现下跌趋势\n- BTC：价格86871 \u003c EMA20 86904，MACD 4.37（正值但下降），RSI 39.83（接近超卖）\n- 成交量普遍偏低，缺乏明显的方向性驱动\n\n**持仓评估**：\n- 当前无持仓，无需平仓操作\n\n**新机会扫描**：\n- **BTCUSDT**：RSI 39.83接近超卖，但MACD仍为正值且下降，趋势仍偏空\n- **ETHUSDT**：RSI 31.18严重超卖，但MACD -1.40负值，趋势明确向下\n- **SOLUSDT**：价格126.67 \u003c EMA20 126.88，MACD -0.12负值，RSI 36.27接近超卖\n- 所有币种都显示超卖状态，但在弱势市场中，单一RSI超卖不足以作为开多理由\n- 需要多个指标同时确认反转信号，且信号必须稳定持续\n\n**预执行检查清单**：\n- 熔断机制触发：Sharpe \u003c 0，要求置信度≥85\n- 当前信号多为单一指标超卖，缺乏趋势、动量、成交量的综合确认\n- 信号持续时间不足：多数反弹信号刚刚出现，在弱势市场中需要10-15分钟稳定验证\n- 风险回报比无法达到3:1要求（止损需要更宽，但止盈空间受限）\n- 时间稳定性不足：没有发现信号已经持续5-10分钟的稳定机会\n\n**决策**：\n- 在弱势市场环境下，且熔断机制触发，需要非常选择性的交易\n- 当前缺乏多指标确认的稳定反转信号\n- 选择等待更好的机会，避免在超卖反弹中追高\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:40:01.050089242+08:00",
+      "cycle_number": 309,
+      "cot_trace": "**思维链分析：**\n\n从当前市场数据观察，整体呈现弱势环境特征：\n- BTC：价格86871，低于EMA20(86904)，MACD仍为正值但大幅下降(4.37)，RSI 39.83显示超卖但趋势向下\n- ETH：价格2798.5，低于EMA20(2801.3)，MACD负值(-1.40)，RSI 37.35深度超卖\n- 其他山寨币普遍处于下跌趋势，RSI均显示超卖状态\n\n**关键观察：**\n1. **趋势方向**：所有币种价格均低于EMA20，4小时级别EMA20也低于EMA50，确认整体下跌趋势\n2. **动量指标**：MACD普遍为负或快速下降，显示下跌动能\n3. **成交量**：普遍低于平均水平，缺乏买盘支撑\n\n**风险回报分析：**\n虽然多个币种RSI显示超卖，但在弱势市场中：\n- 需要多指标综合确认反转信号\n- 当前信号强度不足，单一RSI超卖不足以作为开仓依据\n- 信号持续时间不足，需要等待更稳定的反弹确认\n\n**决策：** 当前市场环境下，缺乏符合3:1风险回报比且时间稳定的交易机会，选择等待。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:42:58.117178555+08:00",
+      "cycle_number": 310,
+      "cot_trace": "**思维链分析：**\n\n当前市场环境分析：\n- BTC：RSI 35.09（超卖区域），MACD -2.567（负值），价格低于EMA20，4小时趋势向下，成交量相对较低\n- ETH：类似情况，RSI 37.35，MACD -1.397，价格略低于EMA20\n- 其他山寨币普遍呈现弱势，RSI大多在30-40区间\n\n**硬约束检查：**\n1. 风险回报比：当前信号不明确，无法满足≥3:1要求\n2. 持仓数量：0个，符合限制\n3. 保证金使用率：0%，符合要求\n\n**具体分析：**\n- BTC虽然RSI超卖，但MACD持续负值，趋势向下，缺乏成交量确认\n- 所有币种都处于弱势状态，没有明确的反转信号\n- 信号持续时间不足：当前弱势格局已经持续，但没有明显的反转确认信号\n- 执行延迟考虑：当前信号不稳定，可能在执行前失效\n\n**自我纠正：** 从历史数据看，在弱势市场中的单一指标反弹信号往往不可靠，需要多个指标和成交量共同确认\n\n**决策：** 由于没有满足硬约束（风险回报比≥3:1）的明确机会，且信号质量不足以达到70置信度，选择等待。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:46:02.792302524+08:00",
+      "cycle_number": 311,
+      "cot_trace": "**思维链分析：**\n\n首先进行市场环境识别和熔断检查：\n- 夏普比率-0.06 \u003c 0，触发熔断机制，要求置信度≥85才能开仓\n- 账户回撤-53.13%，需要更加谨慎\n\n**BTC分析：**\n价格86929在EMA20(86903)之上，MACD正值3.74，RSI 58.11中性偏强，但4小时级别显示EMA20(88168) \u003c EMA50(89044)长期趋势偏空。成交量偏低，缺乏明确方向信号。当前信号不够稳定，不符合熔断机制下的高置信度要求。\n\n**ETH分析：**\n价格2798.50略低于EMA20(2800.80)，MACD负值-1.46，RSI 39.37超卖，但成交量未放大确认。虽然技术指标显示超卖，但趋势仍偏弱，单一RSI信号不足以在熔断条件下开仓。\n\n**其他币种分析：**\nSOL、BNB、XRP、HYPE均显示弱势特征，RSI普遍偏低但缺乏成交量配合。\n\n**硬约束检查：**\n- 夏普\u003c0，需要置信度≥85，当前无信号达到此标准\n- 风险回报比无法满足≥3:1（无明确机会）\n- 信号不稳定，不符合时间稳定性要求\n\n当前市场处于弱势震荡环境，结合熔断机制触发，应该保持观望，等待更高质量的信号出现。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:49:10.505134608+08:00",
+      "cycle_number": 312,
+      "cot_trace": "**思维链：**\n\n首先进行历史审查和自我纠正：\n- 当前无历史决策数据提供，无法进行具体历史错误模式分析\n- 账户盈亏-53.13%表明需要更加谨慎，提高入场门槛\n\n市场环境识别：\n- BTC：价格86929，EMA20 86903，价格略高于EMA20，MACD正值3.74，RSI 58.11 - 中性偏强震荡\n- ETH：价格2798.5，EMA20 2800.8，价格略低于EMA20，MACD负值-1.46，RSI 39.37 - 弱势震荡\n- 整体市场：夏普比率-0.06，表明当前市场环境不佳\n\n持仓评估：\n- 当前无持仓\n\n机会扫描：\n- **BTC**：EMA20略低于价格，MACD正值但较小，RSI中性，成交量低迷 - 无明显方向信号\n- **ETH**：EMA20略高于价格，MACD负值，RSI超卖39.37，但趋势仍然向下，单一RSI信号不足以作为开多理由\n- **SOL**：价格126.69，EMA20 126.81，MACD负值-0.11，RSI 44.51 - 弱势但无明确反转信号\n- **BNB**：相对较强，EMA20 830.02，价格830.31，MACD正值0.13，但成交量极低，信号可靠性差\n- **HYPE**：RSI超卖30.48，但EMA20仍高于价格，趋势向下 - 单一指标信号不足\n- **XRP**：无明显趋势信号\n\n**预执行检查清单验证：**\n- 无符合风险回报比≥3:1的机会\n- 所有币种均缺乏多指标综合确认\n- 成交量普遍低迷，缺乏验证\n- 市场环境弱势，需要更高置信度\n\n决策：在当前弱势市场环境下，缺乏高质量的多指标确认信号，夏普比率为负要求更高入场门槛。选择等待更好机会。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    },
+    {
+      "timestamp": "2025-12-02T13:51:59.3412995+08:00",
+      "cycle_number": 313,
+      "cot_trace": "**思维链分析：**\n\n审查当前市场状态：\n- 账户净值46.87，盈亏-53.13%，夏普比率-0.06（为负值）\n- 根据熔断机制，夏普\u003c0时需要更选择性交易，仅以置信度≥85开仓\n- 当前无持仓，距离上次交易47分钟\n\n技术分析：\n- **BTC**: 价格86979，EMA20 86923，价格略高于EMA，MACD正值18.09但呈下降趋势，RSI 63.5中性偏多\n- **ETH**: MACD负值-0.75，RSI 55.6中性\n- **SOL/BNB/XRP/HYPE**: 均显示震荡格局，无明显方向性信号\n\n硬约束检查：\n- 夏普比率-0.06 \u003c 0，需要置信度≥85才能开仓\n- 所有币种都缺乏明确的趋势信号，多为横盘震荡\n- 单一指标如RSI均在中性区域，无超买超卖极端情况\n- 成交量普遍偏低，缺乏确认信号\n- 未发现满足风险回报比≥3:1且置信度≥85的机会\n\n决策：由于夏普比率为负且缺乏高质量信号，选择等待更好的机会。\n\n```json",
+      "decision_json": "",
+      "AccountState": {
+        "total_balance": 0,
+        "available_balance": 0,
+        "total_unrealized_profit": 0,
+        "position_count": 0,
+        "margin_used_pct": 0
+      },
+      "Positions": null,
+      "Decisions": null,
+      "ExecutionLog": null,
+      "Success": true,
+      "ErrorMessage": ""
+    }
+  ],
+  "TradeRecords": [
+    {
+      "ID": 1308,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "open_short",
+      "Side": "short",
+      "Quantity": 0.00279,
+      "ExecutionPrice": 86414,
+      "PnL": 0,
+      "Fee": 0.108492,
+      "Timestamp": "2025-12-02T11:07:14.935+08:00"
+    },
+    {
+      "ID": 1311,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_short",
+      "Side": "short",
+      "Quantity": 0.00279,
+      "ExecutionPrice": 86865,
+      "PnL": -1.25829,
+      "Fee": 0.109059,
+      "Timestamp": "2025-12-02T11:46:10.518+08:00"
+    },
+    {
+      "ID": 1309,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "open_long",
+      "Side": "long",
+      "Quantity": 0.00175,
+      "ExecutionPrice": 86766,
+      "PnL": 0,
+      "Fee": 0.068328,
+      "Timestamp": "2025-12-02T11:49:14.36+08:00"
+    },
+    {
+      "ID": 1310,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "open_long",
+      "Side": "long",
+      "Quantity": 0.00094,
+      "ExecutionPrice": 86766,
+      "PnL": 0,
+      "Fee": 0.036702,
+      "Timestamp": "2025-12-02T11:49:14.36+08:00"
+    },
+    {
+      "ID": 1312,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_long",
+      "Side": "long",
+      "Quantity": 0.00056,
+      "ExecutionPrice": 86922,
+      "PnL": 0.08736,
+      "Fee": 0.021904,
+      "Timestamp": "2025-12-02T13:04:12.143+08:00"
+    },
+    {
+      "ID": 1313,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_long",
+      "Side": "long",
+      "Quantity": 0.00013,
+      "ExecutionPrice": 86922,
+      "PnL": 0.02028,
+      "Fee": 0.005084,
+      "Timestamp": "2025-12-02T13:04:12.143+08:00"
+    },
+    {
+      "ID": 1314,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_long",
+      "Side": "long",
+      "Quantity": 0.00013,
+      "ExecutionPrice": 86923,
+      "PnL": 0.02041,
+      "Fee": 0.005084,
+      "Timestamp": "2025-12-02T13:04:12.143+08:00"
+    },
+    {
+      "ID": 1315,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_long",
+      "Side": "long",
+      "Quantity": 0.00018,
+      "ExecutionPrice": 86923,
+      "PnL": 0.02826,
+      "Fee": 0.00704,
+      "Timestamp": "2025-12-02T13:04:12.143+08:00"
+    },
+    {
+      "ID": 1316,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_long",
+      "Side": "long",
+      "Quantity": 0.00013,
+      "ExecutionPrice": 86924,
+      "PnL": 0.02054,
+      "Fee": 0.005085,
+      "Timestamp": "2025-12-02T13:04:12.143+08:00"
+    },
+    {
+      "ID": 1317,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_long",
+      "Side": "long",
+      "Quantity": 0.00013,
+      "ExecutionPrice": 86925,
+      "PnL": 0.02067,
+      "Fee": 0.005085,
+      "Timestamp": "2025-12-02T13:04:12.143+08:00"
+    },
+    {
+      "ID": 1318,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_long",
+      "Side": "long",
+      "Quantity": 0.00012,
+      "ExecutionPrice": 86926,
+      "PnL": 0.0192,
+      "Fee": 0.004694,
+      "Timestamp": "2025-12-02T13:04:12.143+08:00"
+    },
+    {
+      "ID": 1319,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_long",
+      "Side": "long",
+      "Quantity": 0.0008,
+      "ExecutionPrice": 86926,
+      "PnL": 0.128,
+      "Fee": 0.031293,
+      "Timestamp": "2025-12-02T13:04:12.143+08:00"
+    },
+    {
+      "ID": 1320,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_long",
+      "Side": "long",
+      "Quantity": 0.00013,
+      "ExecutionPrice": 86926,
+      "PnL": 0.0208,
+      "Fee": 0.005085,
+      "Timestamp": "2025-12-02T13:04:12.143+08:00"
+    },
+    {
+      "ID": 1321,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_long",
+      "Side": "long",
+      "Quantity": 0.00018,
+      "ExecutionPrice": 86926,
+      "PnL": 0.0288,
+      "Fee": 0.007041,
+      "Timestamp": "2025-12-02T13:04:12.143+08:00"
+    },
+    {
+      "ID": 1322,
+      "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+      "Symbol": "BTCUSDT",
+      "Action": "close_long",
+      "Side": "long",
+      "Quantity": 0.0002,
+      "ExecutionPrice": 86927,
+      "PnL": 0.0322,
+      "Fee": 0.007823,
+      "Timestamp": "2025-12-02T13:04:12.143+08:00"
+    }
+  ],
+  "MatchedTrades": [
+    {
+      "CycleNumber": 258,
+      "OpenAction": {
+        "action": "open_short",
+        "symbol": "BTCUSDT",
+        "quantity": 0.0027888676734363245,
+        "leverage": 10,
+        "price": 86414,
+        "order_id": 0,
+        "timestamp": "2025-12-02T11:07:12.192662224+08:00",
+        "success": true,
+        "error": "",
+        "is_auto_triggered": false,
+        "was_stop_loss": false
+      },
+      "CloseAction": {
+        "action": "close_short",
+        "symbol": "BTCUSDT",
+        "quantity": 0.00279,
+        "leverage": 10,
+        "price": 86865,
+        "order_id": 0,
+        "timestamp": "2025-12-02T11:46:08.121115981+08:00",
+        "success": true,
+        "error": "",
+        "is_auto_triggered": false,
+        "was_stop_loss": false
+      },
+      "OpenTrade": {
+        "ID": 1308,
+        "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+        "Symbol": "BTCUSDT",
+        "Action": "open_short",
+        "Side": "short",
+        "Quantity": 0.00279,
+        "ExecutionPrice": 86414,
+        "PnL": 0,
+        "Fee": 0.108492,
+        "Timestamp": "2025-12-02T11:07:14.935+08:00"
+      },
+      "CloseTrade": {
+        "ID": 1311,
+        "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+        "Symbol": "BTCUSDT",
+        "Action": "close_short",
+        "Side": "short",
+        "Quantity": 0.00279,
+        "ExecutionPrice": 86865,
+        "PnL": -1.25829,
+        "Fee": 0.109059,
+        "Timestamp": "2025-12-02T11:46:10.518+08:00"
+      },
+      "PnL": -1.25829,
+      "Duration": 2335583000000,
+      "RiskRewardRatio": 0
+    },
+    {
+      "CycleNumber": 272,
+      "OpenAction": {
+        "action": "open_long",
+        "symbol": "BTCUSDT",
+        "quantity": 0.0026853836756333127,
+        "leverage": 10,
+        "price": 86766,
+        "order_id": 0,
+        "timestamp": "2025-12-02T11:49:12.297180727+08:00",
+        "success": true,
+        "error": "",
+        "is_auto_triggered": false,
+        "was_stop_loss": false
+      },
+      "CloseAction": {
+        "action": "close_long",
+        "symbol": "BTCUSDT",
+        "quantity": 0.00269,
+        "leverage": 10,
+        "price": 86924.5,
+        "order_id": 0,
+        "timestamp": "2025-12-02T13:04:09.930542374+08:00",
+        "success": true,
+        "error": "",
+        "is_auto_triggered": false,
+        "was_stop_loss": false
+      },
+      "OpenTrade": {
+        "ID": 1309,
+        "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+        "Symbol": "BTCUSDT",
+        "Action": "open_long",
+        "Side": "long",
+        "Quantity": 0.00175,
+        "ExecutionPrice": 86766,
+        "PnL": 0,
+        "Fee": 0.068328,
+        "Timestamp": "2025-12-02T11:49:14.36+08:00"
+      },
+      "CloseTrade": {
+        "ID": 1312,
+        "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+        "Symbol": "BTCUSDT",
+        "Action": "close_long",
+        "Side": "long",
+        "Quantity": 0.00056,
+        "ExecutionPrice": 86922,
+        "PnL": 0.08736,
+        "Fee": 0.021904,
+        "Timestamp": "2025-12-02T13:04:12.143+08:00"
+      },
+      "PnL": 0.08736,
+      "Duration": 4497783000000,
+      "RiskRewardRatio": 0
+    },
+    {
+      "CycleNumber": 272,
+      "OpenAction": {
+        "action": "open_long",
+        "symbol": "BTCUSDT",
+        "quantity": 0.0026853836756333127,
+        "leverage": 10,
+        "price": 86766,
+        "order_id": 0,
+        "timestamp": "2025-12-02T11:49:12.297180727+08:00",
+        "success": true,
+        "error": "",
+        "is_auto_triggered": false,
+        "was_stop_loss": false
+      },
+      "CloseAction": {
+        "action": "close_long",
+        "symbol": "BTCUSDT",
+        "quantity": 0.00269,
+        "leverage": 10,
+        "price": 86924.5,
+        "order_id": 0,
+        "timestamp": "2025-12-02T13:04:09.930542374+08:00",
+        "success": true,
+        "error": "",
+        "is_auto_triggered": false,
+        "was_stop_loss": false
+      },
+      "OpenTrade": {
+        "ID": 1310,
+        "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+        "Symbol": "BTCUSDT",
+        "Action": "open_long",
+        "Side": "long",
+        "Quantity": 0.00094,
+        "ExecutionPrice": 86766,
+        "PnL": 0,
+        "Fee": 0.036702,
+        "Timestamp": "2025-12-02T11:49:14.36+08:00"
+      },
+      "CloseTrade": {
+        "ID": 1313,
+        "TraderID": "hyperliquid_84ea7a13-7bd4-4401-b4ab-ad63580f7b89_deepseek_1763366728",
+        "Symbol": "BTCUSDT",
+        "Action": "close_long",
+        "Side": "long",
+        "Quantity": 0.00013,
+        "ExecutionPrice": 86922,
+        "PnL": 0.02028,
+        "Fee": 0.005084,
+        "Timestamp": "2025-12-02T13:04:12.143+08:00"
+      },
+      "PnL": 0.02028,
+      "Duration": 4497783000000,
+      "RiskRewardRatio": 0
+    }
+  ],
+  "TimeSeries": [
+    {
+      "CycleNumber": 253,
+      "Timestamp": "2025-12-02T10:52:05.017154119+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 254,
+      "Timestamp": "2025-12-02T10:55:04.608630383+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 255,
+      "Timestamp": "2025-12-02T10:58:00.602530534+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 256,
+      "Timestamp": "2025-12-02T11:01:02.983886075+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 257,
+      "Timestamp": "2025-12-02T11:04:12.349637613+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 258,
+      "Timestamp": "2025-12-02T11:07:24.808736139+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 259,
+      "Timestamp": "2025-12-02T11:10:06.550725451+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 260,
+      "Timestamp": "2025-12-02T11:13:18.284845876+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 261,
+      "Timestamp": "2025-12-02T11:16:11.908373288+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 262,
+      "Timestamp": "2025-12-02T11:19:05.774211189+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 263,
+      "Timestamp": "2025-12-02T11:22:19.133497794+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 264,
+      "Timestamp": "2025-12-02T11:25:11.171152117+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 265,
+      "Timestamp": "2025-12-02T11:28:16.453705251+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 266,
+      "Timestamp": "2025-12-02T11:31:41.855181401+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 267,
+      "Timestamp": "2025-12-02T11:34:34.331924065+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 268,
+      "Timestamp": "2025-12-02T11:37:14.590051902+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 269,
+      "Timestamp": "2025-12-02T11:40:32.530812425+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 270,
+      "Timestamp": "2025-12-02T11:43:10.759109678+08:00",
+      "CumulativePnL": 0,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 271,
+      "Timestamp": "2025-12-02T11:46:14.259608777+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 1
+    },
+    {
+      "CycleNumber": 272,
+      "Timestamp": "2025-12-02T11:49:24.075405332+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 273,
+      "Timestamp": "2025-12-02T11:52:09.424528372+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 274,
+      "Timestamp": "2025-12-02T11:55:24.069755575+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 275,
+      "Timestamp": "2025-12-02T11:58:18.149084594+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 276,
+      "Timestamp": "2025-12-02T12:01:12.255643017+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 277,
+      "Timestamp": "2025-12-02T12:04:17.780412606+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 278,
+      "Timestamp": "2025-12-02T12:07:33.418401902+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 279,
+      "Timestamp": "2025-12-02T12:10:23.466884893+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 280,
+      "Timestamp": "2025-12-02T12:13:12.395046684+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 281,
+      "Timestamp": "2025-12-02T12:16:17.29399257+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 282,
+      "Timestamp": "2025-12-02T12:19:15.278835804+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 283,
+      "Timestamp": "2025-12-02T12:22:11.235523866+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 284,
+      "Timestamp": "2025-12-02T12:25:29.168008274+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 285,
+      "Timestamp": "2025-12-02T12:28:16.491554406+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 286,
+      "Timestamp": "2025-12-02T12:31:17.660067397+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 287,
+      "Timestamp": "2025-12-02T12:34:38.448983272+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 288,
+      "Timestamp": "2025-12-02T12:37:13.152770216+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 289,
+      "Timestamp": "2025-12-02T12:42:37.939397489+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 290,
+      "Timestamp": "2025-12-02T12:43:47.89050476+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 291,
+      "Timestamp": "2025-12-02T12:46:16.94676693+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 292,
+      "Timestamp": "2025-12-02T12:49:17.046252105+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 293,
+      "Timestamp": "2025-12-02T12:52:21.775739271+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 294,
+      "Timestamp": "2025-12-02T12:55:14.268496853+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 295,
+      "Timestamp": "2025-12-02T12:58:09.218806355+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 296,
+      "Timestamp": "2025-12-02T13:01:16.578996467+08:00",
+      "CumulativePnL": -1.25829,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 297,
+      "Timestamp": "2025-12-02T13:04:15.754158437+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 2
+    },
+    {
+      "CycleNumber": 298,
+      "Timestamp": "2025-12-02T13:07:07.621488823+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 299,
+      "Timestamp": "2025-12-02T13:10:02.56830842+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 300,
+      "Timestamp": "2025-12-02T13:13:00.231725416+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 301,
+      "Timestamp": "2025-12-02T13:17:10.164480486+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 302,
+      "Timestamp": "2025-12-02T13:19:00.213827679+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 303,
+      "Timestamp": "2025-12-02T13:21:59.240331629+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 304,
+      "Timestamp": "2025-12-02T13:25:05.529080612+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 305,
+      "Timestamp": "2025-12-02T13:28:04.085616904+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 306,
+      "Timestamp": "2025-12-02T13:31:08.72840928+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 307,
+      "Timestamp": "2025-12-02T13:34:06.649489199+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 308,
+      "Timestamp": "2025-12-02T13:37:09.596606972+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 309,
+      "Timestamp": "2025-12-02T13:40:01.050089242+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 310,
+      "Timestamp": "2025-12-02T13:42:58.117178555+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 311,
+      "Timestamp": "2025-12-02T13:46:02.792302524+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 312,
+      "Timestamp": "2025-12-02T13:49:10.505134608+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    },
+    {
+      "CycleNumber": 313,
+      "Timestamp": "2025-12-02T13:51:59.3412995+08:00",
+      "CumulativePnL": -1.1506499999999997,
+      "AccountBalance": 0,
+      "PositionCount": 0,
+      "TradeCount": 0
+    }
+  ],
+  "BasicStats": {
+    "TotalTrades": 3,
+    "WinningTrades": 2,
+    "LosingTrades": 1,
+    "WinRate": 66.66666666666666,
+    "TotalPnL": -1.1506499999999997,
+    "NetPnL": -1.5784489999999998,
+    "AvgWin": 0.05381999999999999,
+    "AvgLoss": -1.25829,
+    "ProfitFactor": 0.042772333881696586,
+    "TotalFees": 0.427799,
+    "MaxProfit": 0.08736,
+    "MaxLoss": -1.25829,
+    "MaxDrawdown": 1.25829,
+    "SharpeRatio": 0.164139185235118
+  },
+  "ReportPath": "phase1_report_253_313.md"
+}

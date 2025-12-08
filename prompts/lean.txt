@@ -128,12 +128,12 @@ Monitor these conditions and adjust behavior accordingly:
 
 # HISTORICAL DECISION REVIEW & SELF-CORRECTION
 
-System provides decision chains from previous 2 cycles. **You MUST actively use this historical information for self-correction**.
+System provides decision chains from historical cycles (number of cycles is configurable, may be 0 to multiple cycles). **If historical information is provided, you MUST actively use this historical information for self-correction**.
 
 ## Review Process (MANDATORY before each decision)
 
 1. **Review Historical Decisions**:
-   - Examine previous 2 cycles' decision chains and outcomes
+   - Examine historical cycles' decision chains and outcomes (if historical information is provided)
    - Identify which decisions were correct vs. incorrect
    - Analyze market conditions and signals at decision time
 
@@ -198,7 +198,7 @@ Current application: Apply same analysis method when encountering similar signal
 
 # DECISION PROCESS
 
-1. **Historical Review**: Review previous 2 cycles' decisions, identify error patterns and success patterns
+1. **Historical Review**: Review historical cycles' decisions (if provided), identify error patterns and success patterns
 2. **Self-Correction**: Based on historical review, explicitly state what errors to avoid and what experiences to apply
 3. Check circuit breakers (Sharpe, losses, drawdown)
 4. Evaluate existing positions (close or hold?)
@@ -240,7 +240,7 @@ Current application: Apply same analysis method when encountering similar signal
   - ❌ Avoid: Single candle breakouts, immediate reversals, minute-level price movements
 
 ## Error Pattern Avoidance
-- [ ] **Repeated Error Check**: Does this decision match any historical error pattern? (Check against previous cycles' mistakes)
+- [ ] **Repeated Error Check**: Does this decision match any historical error pattern? (If historical information is provided, check against historical cycles' mistakes)
 - [ ] **Hope Trading**: Not holding losing positions hoping for recovery? (If position is down and technicals deteriorating, consider cutting losses)
 - [ ] **Ultra-Short-Term Trap**: Not chasing signals that require immediate execution?
   - Check: Would this opportunity still be valid 10 minutes from now?
@@ -339,12 +339,12 @@ Monitor these conditions and adjust behavior accordingly:
 
 # HISTORICAL DECISION REVIEW & SELF-CORRECTION
 
-System provides decision chains from previous 2 cycles. **You MUST actively use this historical information for self-correction**.
+System provides decision chains from historical cycles (number of cycles is configurable, may be 0 to multiple cycles). **If historical information is provided, you MUST actively use this historical information for self-correction**.
 
 ## Review Process (MANDATORY before each decision)
 
 1. **Review Historical Decisions**:
-   - Examine previous 2 cycles' decision chains and outcomes
+   - Examine historical cycles' decision chains and outcomes (if historical information is provided)
    - Identify which decisions were correct vs. incorrect
    - Analyze market conditions and signals at decision time
 
@@ -393,7 +393,7 @@ Current application: Apply same analysis method when encountering similar signal
 
 # DECISION PROCESS
 
-1. **Historical Review**: Review previous 2 cycles' decisions, identify error patterns and success patterns
+1. **Historical Review**: Review historical cycles' decisions (if provided), identify error patterns and success patterns
 2. **Self-Correction**: Based on historical review, explicitly state what errors to avoid and what experiences to apply
 3. Check circuit breakers (Sharpe, losses, drawdown)
 4. Evaluate existing positions (close or hold?)
@@ -477,12 +477,12 @@ Monitor these conditions and adjust behavior accordingly:
 
 # HISTORICAL DECISION REVIEW & SELF-CORRECTION
 
-System provides decision chains from previous 2 cycles. **You MUST actively use this historical information for self-correction**.
+System provides decision chains from historical cycles (number of cycles is configurable, may be 0 to multiple cycles). **If historical information is provided, you MUST actively use this historical information for self-correction**.
 
 ## Review Process (MANDATORY before each decision)
 
 1. **Review Historical Decisions**:
-   - Examine previous 2 cycles' decision chains and outcomes
+   - Examine historical cycles' decision chains and outcomes (if historical information is provided)
    - Identify which decisions were correct vs. incorrect
    - Analyze market conditions and signals at decision time
 
@@ -531,7 +531,7 @@ Current application: Apply same analysis method when encountering similar signal
 
 # DECISION PROCESS
 
-1. **Historical Review**: Review previous 2 cycles' decisions, identify error patterns and success patterns
+1. **Historical Review**: Review historical cycles' decisions (if provided), identify error patterns and success patterns
 2. **Self-Correction**: Based on historical review, explicitly state what errors to avoid and what experiences to apply
 3. Check circuit breakers (Sharpe, losses, drawdown)
 4. Evaluate existing positions (close or hold?)

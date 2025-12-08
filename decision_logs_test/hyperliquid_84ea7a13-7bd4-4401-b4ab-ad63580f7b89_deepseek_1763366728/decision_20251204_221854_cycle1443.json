@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-12-04T22:18:54.78393749+08:00",
+  "cycle_number": 1443,
+  "system_prompt": "",
+  "input_prompt": "",
+  "cot_trace": "## 思维链\n\n**历史审查与自我纠正**：\n- 当前无持仓，账户净值36.60，盈亏-63.40%显示之前交易表现不佳\n- 夏普比率-0.05触发熔断机制，要求开仓置信度≥85\n- 需要更加谨慎，仅选择高质量信号\n\n**市场环境分析**：\n- BTC：价格92600，EMA20 92618，轻微承压；MACD -54.4负值但改善中；RSI 51中性；4H趋势偏弱\n- ETH：价格3174.8，EMA20 3174.1，基本持平；MACD -0.3接近零轴；RSI 52中性\n- 整体市场处于弱势环境，需要更高置信度和更严格标准\n\n**机会评估**：\n- **BTC**：MACD从-80改善至-54，显示负动量减弱，但价格仍在EMA20下方，趋势不明确\n- **ETH**：技术指标中性，缺乏明确方向信号\n- **SOL**：价格142.47略高于EMA20 142.39，RSI 55.4中性，无强烈信号\n- **BNB**：价格906.44高于EMA20 905.45，RSI 60.2偏强但未超买\n- **XRP/HYPE**：均无明显趋势信号\n\n**风险回报验证**：\n- 对BNB进行测试：入场906.44，止损900（0.71%距离），止盈930（2.6%距离）\n- 风险回报比 = (930-906.44)/(906.44-900) = 23.56/6.44 = 3.66:1 ✓ 满足硬约束\n- 止损距离0.71% \u003e 大市值山寨币最小值0.6% ✓ 满足硬约束\n- 账户风险 = 0.71% × 8x = 5.68% ✓ 可接受\n- 信号稳定性：价格在906附近已震荡多根K线，信号稳定\n\n**最终决策**：\n- BNB显示相对强势，价格在EMA20上方，RSI偏强但未超买，符合弱势市场中高置信度要求\n\n```json",
+  "decision_json": "[\n  {\n    \"symbol\": \"BNBUSDT\",\n    \"action\": \"open_long\",\n    \"leverage\": 8,\n    \"position_size_usd\": 55,\n    \"stop_loss\": 900,\n    \"take_profit\": 930,\n    \"confidence\": 85,\n    \"risk_usd\": 3,\n    \"reasoning\": \"弱势市场中相对强势，价格高于EMA20，RSI 60.2偏强，风险回报3.66:1满足硬约束\"\n  }\n]",
+  "account_state": {
+    "total_balance": 36.595481,
+    "available_balance": 36.595481,
+    "total_unrealized_profit": -63.404519,
+    "position_count": 0,
+    "margin_used_pct": 0
+  },
+  "positions": null,
+  "candidate_coins": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "BNBUSDT",
+    "XRPUSDT",
+    "HYPEUSDT"
+  ],
+  "decisions": null,
+  "execution_log": [],
+  "success": false,
+  "error_message": "获取AI决策失败: 解析AI响应失败: 决策验证失败: 决策 #1 验证失败: 杠杆必须在1-5之间（BNBUSDT，当前配置上限5倍）: 8"
+}

@@ -1,0 +1,56 @@
+services:
+  # Backend service (API and core logic) - TEST V2
+  nofx-test-v2:
+    build:
+      context: .
+      dockerfile: ./ops/docker/Dockerfile.backend
+    container_name: nofx-trading-test-v2
+    restart: unless-stopped
+    ports:
+      - "${NOFX_BACKEND_PORT_TEST_V2:-8083}:8080"
+    volumes:
+      - ./config.json.test:/app/config.json:ro
+      - ./config.db.test:/app/config.db
+      - ./beta_codes.txt:/app/beta_codes.txt:ro
+      - ./decision_logs_test:/app/decision_logs
+      - ./prompts:/app/prompts
+      - /etc/localtime:/etc/localtime:ro  # Sync host time
+    environment:
+      - TZ=${NOFX_TIMEZONE:-Asia/Shanghai}  # Set timezone
+    networks:
+      - nofx-network-test-v2
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Frontend service (static serving and proxy) - TEST V2
+  nofx-frontend-test-v2:
+    build:
+      context: .
+      dockerfile: ./ops/docker/Dockerfile.frontend
+    container_name: nofx-frontend-test-v2
+    restart: unless-stopped
+    ports:
+      - "${NOFX_FRONTEND_PORT_TEST_V2:-8084}:80"
+      - "${NOFX_FRONTEND_HTTPS_PORT_TEST_V2:-8444}:443"
+    volumes:
+      - ./nginx/nginx-test-v2.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - nofx-network-test-v2
+    depends_on:
+      - nofx-test-v2
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+networks:
+  nofx-network-test-v2:
+    driver: bridge
+

@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-12-06T16:45:29.771257074+08:00",
+  "cycle_number": 2292,
+  "system_prompt": "",
+  "input_prompt": "",
+  "cot_trace": "",
+  "decision_json": "",
+  "account_state": {
+    "total_balance": 0,
+    "available_balance": 0,
+    "total_unrealized_profit": 0,
+    "position_count": 0,
+    "margin_used_pct": 0
+  },
+  "positions": null,
+  "candidate_coins": null,
+  "decisions": null,
+  "execution_log": [],
+  "success": false,
+  "error_message": "构建交易上下文失败: 获取账户余额失败: 获取账户信息失败: failed to fetch user state: request failed: Post \"https://api.hyperliquid.xyz/info\": net/http: TLS handshake timeout"
+}

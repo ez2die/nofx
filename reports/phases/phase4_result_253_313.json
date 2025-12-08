@@ -1,0 +1,535 @@
+{
+  "PromptUnderstanding": {
+    "RiskRewardMentioned": 52,
+    "StopLossMentioned": 42,
+    "MarketNoiseMentioned": 5,
+    "TrendAnalysisMentioned": 61,
+    "EntryTimingMentioned": 32,
+    "LeverageMentioned": 29,
+    "ConfidenceMentioned": 55,
+    "TotalDecisions": 61,
+    "UnderstandingScore": 65.24590163934427,
+    "MentionDetails": [
+      {
+        "CycleNumber": 253,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd币种**：均缺乏明确的突破或反转信号\n\n**预执行检查清单验证**：\n- 无符合风险回报≥3:1且置信度≥85的机会\n- 所有币种都处于震荡或弱势反弹状态，\ufffd\ufffd"
+      },
+      {
+        "CycleNumber": 254,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd为负且无持仓，选择等待更明确的信号\n\n**预执行检查清单验证：**\n- 无满足风险回报比≥3:1的机会\n- 信号均不稳定，不符合时间稳定性要求\n- 弱势市场\ufffd"
+      },
+      {
+        "CycleNumber": 255,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "出现，需要等待10-15分钟确认稳定性\n\n**当前决策**：\n- 没有满足置信度≥85且风险回报≥3:1的稳定机会\n- 所有候选币种都缺乏成交量确认和趋势反转的明\ufffd"
+      },
+      {
+        "CycleNumber": 256,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd多数币种成交量低于平均水平，缺乏买盘支撑\n\n**预执行检查清单验证**：\n- 风险回报比：需要≥3:1（硬约束）\n- 止损距离：BTC/ETH必须≥0.4%（硬约束）\n-"
+      },
+      {
+        "CycleNumber": 257,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd\n- **HYPEUSDT**：相对强势，RSI 55.09，EMA接近当前价格，但4小时趋势仍向下\n\n**风险回报评估**：\n- 在弱势市场中，单一RSI超卖信号不足以作为开仓理由\n- \ufffd\ufffd"
+      },
+      {
+        "CycleNumber": 258,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "示空头情绪\n- 信号持续时间：RSI超卖状态已持续多根K线，具备时间稳定性\n- 风险回报计算：入场86513，止损87000，止盈85000\n  - 风险：(87000-86513)/86513 = 0.56"
+      },
+      {
+        "CycleNumber": 259,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "号\n\n**BTCUSDT持仓评估：**\n- 入场快照显示：入场价86414，止损87000，止盈85000，风险回报比3.13:1\n- 当前价格86415，距离止损585点（0.68%），距离合理\n- 入场假"
+      },
+      {
+        "CycleNumber": 260,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "5\n\n**SOLUSDT**：RSI 25.51极度超卖，但价格126.80低于EMA20 127.18，MACD -0.125为负值\n- 风险回报计算：入场126.80，止损129.00，止盈120.00\n  - 风险：(129.00-126.80)/126.80 "
+      },
+      {
+        "CycleNumber": 261,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd**：\n- **BTCUSDT**：价格86502低于EMA20 86565，MACD -15.635负值，RSI 42.927显示弱势\n- 风险回报计算：入场86500，止损87000，止盈85000\n  - 风险：(87000-86500)/86500 = 0.58"
+      },
+      {
+        "CycleNumber": 263,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\n\n- **ETHUSDT**：价格2788.80低于EMA20 2799.66，MACD -1.749负值，RSI 24.51严重超卖\n  - 风险回报计算：假设入场2788，止损2830，止盈2700\n  - 风险：(2830-2788)/2788 = 1.51"
+      },
+      {
+        "CycleNumber": 264,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "有候选币种**：在弱势市场中，单一RSI超卖指标通常不足以作为开多理由\n- **风险回报检查**：没有发现满足3:1风险回报比的高质量机会\n\n**预执行检查清\ufffd"
+      },
+      {
+        "CycleNumber": 265,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "RSI 25.95极度超卖\n- 信号持续时间：RSI超卖已持续多根K线，具备时间稳定性\n- 风险回报计算：入场2787.70，止损2820（+1.16%），止盈2700（-3.15%）\n  - 风险：(2"
+      },
+      {
+        "CycleNumber": 266,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "仓当前盈利0.15%，持仓23分钟\n- 信号持续有效：下跌趋势+超卖状态+MACD负值\n- 风险回报比仍符合3:1要求\n\n**新机会扫描：**\n- **BTCUSDT**：当前已持仓，无新\ufffd\ufffd"
+      },
+      {
+        "CycleNumber": 267,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "LUSDT**：价格126.08低于EMA20 126.706，MACD -0.315为负值，RSI 20.457显示严重超卖\n  - 风险回报计算：入场126.08，止损127.50（0.6%最小距离），止盈120.00\n  - 风险：("
+      },
+      {
+        "CycleNumber": 269,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "微负值，RSI 52.364中性\n   - 缺乏明确的入场信号\n\n**预执行检查清单验证：**\n- 风险回报比：当前持仓满足要求\n- 止损距离：满足BTC最小0.4%要求\n- 杠杆：10x"
+      },
+      {
+        "CycleNumber": 271,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "：\n- ✅ 持仓入场假设失效 → 必须平仓\n- ❌ 无新开仓机会（信号强度不足或风险回报不达标）\n\n**最终决策**：平掉BTC空单，无新开仓\n\n```json"
+      },
+      {
+        "CycleNumber": 272,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd期回调压力\n- 资金费率：-0.00124%轻微负值，无明显挤压\n\n**硬约束检查：**\n- 风险回报比：入场86870，止损86000（0.8%距离），止盈89000（2.45%距离），风险\ufffd"
+      },
+      {
+        "CycleNumber": 273,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd要求\n\n**新机会扫描：**\n- 检查所有候选币种，未发现满足硬约束的新机会\n- 风险回报比要求≥3:1，当前信号质量不足\n- 信号稳定性：多数币种处于横盘\ufffd"
+      },
+      {
+        "CycleNumber": 274,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "**和**HYPE**：均缺乏强劲趋势和动量确认。\n\n**硬约束检查：**\n- 没有发现满足风险回报≥3:1且置信度≥85的机会。\n\n**决策**：继续持有BTC多仓，等待趋势\ufffd\ufffd"
+      },
+      {
+        "CycleNumber": 275,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "乏明确方向\n- **其他币种**：均无明显高置信度信号\n\n**预执行检查清单**：\n- 风险回报比：无新开仓，不适用\n- 止损距离最小值：持仓有效，止损86000距\ufffd\ufffd"
+      },
+      {
+        "CycleNumber": 276,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "一般\n\n**硬约束检查**：\n- 所有候选币种均未达到置信度≥85（夏普\u003c0要求）且风险回报≥3:1的要求\n\n**决策**：维持当前BTC多仓，无新开仓位\n\n```json"
+      },
+      {
+        "CycleNumber": 278,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd似横盘格局，动量微弱\n- XRP/HYPE：无明显交易机会\n\n**预执行检查清单**：\n- 风险回报比：持仓的(89000-86766)/(86766-86000) = 2234/766 = 2.92:1 \u003c 3.0:1 → **硬约束\ufffd\ufffd"
+      },
+      {
+        "CycleNumber": 279,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd强度弱\n- **结论**：无满足硬约束的新开仓机会\n\n**硬约束最终验证**：\n- ✅ 风险回报比：现有持仓3.06:1满足要求\n- ✅ 持仓数：1个，未超限\n- ✅ 保证金\ufffd"
+      },
+      {
+        "CycleNumber": 282,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "0.001接近零，无明显方向。\n- **HYPE**：无明显强劲信号。\n\n**硬约束检查**：\n- 风险回报比：当前持仓满足3.06:1（已验证）\n- 最多持仓：当前1个，未超限\n- "
+      },
+      {
+        "CycleNumber": 283,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "强烈信号\n- **HYPE**：山寨币，在当前夏普\u003c0环境下应避免\n\n**硬约束检查**：\n- 风险回报比：无新开仓，不适用\n- 止损距离：无新开仓，不适用\n- 熔断机制\ufffd"
+      },
+      {
+        "CycleNumber": 284,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd价格2806.90 ≈ EMA20 2804.14，MACD 2.573微弱正值，RSI 54.06中性，信号质量中等，风险回报计算不满足3:1硬约束\n- **SOLUSDT**：价格127.30 ≈ EMA20 127.231，MACD 0.120\ufffd"
+      },
+      {
+        "CycleNumber": 285,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd仓BTC多仓已持有38分钟，入场时基于上涨趋势+MACD转正+RSI超买但趋势强劲，风险回报3.06:1满足要求\n- 从入场快照看，原始假设是\"上涨趋势确认\"，需要\ufffd\ufffd"
+      },
+      {
+        "CycleNumber": 286,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "度不足\n- XRP：无明显趋势信号\n- HYPE：无明显高质量信号\n\n**硬约束检查：**\n- 风险回报比：无明显机会满足≥3:1要求\n- 熔断机制：夏普\u003c0需要置信度≥85，"
+      },
+      {
+        "CycleNumber": 287,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd：在BTC上开多仓，入场假设为\"上涨趋势确认+MACD转正+RSI超买但趋势强劲\"，风险回报3.06:1满足要求\n- 当前持仓状态：BTC多仓已持有44分钟，当前微盈0.16%"
+      },
+      {
+        "CycleNumber": 289,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "TR 116.996，相对正常\n\n**新机会扫描：**\n检查所有候选币种，寻找置信度≥85且风险回报≥3:1的机会\n\n**BTC分析：**\n- 趋势：中性偏多（价格\u003eEMA20但差距很小\ufffd"
+      },
+      {
+        "CycleNumber": 290,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd明确方向\n- HYPE：RSI 72.577超买，但市值较小，风险较高\n\n**硬约束检查：**\n- 风险回报比：所有候选币种均无法满足≥3:1的要求\n- 置信度：所有信号均低\ufffd"
+      },
+      {
+        "CycleNumber": 291,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "性，无明显交易信号\n- **BNBUSDT**：价格\u003eEMA20，MACD正值，但RSI 73.006显示超买，风险回报难以满足3:1\n- **XRPUSDT**：价格与EMA20几乎重合，MACD接近零轴，无明\ufffd\ufffd"
+      },
+      {
+        "CycleNumber": 292,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "20 127.23，缺乏明确信号\n- **BNB**：价格830.56 \u003e EMA20 828.88，但RSI 69.24接近超买，风险回报难以满足3:1\n- **XRP**：横盘震荡，无明显趋势\n- **HYPE**：RSI 76.20超买\ufffd"
+      },
+      {
+        "CycleNumber": 293,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd成交量低迷\n  - 入场价830.56，止损815（1.87%距离），止盈890（7.16%距离）\n  - 风险回报比：(890-830.56)/(830.56-815) = 59.44/15.56 = 3.82:1 \u003e 3.0:1 ✅\n  - 止损距离：1."
+      },
+      {
+        "CycleNumber": 294,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd显趋势，技术指标平淡\n- **HYPE**：RSI 64.971偏强但未超买\n\n**硬约束检查**：\n- 风险回报比：无符合≥3:1的新机会\n- 止损距离：所有潜在机会均需满足最小\ufffd"
+      },
+      {
+        "CycleNumber": 295,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "认+MACD转正\"，当前价格86952与入场价86766基本持平，盈亏+0.16%\n- 入场快照显示风险回报3.06:1满足要求，止损86000，距离约0.87%（\u003e0.4%最小值），符合硬约束\n"
+      },
+      {
+        "CycleNumber": 296,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "标不足以开仓\n- **BNB**：价格831.8 \u003e EMA20 829.858，MACD正值1.187，RSI 70.634超买\n  - 风险回报计算：入场831.8，止损820（1.42%距离），止盈860（3.39%距离），风险\ufffd"
+      },
+      {
+        "CycleNumber": 297,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "明显信号\n- HYPE：各项指标中性，无明显交易机会\n\n**硬约束检查**：\n- 无符合3:1风险回报比的新机会\n- 所有候选币种均缺乏多指标综合确认\n\n**最终决策**\ufffd"
+      },
+      {
+        "CycleNumber": 298,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd号虽然极端，但缺乏多指标确认和时间稳定性\n\n**预执行检查清单验证**：\n- 风险回报比：无法满足≥3:1要求，因为缺乏明确的止盈目标位\n- 置信度：由\ufffd"
+      },
+      {
+        "CycleNumber": 299,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "极度超卖，但趋势结构仍保持下行\n- 成交量低于平均水平，缺乏反转动能\n\n**风险回报评估**：\n- 当前市场波动性较高，需要更宽的止损（BTC/ETH ≥0.4%硬\ufffd\ufffd"
+      },
+      {
+        "CycleNumber": 300,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "决策\n- **其他山寨币**：要么信号矛盾，要么波动性过高\n\n**硬约束检查**：\n- 风险回报比：无开仓信号，不适用\n- 熔断机制：Sharpe -0.06 \u003c 0，要求置信度≥"
+      },
+      {
+        "CycleNumber": 301,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd有力的趋势确认。\n\n**风险评估**：所有潜在机会都无法满足硬约束要求：\n- 风险回报比：在弱势市场中难以达到≥3:1\n- 信号稳定性：没有持续10+分钟的\ufffd"
+      },
+      {
+        "CycleNumber": 302,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "下需要更高置信度(≥85)\n- 当前信号缺乏多指标确认和成交量支持\n- 没有满足3:1风险回报比的明确机会\n\n**决策：** 等待更好的交易机会，当前信号质量不"
+      },
+      {
+        "CycleNumber": 303,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd需要置信度≥85。目前没有达到此标准的信号。\n\n**硬约束验证**:\n- 没有发现风险回报比≥3:1的明确机会\n- 信号强度不足，缺乏多指标确认\n- 成交量普遍\ufffd"
+      },
+      {
+        "CycleNumber": 304,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd缺乏明确的趋势方向\n- 需要置信度≥85，但当前信号质量均未达到此标准\n- 风险回报比难以达到3:1的硬约束要求\n- 信号不够稳定，在执行延迟后可能失\ufffd"
+      },
+      {
+        "CycleNumber": 305,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd度\n- 其他山寨币均缺乏多指标确认的稳定信号\n\n**预执行检查清单验证：**\n- 风险回报比：无符合≥3:1的机会\n- 时间稳定性：当前信号多为横盘震荡，缺\ufffd"
+      },
+      {
+        "CycleNumber": 308,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd时间不足：多数反弹信号刚刚出现，在弱势市场中需要10-15分钟稳定验证\n- 风险回报比无法达到3:1要求（止损需要更宽，但止盈空间受限）\n- 时间稳定\ufffd"
+      },
+      {
+        "CycleNumber": 309,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd速下降，显示下跌动能\n3. **成交量**：普遍低于平均水平，缺乏买盘支撑\n\n**风险回报分析：**\n虽然多个币种RSI显示超卖，但在弱势市场中：\n- 需要多指\ufffd"
+      },
+      {
+        "CycleNumber": 310,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd\ufffd于EMA20\n- 其他山寨币普遍呈现弱势，RSI大多在30-40区间\n\n**硬约束检查：**\n1. 风险回报比：当前信号不明确，无法满足≥3:1要求\n2. 持仓数量：0个，符合\ufffd\ufffd"
+      },
+      {
+        "CycleNumber": 311,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "合。\n\n**硬约束检查：**\n- 夏普\u003c0，需要置信度≥85，当前无信号达到此标准\n- 风险回报比无法满足≥3:1（无明确机会）\n- 信号不稳定，不符合时间稳定性\ufffd"
+      },
+      {
+        "CycleNumber": 312,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "指标信号不足\n- **XRP**：无明显趋势信号\n\n**预执行检查清单验证：**\n- 无符合风险回报比≥3:1的机会\n- 所有币种均缺乏多指标综合确认\n- 成交量普遍低迷\ufffd"
+      },
+      {
+        "CycleNumber": 313,
+        "Symbol": "",
+        "MentionType": "risk_reward",
+        "Context": "\ufffd区域，无超买超卖极端情况\n- 成交量普遍偏低，缺乏确认信号\n- 未发现满足风险回报比≥3:1且置信度≥85的机会\n\n决策：由于夏普比率为负且缺乏高质量"
+      }
+    ]
+  },
+  "PromptCompliance": {
+    "RiskRewardCompliance": {
+      "TotalChecks": 2,
+      "PassedChecks": 0,
+      "FailedChecks": 2,
+      "ComplianceRate": 0,
+      "Violations": [
+        {
+          "CycleNumber": 258,
+          "Symbol": "BTCUSDT",
+          "Rule": "风险回报比",
+          "Expected": "≥ 3.0:1",
+          "Actual": "风险回报比 2.41:1 低于要求 3.0:1",
+          "CoTTrace": "",
+          "DecisionJSON": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"open_short\",\n    \"leverage\": 10,\n    \"position_size_usd\": 241,\n    \"stop_loss\": 87000,\n    \"take_profit\": 85000,\n    \"confidence\": 85,\n    \"risk_usd\": 300,\n    \"reasoning\": \"下跌趋势确认+RSI超卖+MACD负值+资金费率负值，风险回报比3.13:1满足硬约束\"\n  }\n]"
+        },
+        {
+          "CycleNumber": 272,
+          "Symbol": "BTCUSDT",
+          "Rule": "风险回报比",
+          "Expected": "≥ 3.0:1",
+          "Actual": "风险回报比 2.92:1 低于要求 3.0:1",
+          "CoTTrace": "",
+          "DecisionJSON": "[\n  {\n    \"symbol\": \"BTCUSDT\",\n    \"action\": \"open_long\",\n    \"leverage\": 10,\n    \"position_size_usd\": 233,\n    \"stop_loss\": 86000,\n    \"take_profit\": 89000,\n    \"confidence\": 85,\n    \"risk_usd\": 300,\n    \"reasoning\": \"上涨趋势确认+MACD转正+RSI超买但趋势强劲，风险回报3.06:1满足要求\"\n  }\n]"
+        }
+      ]
+    },
+    "StopLossCompliance": {
+      "TotalChecks": 3,
+      "PassedChecks": 3,
+      "FailedChecks": 0,
+      "ComplianceRate": 100,
+      "Violations": null
+    },
+    "LeverageCompliance": {
+      "TotalChecks": 3,
+      "PassedChecks": 3,
+      "FailedChecks": 0,
+      "ComplianceRate": 100,
+      "Violations": null
+    },
+    "ConfidenceCompliance": {
+      "TotalChecks": 2,
+      "PassedChecks": 2,
+      "FailedChecks": 0,
+      "ComplianceRate": 100,
+      "Violations": null
+    },
+    "EntryTimingCompliance": {
+      "TotalChecks": 2,
+      "PassedChecks": 2,
+      "FailedChecks": 0,
+      "ComplianceRate": 100,
+      "Violations": null
+    },
+    "MarketNoiseCompliance": {
+      "TotalChecks": 3,
+      "PassedChecks": 3,
+      "FailedChecks": 0,
+      "ComplianceRate": 100,
+      "Violations": null
+    }
+  },
+  "PromptAmbiguity": {
+    "AmbiguousRules": [
+      {
+        "RuleText": "参考原则 vs 硬约束",
+        "AmbiguityType": "unclear",
+        "Examples": [
+          "参考原则（非强制规则）**：通常需要综合多个指标，单一指标（包括RSI）通常不足以做出决策\n",
+          "参考原则，你应根据实际市场情况综合判断，而非机械执行\n",
+          "参考原则，非强制规则）**\n"
+        ],
+        "Impact": "AI可能将参考原则误认为是硬约束，或反之",
+        "Frequency": 19
+      },
+      {
+        "RuleText": "建议 vs 要求",
+        "AmbiguityType": "vague",
+        "Examples": [
+          "Prompt中同时包含'建议'和'必须'的表述，可能导致AI混淆"
+        ],
+        "Impact": "AI可能将建议误认为是要求，或忽略必须遵守的规则",
+        "Frequency": 14
+      },
+      {
+        "RuleText": "数值范围模糊",
+        "AmbiguityType": "vague",
+        "Examples": [
+          "15-25",
+          "12-22",
+          "8-15",
+          "70-100",
+          "0-100"
+        ],
+        "Impact": "AI可能选择范围边界值，导致不符合预期",
+        "Frequency": 63
+      }
+    ],
+    "ContradictoryRules": [
+      {
+        "Rule1": "耐心等待信号稳定",
+        "Rule2": "快速响应入场假设失效",
+        "Contradiction": "两个规则可能在不同情况下同时适用，但AI可能混淆何时应用哪个规则",
+        "Examples": [
+          "在弱势市场中要求耐心等待，但入场假设失效时要求快速响应"
+        ],
+        "Impact": "AI可能在不该等待时等待，或在不该快速响应时快速响应"
+      },
+      {
+        "Rule1": "趋势优先",
+        "Rule2": "多指标综合判断",
+        "Contradiction": "当趋势与其他指标冲突时，AI可能不确定应该优先哪个",
+        "Examples": [
+          "趋势向下但RSI超卖时，应该优先趋势还是RSI信号"
+        ],
+        "Impact": "AI可能做出不一致的决策"
+      }
+    ],
+    "MissingClarity": [
+      {
+        "Topic": "入场时机判断",
+        "Issue": "Prompt中缺少明确的入场时机判断标准",
+        "Examples": [
+          "AI可能依赖单一指标而非综合判断"
+        ],
+        "SuggestedFix": "添加明确的入场时机判断流程图或检查清单"
+      },
+      {
+        "Topic": "止损设置方法",
+        "Issue": "Prompt中缺少明确的止损设置计算方法",
+        "Examples": [
+          "AI可能设置过窄的止损，导致频繁触发"
+        ],
+        "SuggestedFix": "添加止损设置的步骤化指导"
+      }
+    ]
+  },
+  "PromptEffectiveness": {
+    "EffectiveRules": null,
+    "IneffectiveRules": null,
+    "RuleImpact": {}
+  },
+  "PromptRecommendations": [
+    {
+      "Priority": "high",
+      "Category": "guidance",
+      "Issue": "市场噪音在CoTTrace中提及率低",
+      "CurrentPrompt": "市场噪音考虑：止损应≥2-3×典型K线内波动性",
+      "SuggestedChange": "在止损设置部分添加强制检查清单，要求AI在设置止损时明确说明是否考虑了市场噪音",
+      "Rationale": "只有8.2%的决策提到了市场噪音，导致止损设置过窄",
+      "ExpectedImpact": "减少因市场噪音导致的虚假止损触发",
+      "Evidence": [
+        "止损遵循率: 100.0%"
+      ]
+    },
+    {
+      "Priority": "high",
+      "Category": "structure",
+      "Issue": "规则矛盾: 耐心等待信号稳定 vs 快速响应入场假设失效",
+      "CurrentPrompt": "两个规则同时存在但可能冲突",
+      "SuggestedChange": "明确说明何时应用哪个规则，添加决策树或优先级说明",
+      "Rationale": "两个规则可能在不同情况下同时适用，但AI可能混淆何时应用哪个规则",
+      "ExpectedImpact": "减少AI决策的不一致性",
+      "Evidence": [
+        "在弱势市场中要求耐心等待，但入场假设失效时要求快速响应"
+      ]
+    },
+    {
+      "Priority": "high",
+      "Category": "structure",
+      "Issue": "规则矛盾: 趋势优先 vs 多指标综合判断",
+      "CurrentPrompt": "两个规则同时存在但可能冲突",
+      "SuggestedChange": "明确说明何时应用哪个规则，添加决策树或优先级说明",
+      "Rationale": "当趋势与其他指标冲突时，AI可能不确定应该优先哪个",
+      "ExpectedImpact": "减少AI决策的不一致性",
+      "Evidence": [
+        "趋势向下但RSI超卖时，应该优先趋势还是RSI信号"
+      ]
+    },
+    {
+      "Priority": "high",
+      "Category": "constraint",
+      "Issue": "风险回报比违反率高",
+      "CurrentPrompt": "风险回报比要求：绝对最小值3.0:1",
+      "SuggestedChange": "在预执行检查清单中将风险回报比检查放在第一位，并添加'如果风险回报比\u003c3.0:1，立即拒绝，不要寻找例外'的明确说明",
+      "Rationale": "风险回报比遵循率只有0.0%，存在2次违反",
+      "ExpectedImpact": "减少风险回报比违反次数",
+      "Evidence": [
+        "违反次数: 2"
+      ]
+    },
+    {
+      "Priority": "medium",
+      "Category": "clarity",
+      "Issue": "参考原则与硬约束混淆",
+      "CurrentPrompt": "参考原则（非强制规则）",
+      "SuggestedChange": "明确区分硬约束和参考原则，使用不同的格式（如硬约束用【】标记，参考原则用（）标记）",
+      "Rationale": "AI可能将参考原则误认为是硬约束，导致过度遵守或忽略",
+      "ExpectedImpact": "提高AI对规则层级的理解",
+      "Evidence": [
+        "参考原则（非强制规则）**：通常需要综合多个指标，单一指标（包括RSI）通常不足以做出决策\n",
+        "参考原则，你应根据实际市场情况综合判断，而非机械执行\n",
+        "参考原则，非强制规则）**\n"
+      ]
+    }
+  ],
+  "ReportPath": "phase4_report_253_313.md"
+}
